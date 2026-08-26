@@ -161,6 +161,42 @@ Esto mantiene la misma regla del laboratorio original:
 * Más de S/ 3000: 5%.
 * En otro caso: sin descuento.
 
+## Prompt utilizado con Inteligencia Artificial
+
+Para desarrollar la versión con IA se utilizó el siguiente prompt:
+
+> Adapta el laboratorio de carrito de compras en Kotlin a Programación Orientada a Objetos, manteniendo todas las funcionalidades del laboratorio original.
+>
+> La solución debe demostrar de forma clara los cuatro principios de POO:
+>
+> - Encapsulamiento
+> - Herencia
+> - Abstracción
+> - Polimorfismo
+>
+> Mantén las funcionalidades de:
+>
+> - Registro de productos.
+> - Cálculo de subtotal.
+> - Cálculo del IGV del 18%.
+> - Cálculo del total.
+> - Reporte del carrito.
+> - Producto más caro.
+> - Descuento de 5% si supera S/ 3000 y 10% si supera S/ 5000.
+> - Búsqueda de productos.
+> - Eliminación de productos.
+> - Recalculo de totales.
+>
+> Utiliza Kotlin y ejecuta el programa por consola.
+>
+> La solución debe ser sencilla de explicar en una defensa oral y debe indicar claramente en qué parte del código se aplica cada principio de Programación Orientada a Objetos.
+
+## Uso de la IA
+
+La Inteligencia Artificial fue utilizada para proponer una reorganización del código original aplicando Programación Orientada a Objetos.
+
+La versión original del laboratorio se conserva en la rama `sin-ia`, mientras que esta rama `con-ia` contiene la versión adaptada con abstracción, herencia, encapsulamiento y polimorfismo.
+
 ## Conclusión
 
 La versión con-ia mantiene la funcionalidad del carrito desarrollado en el laboratorio, pero reorganiza el código utilizando Programación Orientada a Objetos.
