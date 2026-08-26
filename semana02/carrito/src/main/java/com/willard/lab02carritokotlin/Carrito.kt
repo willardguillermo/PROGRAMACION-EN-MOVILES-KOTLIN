@@ -138,12 +138,10 @@ fun obtenerEstrategiaDescuento(total: Double): EstrategiaDescuento {
         total > 5000 -> DescuentoDiezPorCiento()
         total > 3000 -> DescuentoCincoPorCiento()
         else -> SinDescuento()
-
     }
 }
 
 fun main() {
-
     println("=========================================")
     println(" CARRITO DE COMPRAS - TIENDA TECSUP ")
     println(" VERSION POO - CON IA ")
@@ -193,45 +191,23 @@ fun main() {
     )
 
     for (producto in carrito.obtenerProductos()) {
-        println(
-            "Producto agregado: ${producto.nombre} - ${producto.mostrarTipo()}"
-        )
+        println("Producto agregado: ${producto.nombre} - ${producto.mostrarTipo()}")
     }
 
     println()
 
     carrito.mostrarDetalle()
 
-    println(
-        "Cantidad de productos: ${carrito.cantidadProductos()}"
-    )
-
+    println("Cantidad de productos: ${carrito.cantidadProductos()}")
     println()
 
     val subtotal = carrito.calcularSubtotal()
     val igv = carrito.calcularIGV()
     val total = carrito.calcularTotal()
 
-    println(
-        String.format(
-            "Subtotal      : S/ %8.2f",
-            subtotal
-        )
-    )
-
-    println(
-        String.format(
-            "IGV (18%%)     : S/ %8.2f",
-            igv
-        )
-    )
-
-    println(
-        String.format(
-            "TOTAL A PAGAR : S/ %8.2f",
-            total
-        )
-    )
+    println(String.format("Subtotal      : S/ %8.2f", subtotal))
+    println(String.format("IGV (18%%)     : S/ %8.2f", igv))
+    println(String.format("TOTAL A PAGAR : S/ %8.2f", total))
 
     println()
 
@@ -240,35 +216,20 @@ fun main() {
     if (masCaro != null) {
         println(
             "Producto mas caro: ${masCaro.nombre} " +
-                    String.format(
-                        "(S/ %.2f)",
-                        masCaro.precio
-                    )
+                    String.format("(S/ %.2f)", masCaro.precio)
         )
     }
 
     println()
 
-    // POLIMORFISMO
     val estrategia: EstrategiaDescuento =
         obtenerEstrategiaDescuento(total)
 
     val descuento = estrategia.calcular(total)
     val totalConDescuento = total - descuento
 
-    println(
-        String.format(
-            "Descuento aplicado: S/ %.2f",
-            descuento
-        )
-    )
-
-    println(
-        String.format(
-            "TOTAL CON DESCUENTO: S/ %.2f",
-            totalConDescuento
-        )
-    )
+    println(String.format("Descuento aplicado: S/ %.2f", descuento))
+    println(String.format("TOTAL CON DESCUENTO: S/ %.2f", totalConDescuento))
 
     println()
     println("--------- BUSQUEDA DE PRODUCTO ---------")
@@ -277,9 +238,7 @@ fun main() {
         carrito.buscarProducto("Mouse Logitech")
 
     if (productoBuscado != null) {
-        println(
-            "Producto encontrado: ${productoBuscado.nombre}"
-        )
+        println("Producto encontrado: ${productoBuscado.nombre}")
     } else {
         println("Producto no encontrado")
     }
@@ -300,10 +259,7 @@ fun main() {
 
     carrito.mostrarDetalle()
 
-    println(
-        "Cantidad de productos: ${carrito.cantidadProductos()}"
-    )
-
+    println("Cantidad de productos: ${carrito.cantidadProductos()}")
     println()
 
     val nuevoSubtotal = carrito.calcularSubtotal()
@@ -319,38 +275,9 @@ fun main() {
     val nuevoTotalConDescuento =
         nuevoTotal - nuevoDescuento
 
-    println(
-        String.format(
-            "Subtotal actualizado      : S/ %8.2f",
-            nuevoSubtotal
-        )
-    )
-
-    println(
-        String.format(
-            "IGV actualizado (18%%)     : S/ %8.2f",
-            nuevoIgv
-        )
-    )
-
-    println(
-        String.format(
-            "TOTAL actualizado         : S/ %8.2f",
-            nuevoTotal
-        )
-    )
-
-    println(
-        String.format(
-            "Descuento actualizado     : S/ %8.2f",
-            nuevoDescuento
-        )
-    )
-
-    println(
-        String.format(
-            "TOTAL CON DESCUENTO       : S/ %8.2f",
-            nuevoTotalConDescuento
-        )
-    )
+    println(String.format("Subtotal actualizado      : S/ %8.2f", nuevoSubtotal))
+    println(String.format("IGV actualizado (18%%)     : S/ %8.2f", nuevoIgv))
+    println(String.format("TOTAL actualizado         : S/ %8.2f", nuevoTotal))
+    println(String.format("Descuento actualizado     : S/ %8.2f", nuevoDescuento))
+    println(String.format("TOTAL CON DESCUENTO       : S/ %8.2f", nuevoTotalConDescuento))
 }
