@@ -1,4 +1,4 @@
-## Laboratorio 02 - Carrito de Compras en Kotlin
+## Laboratorio 02 - Carrito de Compras en Kotlin con POO
 
 ## Datos del estudiante
 
@@ -6,82 +6,163 @@ Nombre: Willard Guillermo
 Curso: Programación en Móviles
 Laboratorio: 02
 Lenguaje: Kotlin
+Rama: con-ia
 
 ## Descripción
 
-En este laboratorio se desarrolló la lógica de un carrito de compras utilizando Kotlin.
+En esta versión del laboratorio se desarrolló la lógica de un carrito de compras en Kotlin aplicando Programación Orientada a Objetos.
 
-El programa permite registrar productos con nombre, precio y cantidad, almacenarlos en una lista mutable y realizar diferentes operaciones sobre ellos.
+El programa conserva las funcionalidades principales del laboratorio original:
 
-Se implementaron funciones para:
+* Registro de productos.
+* Cálculo del subtotal.
+* Cálculo del IGV del 18%.
+* Cálculo del total.
+* Reporte detallado del carrito.
+* Producto más caro.
+* Descuento según el monto total.
+* Búsqueda de productos.
+* Eliminación de productos.
+* Recalculo de totales.
 
-* Calcular el subtotal de los productos.
-* Calcular el IGV del 18%.
-* Calcular el total a pagar.
-* Mostrar el detalle del carrito con columnas alineadas.
-* Identificar el producto más caro.
-* Aplicar descuentos según el monto total utilizando when.
-* Buscar productos utilizando find.
-* Eliminar productos utilizando removeIf.
-* Recalcular los totales después de eliminar un producto.
+Además, esta versión implementa los principios de:
 
-Modelo de datos
+* Abstracción.
+* Herencia.
+* Encapsulamiento.
+* Polimorfismo.
 
-Para representar cada producto se utilizó una data class:
+## Abstracción
 
-data class Producto(
+Se utilizó una clase abstracta llamada Producto.
+
+abstract class Producto(
 val nombre: String,
 val precio: Double,
 var cantidad: Int
-)
+) {
+abstract fun mostrarTipo(): String
+open fun calcularImporte(): Double {
+return precio * cantidad
+}
+}
 
-¿Por qué nombre y precio son val, pero cantidad es var?
+La clase Producto representa las características comunes que comparten todos los productos.
 
-nombre y precio fueron declarados con val porque son valores que no deberían cambiar después de crear un producto.
+Además, el método:
 
-Por ejemplo, si se crea:
+abstract fun mostrarTipo(): String
 
-Producto("Laptop HP", 2500.0, 1)
+obliga a las clases hijas a definir su propia forma de indicar qué tipo de producto representan.
 
-el nombre Laptop HP y su precio 2500.0 permanecen constantes.
+También se utilizó la interfaz:
 
-En cambio, cantidad se declaró con var porque puede ser necesario modificarla durante el uso del carrito.
+interface EstrategiaDescuento {
+fun calcular(total: Double): Double
+}
+
+Esta interfaz define el comportamiento general que deben tener las diferentes estrategias de descuento.
+
+## Herencia
+
+Se crearon clases que heredan de Producto.
 
 Por ejemplo:
 
-producto.cantidad = 2
+class ProductoTecnologico(
+nombre: String,
+precio: Double,
+cantidad: Int,
+private val marca: String
+) : Producto(nombre, precio, cantidad)
 
-Si intentara modificar el precio de esta manera:
+También:
 
-producto.precio = 3000.0
+class Accesorio(
+nombre: String,
+precio: Double,
+cantidad: Int,
+private val categoria: String
+) : Producto(nombre, precio, cantidad)
 
-Kotlin mostraría un error porque precio fue declarado con val y, por lo tanto, no puede reasignarse.
+Esto permite reutilizar los atributos y métodos definidos en la clase Producto.
 
-## Resultado final
+## Encapsulamiento
 
-El programa muestra en consola:
+La clase CarritoCompras mantiene internamente la lista de productos:
 
-* Datos del cliente.
-* Productos agregados.
-* Detalle del carrito.
-* Cantidad de productos.
-* Subtotal.
-* IGV.
-* Total a pagar.
-* Producto más caro.
-* Descuento aplicado.
-* Total con descuento.
-* Búsqueda de productos.
-* Eliminación de productos.
-* Totales actualizados después de eliminar un producto.
+private val productos = mutableListOf<Producto>()
 
+La palabra private evita que la lista pueda ser modificada directamente desde fuera de la clase.
 
-## Capturas de ejecución
+Para interactuar con el carrito se utilizan métodos como:
 
-<p align="center">
-  <img src="./capturas/resultado-final1.png" alt="Resultado final - Parte 1" width="900">
-</p>
+fun agregarProducto(producto: Producto)
+fun eliminarProducto(nombre: String): Boolean
+fun buscarProducto(nombre: String): Producto?
+fun calcularSubtotal(): Double
 
-<p align="center">
-  <img src="./capturas/resultado-final2.png" alt="Resultado final - Parte 2" width="900">
-</p>
+De esta manera, la clase controla cómo se accede y modifica su información.
+
+## Polimorfismo
+
+El polimorfismo se utiliza principalmente en las estrategias de descuento.
+
+Todas estas clases implementan la misma interfaz:
+
+class SinDescuento : EstrategiaDescuento
+class DescuentoCincoPorCiento : EstrategiaDescuento
+class DescuentoDiezPorCiento : EstrategiaDescuento
+
+Cada clase implementa el mismo método:
+
+fun calcular(total: Double): Double
+
+pero realiza un cálculo diferente.
+
+Por ejemplo:
+
+class DescuentoCincoPorCiento : EstrategiaDescuento {
+override fun calcular(total: Double): Double {
+return total * 0.05
+}
+}
+
+y:
+
+class DescuentoDiezPorCiento : EstrategiaDescuento {
+override fun calcular(total: Double): Double {
+return total * 0.10
+}
+}
+
+En main() se utiliza una referencia del tipo general:
+
+val estrategia: EstrategiaDescuento =
+obtenerEstrategiaDescuento(total)
+
+La variable estrategia puede contener diferentes implementaciones de EstrategiaDescuento, y el método calcular() se comportará de acuerdo con el objeto concreto recibido.
+
+Lógica del descuento
+
+La estrategia se selecciona utilizando when:
+
+fun obtenerEstrategiaDescuento(total: Double): EstrategiaDescuento {
+return when {
+total > 5000 -> DescuentoDiezPorCiento()
+total > 3000 -> DescuentoCincoPorCiento()
+else -> SinDescuento()
+}
+}
+
+Esto mantiene la misma regla del laboratorio original:
+
+* Más de S/ 5000: 10%.
+* Más de S/ 3000: 5%.
+* En otro caso: sin descuento.
+
+## Conclusión
+
+La versión con-ia mantiene la funcionalidad del carrito desarrollado en el laboratorio, pero reorganiza el código utilizando Programación Orientada a Objetos.
+
+La aplicación de abstracción, herencia, encapsulamiento y polimorfismo permite separar responsabilidades, reutilizar código y facilitar futuras modificaciones del sistema.
