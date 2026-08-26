@@ -1,25 +1,27 @@
 package com.willard.lab02carritokotlin
 
+// =========================
 // ABSTRACCION
+// =========================
+
 abstract class Producto(
     val nombre: String,
     val precio: Double,
-    var cantidad: Int
+    var stock: Int
 ) {
     abstract fun mostrarTipo(): String
-
-    open fun calcularImporte(): Double {
-        return precio * cantidad
-    }
 }
 
+// =========================
 // HERENCIA
+// =========================
+
 class ProductoTecnologico(
     nombre: String,
     precio: Double,
-    cantidad: Int,
+    stock: Int,
     private val marca: String
-) : Producto(nombre, precio, cantidad) {
+) : Producto(nombre, precio, stock) {
 
     override fun mostrarTipo(): String {
         return "Tecnologico - $marca"
@@ -29,60 +31,224 @@ class ProductoTecnologico(
 class Accesorio(
     nombre: String,
     precio: Double,
-    cantidad: Int,
+    stock: Int,
     private val categoria: String
-) : Producto(nombre, precio, cantidad) {
+) : Producto(nombre, precio, stock) {
 
     override fun mostrarTipo(): String {
         return "Accesorio - $categoria"
     }
 }
 
-// ABSTRACCION + POLIMORFISMO
+// =========================
+// USUARIOS
+// =========================
+
+abstract class Usuario(
+    val nombre: String
+) {
+    abstract fun mostrarRol(): String
+}
+
+class Vendedor(nombre: String) : Usuario(nombre) {
+
+    override fun mostrarRol(): String {
+        return "Vendedor"
+    }
+}
+
+class Cliente(nombre: String) : Usuario(nombre) {
+
+    override fun mostrarRol(): String {
+        return "Cliente"
+    }
+}
+
+// =========================
+// POLIMORFISMO
+// =========================
+
 interface EstrategiaDescuento {
     fun calcular(total: Double): Double
 }
 
 class SinDescuento : EstrategiaDescuento {
+
     override fun calcular(total: Double): Double {
         return 0.0
     }
 }
 
 class DescuentoCincoPorCiento : EstrategiaDescuento {
+
     override fun calcular(total: Double): Double {
         return total * 0.05
     }
 }
 
 class DescuentoDiezPorCiento : EstrategiaDescuento {
+
     override fun calcular(total: Double): Double {
         return total * 0.10
     }
 }
 
-// ENCAPSULAMIENTO
+// =========================
+// ITEM DEL CARRITO
+// =========================
+
+data class ItemCarrito(
+    val producto: Producto,
+    var cantidad: Int
+) {
+    fun calcularImporte(): Double {
+        return producto.precio * cantidad
+    }
+}
+
+// =========================
+// TIENDA - ENCAPSULAMIENTO
+// =========================
+
+class Tienda {
+
+    private val catalogo = mutableListOf<Producto>()
+
+    fun registrarProducto(producto: Producto) {
+        catalogo.add(producto)
+
+        println()
+        println("Producto registrado correctamente.")
+    }
+
+    fun obtenerCatalogo(): List<Producto> {
+        return catalogo.toList()
+    }
+
+    fun buscarProducto(nombre: String): Producto? {
+        return catalogo.find {
+            it.nombre.equals(nombre, ignoreCase = true)
+        }
+    }
+
+    fun eliminarProducto(nombre: String): Boolean {
+        val producto = buscarProducto(nombre)
+
+        return if (producto != null) {
+            catalogo.remove(producto)
+            true
+        } else {
+            false
+        }
+    }
+
+    fun mostrarCatalogo() {
+
+        println()
+        println("=============== CATALOGO ===============")
+
+        if (catalogo.isEmpty()) {
+            println("No existen productos registrados.")
+        } else {
+
+            for ((indice, producto) in catalogo.withIndex()) {
+
+                println(
+                    "${indice + 1}. ${producto.nombre}"
+                )
+
+                println(
+                    "   Precio: S/ %.2f".format(producto.precio)
+                )
+
+                println(
+                    "   Stock: ${producto.stock}"
+                )
+
+                println(
+                    "   Tipo: ${producto.mostrarTipo()}"
+                )
+
+                println()
+            }
+        }
+
+        println("========================================")
+    }
+}
+
+// =========================
+// CARRITO
+// =========================
+
 class CarritoCompras {
 
-    private val productos = mutableListOf<Producto>()
+    private val items = mutableListOf<ItemCarrito>()
 
-    fun agregarProducto(producto: Producto) {
-        productos.add(producto)
+    fun agregarProducto(
+        producto: Producto,
+        cantidad: Int
+    ): Boolean {
+
+        if (cantidad <= 0) {
+            return false
+        }
+
+        if (cantidad > producto.stock) {
+            return false
+        }
+
+        val existente = items.find {
+            it.producto.nombre.equals(
+                producto.nombre,
+                ignoreCase = true
+            )
+        }
+
+        if (existente != null) {
+
+            if (existente.cantidad + cantidad > producto.stock) {
+                return false
+            }
+
+            existente.cantidad += cantidad
+
+        } else {
+
+            items.add(
+                ItemCarrito(
+                    producto,
+                    cantidad
+                )
+            )
+        }
+
+        return true
     }
 
-    fun obtenerProductos(): List<Producto> {
-        return productos.toList()
-    }
+    fun eliminarProducto(nombre: String): Boolean {
 
-    fun cantidadProductos(): Int {
-        return productos.size
+        val item = items.find {
+            it.producto.nombre.equals(
+                nombre,
+                ignoreCase = true
+            )
+        }
+
+        return if (item != null) {
+            items.remove(item)
+            true
+        } else {
+            false
+        }
     }
 
     fun calcularSubtotal(): Double {
+
         var subtotal = 0.0
 
-        for (producto in productos) {
-            subtotal += producto.calcularImporte()
+        for (item in items) {
+            subtotal += item.calcularImporte()
         }
 
         return subtotal
@@ -96,63 +262,90 @@ class CarritoCompras {
         return calcularSubtotal() + calcularIGV()
     }
 
-    fun buscarProducto(nombre: String): Producto? {
-        return productos.find {
-            it.nombre.equals(nombre, ignoreCase = true)
-        }
-    }
-
-    fun eliminarProducto(nombre: String): Boolean {
-        return productos.removeIf {
-            it.nombre.equals(nombre, ignoreCase = true)
-        }
+    fun estaVacio(): Boolean {
+        return items.isEmpty()
     }
 
     fun productoMasCaro(): Producto? {
-        return productos.maxByOrNull { it.precio }
+
+        return items.maxByOrNull {
+            it.producto.precio
+        }?.producto
     }
 
-    fun mostrarDetalle() {
+    fun mostrarCarrito() {
 
         println()
-        println("--------- DETALLE DEL CARRITO ---------")
+        println("=============== CARRITO ===============")
 
-        var i = 1
+        if (items.isEmpty()) {
 
-        for (producto in productos) {
+            println("El carrito esta vacio.")
 
-            println(
-                String.format(
-                    "%d. %-20s x%d S/ %8.2f | %s",
-                    i,
-                    producto.nombre,
-                    producto.cantidad,
-                    producto.calcularImporte(),
-                    producto.mostrarTipo()
+        } else {
+
+            for ((indice, item) in items.withIndex()) {
+
+                println(
+                    String.format(
+                        "%d. %-20s x%d  S/ %.2f",
+                        indice + 1,
+                        item.producto.nombre,
+                        item.cantidad,
+                        item.calcularImporte()
+                    )
                 )
-            )
-
-            i++
+            }
         }
 
-        println("---------------------------------------")
+        println("=======================================")
+    }
+
+    fun finalizarCompra() {
+
+        for (item in items) {
+            item.producto.stock -= item.cantidad
+        }
     }
 }
 
-fun obtenerEstrategiaDescuento(total: Double): EstrategiaDescuento {
+// =========================
+// DESCUENTO
+// =========================
+
+fun obtenerEstrategiaDescuento(
+    total: Double
+): EstrategiaDescuento {
 
     return when {
-        total > 5000 -> DescuentoDiezPorCiento()
-        total > 3000 -> DescuentoCincoPorCiento()
-        else -> SinDescuento()
+
+        total > 5000 ->
+            DescuentoDiezPorCiento()
+
+        total > 3000 ->
+            DescuentoCincoPorCiento()
+
+        else ->
+            SinDescuento()
     }
 }
 
-fun mostrarTotales(carrito: CarritoCompras) {
+// =========================
+// TOTALES
+// =========================
 
-    val subtotal = carrito.calcularSubtotal()
-    val igv = carrito.calcularIGV()
-    val total = carrito.calcularTotal()
+fun mostrarTotales(
+    carrito: CarritoCompras
+) {
+
+    val subtotal =
+        carrito.calcularSubtotal()
+
+    val igv =
+        carrito.calcularIGV()
+
+    val total =
+        carrito.calcularTotal()
 
     val estrategia =
         obtenerEstrategiaDescuento(total)
@@ -160,229 +353,593 @@ fun mostrarTotales(carrito: CarritoCompras) {
     val descuento =
         estrategia.calcular(total)
 
-    val totalConDescuento =
+    val totalFinal =
         total - descuento
 
     println()
 
     println(
-        String.format(
-            "Subtotal             : S/ %8.2f",
-            subtotal
-        )
+        "Subtotal: S/ %.2f".format(subtotal)
     )
 
     println(
-        String.format(
-            "IGV (18%%)            : S/ %8.2f",
-            igv
-        )
+        "IGV (18%%): S/ %.2f".format(igv)
     )
 
     println(
-        String.format(
-            "TOTAL A PAGAR        : S/ %8.2f",
-            total
-        )
+        "Total: S/ %.2f".format(total)
     )
 
     println(
-        String.format(
-            "Descuento aplicado   : S/ %8.2f",
-            descuento
-        )
+        "Descuento: S/ %.2f".format(descuento)
     )
 
     println(
-        String.format(
-            "TOTAL CON DESCUENTO  : S/ %8.2f",
-            totalConDescuento
-        )
+        "TOTAL A PAGAR: S/ %.2f".format(totalFinal)
     )
 }
 
-fun main() {
+// =========================
+// MENU VENDEDOR
+// =========================
 
-    println("=========================================")
-    println(" CARRITO DE COMPRAS - TIENDA TECSUP ")
-    println(" VERSION POO - CON IA ")
-    println("=========================================")
+fun menuVendedor(
+    vendedor: Vendedor,
+    tienda: Tienda
+) {
 
-    print("Ingrese su nombre: ")
-    val nombreCliente = readln()
+    var opcion: Int
 
-    println()
-    println("Cliente: $nombreCliente")
-
-    val carrito = CarritoCompras()
-
-    print("\n¿Cuantos productos desea agregar?: ")
-    val cantidadProductos = readln().toInt()
-
-    for (i in 1..cantidadProductos) {
+    do {
 
         println()
-        println("--------- PRODUCTO $i ---------")
-
-        print("Nombre del producto: ")
-        val nombre = readln()
-
-        print("Precio: S/ ")
-        val precio = readln().toDouble()
-
-        print("Cantidad: ")
-        val cantidad = readln().toInt()
-
-        println()
-        println("Tipo de producto:")
-        println("1. Producto tecnologico")
-        println("2. Accesorio")
+        println("========================================")
+        println(" VENDEDOR: ${vendedor.nombre}")
+        println("========================================")
+        println("1. Registrar producto")
+        println("2. Ver catalogo")
+        println("3. Buscar producto")
+        println("4. Eliminar producto")
+        println("5. Salir")
 
         print("Seleccione una opcion: ")
-        val opcion = readln().toInt()
+
+        opcion =
+            readlnOrNull()?.toIntOrNull() ?: 0
 
         when (opcion) {
 
-            1 -> {
+            1 -> registrarProducto(tienda)
 
-                print("Marca: ")
-                val marca = readln()
+            2 -> tienda.mostrarCatalogo()
+
+            3 -> {
+
+                print(
+                    "Ingrese el nombre del producto: "
+                )
+
+                val nombre =
+                    readln()
 
                 val producto =
-                    ProductoTecnologico(
-                        nombre,
-                        precio,
-                        cantidad,
-                        marca
+                    tienda.buscarProducto(nombre)
+
+                if (producto != null) {
+
+                    println()
+                    println("Producto encontrado:")
+                    println("Nombre: ${producto.nombre}")
+
+                    println(
+                        "Precio: S/ %.2f".format(
+                            producto.precio
+                        )
                     )
 
-                carrito.agregarProducto(producto)
+                    println(
+                        "Stock: ${producto.stock}"
+                    )
+
+                    println(
+                        "Tipo: ${producto.mostrarTipo()}"
+                    )
+
+                } else {
+
+                    println(
+                        "Producto no encontrado."
+                    )
+                }
+            }
+
+            4 -> {
+
+                print(
+                    "Producto que desea eliminar: "
+                )
+
+                val nombre =
+                    readln()
+
+                if (tienda.eliminarProducto(nombre)) {
+
+                    println(
+                        "Producto eliminado."
+                    )
+
+                } else {
+
+                    println(
+                        "Producto no encontrado."
+                    )
+                }
+            }
+
+            5 -> println(
+                "Cerrando sesion del vendedor..."
+            )
+
+            else -> println(
+                "Opcion no valida."
+            )
+        }
+
+    } while (opcion != 5)
+}
+
+// =========================
+// REGISTRAR PRODUCTO
+// =========================
+
+fun registrarProducto(
+    tienda: Tienda
+) {
+
+    println()
+    println("--------- NUEVO PRODUCTO ---------")
+
+    print("Nombre: ")
+    val nombre =
+        readln()
+
+    print("Precio: S/ ")
+    val precio =
+        readlnOrNull()?.toDoubleOrNull()
+
+    print("Stock: ")
+    val stock =
+        readlnOrNull()?.toIntOrNull()
+
+    if (
+        precio == null ||
+        precio <= 0 ||
+        stock == null ||
+        stock < 0
+    ) {
+
+        println(
+            "Precio o stock no valido."
+        )
+
+        return
+    }
+
+    println()
+    println("Tipo:")
+    println("1. Producto tecnologico")
+    println("2. Accesorio")
+
+    print("Opcion: ")
+
+    val tipo =
+        readlnOrNull()?.toIntOrNull()
+
+    when (tipo) {
+
+        1 -> {
+
+            print("Marca: ")
+
+            val marca =
+                readln()
+
+            tienda.registrarProducto(
+                ProductoTecnologico(
+                    nombre,
+                    precio,
+                    stock,
+                    marca
+                )
+            )
+        }
+
+        2 -> {
+
+            print("Categoria: ")
+
+            val categoria =
+                readln()
+
+            tienda.registrarProducto(
+                Accesorio(
+                    nombre,
+                    precio,
+                    stock,
+                    categoria
+                )
+            )
+        }
+
+        else -> println(
+            "Tipo de producto no valido."
+        )
+    }
+}
+
+// =========================
+// MENU CLIENTE
+// =========================
+
+fun menuCliente(
+    cliente: Cliente,
+    tienda: Tienda
+) {
+
+    val carrito =
+        CarritoCompras()
+
+    var opcion: Int
+
+    do {
+
+        println()
+        println("========================================")
+        println(" CLIENTE: ${cliente.nombre}")
+        println("========================================")
+        println("1. Ver productos")
+        println("2. Buscar producto")
+        println("3. Agregar producto al carrito")
+        println("4. Ver carrito")
+        println("5. Eliminar producto del carrito")
+        println("6. Finalizar compra")
+        println("7. Salir")
+
+        print("Seleccione una opcion: ")
+
+        opcion =
+            readlnOrNull()?.toIntOrNull() ?: 0
+
+        when (opcion) {
+
+            1 -> tienda.mostrarCatalogo()
+
+            2 -> {
+
+                print(
+                    "Nombre del producto: "
+                )
+
+                val nombre =
+                    readln()
+
+                val producto =
+                    tienda.buscarProducto(nombre)
+
+                if (producto != null) {
+
+                    println()
+                    println(
+                        "Producto: ${producto.nombre}"
+                    )
+
+                    println(
+                        "Precio: S/ %.2f".format(
+                            producto.precio
+                        )
+                    )
+
+                    println(
+                        "Stock disponible: ${producto.stock}"
+                    )
+
+                } else {
+
+                    println(
+                        "Producto no encontrado."
+                    )
+                }
+            }
+
+            3 -> {
+
+                tienda.mostrarCatalogo()
+
+                print(
+                    "Ingrese el nombre del producto: "
+                )
+
+                val nombre =
+                    readln()
+
+                val producto =
+                    tienda.buscarProducto(nombre)
+
+                if (producto == null) {
+
+                    println(
+                        "Producto no encontrado."
+                    )
+
+                } else {
+
+                    print("Cantidad: ")
+
+                    val cantidad =
+                        readlnOrNull()?.toIntOrNull()
+
+                    if (
+                        cantidad == null ||
+                        cantidad <= 0
+                    ) {
+
+                        println(
+                            "Cantidad no valida."
+                        )
+
+                    } else {
+
+                        if (
+                            carrito.agregarProducto(
+                                producto,
+                                cantidad
+                            )
+                        ) {
+
+                            println(
+                                "Producto agregado al carrito."
+                            )
+
+                        } else {
+
+                            println(
+                                "No existe stock suficiente."
+                            )
+                        }
+                    }
+                }
+            }
+
+            4 -> {
+
+                carrito.mostrarCarrito()
+
+                if (!carrito.estaVacio()) {
+                    mostrarTotales(carrito)
+                }
+            }
+
+            5 -> {
+
+                print(
+                    "Producto que desea retirar: "
+                )
+
+                val nombre =
+                    readln()
+
+                if (
+                    carrito.eliminarProducto(nombre)
+                ) {
+
+                    println(
+                        "Producto eliminado del carrito."
+                    )
+
+                } else {
+
+                    println(
+                        "Producto no encontrado en el carrito."
+                    )
+                }
+            }
+
+            6 -> {
+
+                if (carrito.estaVacio()) {
+
+                    println(
+                        "No puede finalizar una compra con el carrito vacio."
+                    )
+
+                } else {
+
+                    carrito.mostrarCarrito()
+
+                    mostrarTotales(carrito)
+
+                    val masCaro =
+                        carrito.productoMasCaro()
+
+                    if (masCaro != null) {
+
+                        println()
+
+                        println(
+                            "Producto mas caro: " +
+                                    "${masCaro.nombre} - " +
+                                    "S/ %.2f".format(
+                                        masCaro.precio
+                                    )
+                        )
+                    }
+
+                    print(
+                        "\n¿Confirmar compra? (S/N): "
+                    )
+
+                    val confirmar =
+                        readln()
+
+                    if (
+                        confirmar.equals(
+                            "S",
+                            ignoreCase = true
+                        )
+                    ) {
+
+                        carrito.finalizarCompra()
+
+                        println()
+                        println(
+                            "Compra realizada correctamente."
+                        )
+
+                        println(
+                            "Gracias por su compra, ${cliente.nombre}."
+                        )
+
+                        return
+
+                    } else {
+
+                        println(
+                            "Compra cancelada."
+                        )
+                    }
+                }
+            }
+
+            7 -> println(
+                "Saliendo del menu cliente..."
+            )
+
+            else -> println(
+                "Opcion no valida."
+            )
+        }
+
+    } while (opcion != 7)
+}
+
+// =========================
+// MAIN
+// =========================
+
+fun main() {
+
+    val tienda =
+        Tienda()
+
+    // Productos iniciales para que el cliente tenga
+    // un catalogo disponible desde el inicio.
+
+    tienda.registrarProducto(
+        ProductoTecnologico(
+            "Laptop HP",
+            2500.0,
+            5,
+            "HP"
+        )
+    )
+
+    tienda.registrarProducto(
+        Accesorio(
+            "Mouse Logitech",
+            45.50,
+            10,
+            "Mouse"
+        )
+    )
+
+    tienda.registrarProducto(
+        ProductoTecnologico(
+            "Audifonos Sony",
+            120.0,
+            8,
+            "Sony"
+        )
+    )
+
+    tienda.registrarProducto(
+        Accesorio(
+            "Teclado Redragon",
+            180.0,
+            6,
+            "Teclado"
+        )
+    )
+
+    var opcionPrincipal: Int
+
+    do {
+
+        println()
+        println("========================================")
+        println("          TIENDA TECSUP")
+        println("========================================")
+        println("1. Ingresar como vendedor")
+        println("2. Ingresar como cliente")
+        println("3. Salir")
+
+        print("Seleccione una opcion: ")
+
+        opcionPrincipal =
+            readlnOrNull()?.toIntOrNull() ?: 0
+
+        when (opcionPrincipal) {
+
+            1 -> {
+
+                print(
+                    "Ingrese nombre del vendedor: "
+                )
+
+                val nombre =
+                    readln()
+
+                val vendedor =
+                    Vendedor(nombre)
+
+                menuVendedor(
+                    vendedor,
+                    tienda
+                )
             }
 
             2 -> {
 
-                print("Categoria: ")
-                val categoria = readln()
+                print(
+                    "Ingrese nombre del cliente: "
+                )
 
-                val producto =
-                    Accesorio(
-                        nombre,
-                        precio,
-                        cantidad,
-                        categoria
-                    )
+                val nombre =
+                    readln()
 
-                carrito.agregarProducto(producto)
+                val cliente =
+                    Cliente(nombre)
+
+                menuCliente(
+                    cliente,
+                    tienda
+                )
+            }
+
+            3 -> {
+
+                println()
+                println(
+                    "Gracias por utilizar Tienda TECSUP."
+                )
             }
 
             else -> {
-                println("Opcion no valida.")
+
+                println(
+                    "Opcion no valida."
+                )
             }
         }
-    }
 
-    println()
-    println("=========================================")
-    println(" PRODUCTOS REGISTRADOS ")
-    println("=========================================")
-
-    for (producto in carrito.obtenerProductos()) {
-
-        println(
-            "Producto agregado: ${producto.nombre} - " +
-                    producto.mostrarTipo()
-        )
-    }
-
-    carrito.mostrarDetalle()
-
-    println(
-        "Cantidad de productos: ${carrito.cantidadProductos()}"
-    )
-
-    mostrarTotales(carrito)
-
-    println()
-
-    val masCaro =
-        carrito.productoMasCaro()
-
-    if (masCaro != null) {
-
-        println(
-            "Producto mas caro: ${masCaro.nombre} " +
-                    String.format(
-                        "(S/ %.2f)",
-                        masCaro.precio
-                    )
-        )
-    }
-
-    println()
-    println("--------- BUSCAR PRODUCTO ---------")
-
-    print("Ingrese el nombre del producto a buscar: ")
-    val nombreBusqueda = readln()
-
-    val productoBuscado =
-        carrito.buscarProducto(nombreBusqueda)
-
-    if (productoBuscado != null) {
-
-        println(
-            "Producto encontrado: ${productoBuscado.nombre}"
-        )
-
-        println(
-            "Precio: S/ ${productoBuscado.precio}"
-        )
-
-        println(
-            "Cantidad: ${productoBuscado.cantidad}"
-        )
-
-        println(
-            "Tipo: ${productoBuscado.mostrarTipo()}"
-        )
-
-    } else {
-
-        println("Producto no encontrado.")
-    }
-
-    println()
-    println("--------- ELIMINAR PRODUCTO ---------")
-
-    print("Ingrese el nombre del producto a eliminar: ")
-    val nombreEliminar = readln()
-
-    val eliminado =
-        carrito.eliminarProducto(nombreEliminar)
-
-    if (eliminado) {
-
-        println(
-            "Producto eliminado correctamente: $nombreEliminar"
-        )
-
-    } else {
-
-        println(
-            "No se encontro el producto."
-        )
-    }
-
-    println()
-    println("--------- CARRITO ACTUALIZADO ---------")
-
-    carrito.mostrarDetalle()
-
-    println(
-        "Cantidad de productos: ${carrito.cantidadProductos()}"
-    )
-
-    mostrarTotales(carrito)
-
-    println()
-    println("Programa finalizado.")
+    } while (opcionPrincipal != 3)
 }
