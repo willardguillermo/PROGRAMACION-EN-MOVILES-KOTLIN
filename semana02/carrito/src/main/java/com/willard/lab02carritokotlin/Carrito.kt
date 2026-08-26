@@ -1,124 +1,267 @@
 package com.willard.lab02carritokotlin
 
-data class Producto(
+// ABSTRACCION
+abstract class Producto(
     val nombre: String,
     val precio: Double,
     var cantidad: Int
-)
+) {
+    abstract fun mostrarTipo(): String
 
-fun calcularSubtotal(productos: List<Producto>): Double {
-    var subtotal = 0.0
-
-    for (p in productos) {
-        subtotal += p.precio * p.cantidad
-    }
-
-    return subtotal
-}
-
-fun calcularIGV(subtotal: Double): Double {
-    return subtotal * 0.18
-}
-
-fun calcularTotal(subtotal: Double, igv: Double): Double {
-    return subtotal + igv
-}
-
-fun calcularDescuento(total: Double): Double {
-    return when {
-        total > 5000 -> total * 0.10
-        total > 3000 -> total * 0.05
-        else -> 0.0
+    open fun calcularImporte(): Double {
+        return precio * cantidad
     }
 }
 
-fun mostrarDetalle(productos: List<Producto>) {
-    println("--------- DETALLE DEL CARRITO ---------")
+// HERENCIA
+class ProductoTecnologico(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    private val marca: String
+) : Producto(nombre, precio, cantidad) {
 
-    var i = 1
+    override fun mostrarTipo(): String {
+        return "Tecnologico - $marca"
+    }
+}
 
-    for (p in productos) {
-        val importe = p.precio * p.cantidad
+// HERENCIA
+class Accesorio(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    private val categoria: String
+) : Producto(nombre, precio, cantidad) {
 
-        println(
-            String.format(
-                "%d. %-20s x%d S/ %8.2f",
-                i,
-                p.nombre,
-                p.cantidad,
-                importe
+    override fun mostrarTipo(): String {
+        return "Accesorio - $categoria"
+    }
+}
+
+// ABSTRACCION + POLIMORFISMO
+interface EstrategiaDescuento {
+    fun calcular(total: Double): Double
+}
+
+class SinDescuento : EstrategiaDescuento {
+    override fun calcular(total: Double): Double {
+        return 0.0
+    }
+}
+
+class DescuentoCincoPorCiento : EstrategiaDescuento {
+    override fun calcular(total: Double): Double {
+        return total * 0.05
+    }
+}
+
+class DescuentoDiezPorCiento : EstrategiaDescuento {
+    override fun calcular(total: Double): Double {
+        return total * 0.10
+    }
+}
+
+// ENCAPSULAMIENTO
+class CarritoCompras {
+
+    private val productos = mutableListOf<Producto>()
+
+    fun agregarProducto(producto: Producto) {
+        productos.add(producto)
+    }
+
+    fun obtenerProductos(): List<Producto> {
+        return productos.toList()
+    }
+
+    fun cantidadProductos(): Int {
+        return productos.size
+    }
+
+    fun calcularSubtotal(): Double {
+        var subtotal = 0.0
+
+        for (producto in productos) {
+            subtotal += producto.calcularImporte()
+        }
+
+        return subtotal
+    }
+
+    fun calcularIGV(): Double {
+        return calcularSubtotal() * 0.18
+    }
+
+    fun calcularTotal(): Double {
+        return calcularSubtotal() + calcularIGV()
+    }
+
+    fun buscarProducto(nombre: String): Producto? {
+        return productos.find { it.nombre == nombre }
+    }
+
+    fun eliminarProducto(nombre: String): Boolean {
+        return productos.removeIf { it.nombre == nombre }
+    }
+
+    fun productoMasCaro(): Producto? {
+        return productos.maxByOrNull { it.precio }
+    }
+
+    fun mostrarDetalle() {
+        println("--------- DETALLE DEL CARRITO ---------")
+
+        var i = 1
+
+        for (producto in productos) {
+            println(
+                String.format(
+                    "%d. %-20s x%d S/ %8.2f | %s",
+                    i,
+                    producto.nombre,
+                    producto.cantidad,
+                    producto.calcularImporte(),
+                    producto.mostrarTipo()
+                )
             )
-        )
 
-        i++
+            i++
+        }
+
+        println("---------------------------------------")
     }
-
-    println("---------------------------------------")
 }
 
-fun buscarProducto(
-    productos: List<Producto>,
-    nombre: String
-): Producto? {
-    return productos.find { it.nombre == nombre }
+fun obtenerEstrategiaDescuento(total: Double): EstrategiaDescuento {
+    return when {
+        total > 5000 -> DescuentoDiezPorCiento()
+        total > 3000 -> DescuentoCincoPorCiento()
+        else -> SinDescuento()
+
+    }
 }
 
 fun main() {
+
     println("=========================================")
     println(" CARRITO DE COMPRAS - TIENDA TECSUP ")
+    println(" VERSION POO - CON IA ")
     println("=========================================")
 
     val nombreCliente = "Willard Guillermo"
-    val carrito = mutableListOf<Producto>()
 
     println("Cliente: $nombreCliente")
     println()
 
-    carrito.add(Producto("Laptop HP", 2500.0, 1))
-    carrito.add(Producto("Mouse Logitech", 45.5, 2))
-    carrito.add(Producto("Audifonos Sony", 120.0, 1))
-    carrito.add(Producto("Teclado Redragon", 180.0, 2))
+    val carrito = CarritoCompras()
 
-    for (producto in carrito) {
-        println("Producto agregado: ${producto.nombre}")
+    carrito.agregarProducto(
+        ProductoTecnologico(
+            "Laptop HP",
+            2500.0,
+            1,
+            "HP"
+        )
+    )
+
+    carrito.agregarProducto(
+        Accesorio(
+            "Mouse Logitech",
+            45.5,
+            2,
+            "Mouse"
+        )
+    )
+
+    carrito.agregarProducto(
+        ProductoTecnologico(
+            "Audifonos Sony",
+            120.0,
+            1,
+            "Sony"
+        )
+    )
+
+    carrito.agregarProducto(
+        Accesorio(
+            "Teclado Redragon",
+            180.0,
+            2,
+            "Teclado"
+        )
+    )
+
+    for (producto in carrito.obtenerProductos()) {
+        println(
+            "Producto agregado: ${producto.nombre} - ${producto.mostrarTipo()}"
+        )
     }
 
     println()
 
-    mostrarDetalle(carrito)
+    carrito.mostrarDetalle()
 
-    println("Cantidad de productos: ${carrito.size}")
-    println()
-
-    val subtotal = calcularSubtotal(carrito)
-    val igv = calcularIGV(subtotal)
-    val total = calcularTotal(subtotal, igv)
-
-    println(String.format("Subtotal      : S/ %8.2f", subtotal))
-    println(String.format("IGV (18%%)     : S/ %8.2f", igv))
-    println(String.format("TOTAL A PAGAR : S/ %8.2f", total))
+    println(
+        "Cantidad de productos: ${carrito.cantidadProductos()}"
+    )
 
     println()
 
-    val masCaro = carrito.maxByOrNull { it.precio }
+    val subtotal = carrito.calcularSubtotal()
+    val igv = carrito.calcularIGV()
+    val total = carrito.calcularTotal()
+
+    println(
+        String.format(
+            "Subtotal      : S/ %8.2f",
+            subtotal
+        )
+    )
+
+    println(
+        String.format(
+            "IGV (18%%)     : S/ %8.2f",
+            igv
+        )
+    )
+
+    println(
+        String.format(
+            "TOTAL A PAGAR : S/ %8.2f",
+            total
+        )
+    )
+
+    println()
+
+    val masCaro = carrito.productoMasCaro()
 
     if (masCaro != null) {
         println(
             "Producto mas caro: ${masCaro.nombre} " +
-                    String.format("(S/ %.2f)", masCaro.precio)
+                    String.format(
+                        "(S/ %.2f)",
+                        masCaro.precio
+                    )
         )
     }
 
-    val descuento = calcularDescuento(total)
-    val totalConDescuento = total - descuento
-
     println()
 
-    if (descuento > 0) {
-        println(String.format("Descuento aplicado: S/ %.2f", descuento))
-    } else {
-        println("No se aplico descuento")
-    }
+    // POLIMORFISMO
+    val estrategia: EstrategiaDescuento =
+        obtenerEstrategiaDescuento(total)
+
+    val descuento = estrategia.calcular(total)
+    val totalConDescuento = total - descuento
+
+    println(
+        String.format(
+            "Descuento aplicado: S/ %.2f",
+            descuento
+        )
+    )
 
     println(
         String.format(
@@ -130,13 +273,13 @@ fun main() {
     println()
     println("--------- BUSQUEDA DE PRODUCTO ---------")
 
-    val productoBuscado = buscarProducto(
-        carrito,
-        "Mouse Logitech"
-    )
+    val productoBuscado =
+        carrito.buscarProducto("Mouse Logitech")
 
     if (productoBuscado != null) {
-        println("Producto encontrado: ${productoBuscado.nombre}")
+        println(
+            "Producto encontrado: ${productoBuscado.nombre}"
+        )
     } else {
         println("Producto no encontrado")
     }
@@ -144,27 +287,70 @@ fun main() {
     println()
     println("--------- ELIMINAR PRODUCTO ---------")
 
-    carrito.removeIf {
-        it.nombre == "Audifonos Sony"
+    val eliminado =
+        carrito.eliminarProducto("Audifonos Sony")
+
+    if (eliminado) {
+        println("Producto eliminado: Audifonos Sony")
+    } else {
+        println("Producto no encontrado")
     }
 
-    println("Producto eliminado: Audifonos Sony")
     println()
 
-    mostrarDetalle(carrito)
+    carrito.mostrarDetalle()
 
-    println("Cantidad de productos: ${carrito.size}")
+    println(
+        "Cantidad de productos: ${carrito.cantidadProductos()}"
+    )
+
     println()
 
-    val nuevoSubtotal = calcularSubtotal(carrito)
-    val nuevoIgv = calcularIGV(nuevoSubtotal)
-    val nuevoTotal = calcularTotal(nuevoSubtotal, nuevoIgv)
-    val nuevoDescuento = calcularDescuento(nuevoTotal)
-    val nuevoTotalConDescuento = nuevoTotal - nuevoDescuento
+    val nuevoSubtotal = carrito.calcularSubtotal()
+    val nuevoIgv = carrito.calcularIGV()
+    val nuevoTotal = carrito.calcularTotal()
 
-    println(String.format("Subtotal actualizado      : S/ %8.2f", nuevoSubtotal))
-    println(String.format("IGV actualizado (18%%)     : S/ %8.2f", nuevoIgv))
-    println(String.format("TOTAL actualizado         : S/ %8.2f", nuevoTotal))
-    println(String.format("Descuento actualizado     : S/ %8.2f", nuevoDescuento))
-    println(String.format("TOTAL CON DESCUENTO       : S/ %8.2f", nuevoTotalConDescuento))
+    val nuevaEstrategia =
+        obtenerEstrategiaDescuento(nuevoTotal)
+
+    val nuevoDescuento =
+        nuevaEstrategia.calcular(nuevoTotal)
+
+    val nuevoTotalConDescuento =
+        nuevoTotal - nuevoDescuento
+
+    println(
+        String.format(
+            "Subtotal actualizado      : S/ %8.2f",
+            nuevoSubtotal
+        )
+    )
+
+    println(
+        String.format(
+            "IGV actualizado (18%%)     : S/ %8.2f",
+            nuevoIgv
+        )
+    )
+
+    println(
+        String.format(
+            "TOTAL actualizado         : S/ %8.2f",
+            nuevoTotal
+        )
+    )
+
+    println(
+        String.format(
+            "Descuento actualizado     : S/ %8.2f",
+            nuevoDescuento
+        )
+    )
+
+    println(
+        String.format(
+            "TOTAL CON DESCUENTO       : S/ %8.2f",
+            nuevoTotalConDescuento
+        )
+    )
 }
