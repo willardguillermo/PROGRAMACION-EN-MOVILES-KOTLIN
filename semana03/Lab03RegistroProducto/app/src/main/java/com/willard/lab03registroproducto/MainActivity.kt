@@ -24,6 +24,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+
 
 
 class MainActivity : ComponentActivity() {
@@ -52,12 +55,15 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun PantallaRegistro(modifier: Modifier = Modifier) {
+fun PantallaRegistro(
+    modifier: Modifier = Modifier
+) {
 
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
     var mostrarResumen by remember { mutableStateOf(false) }
+    var importeTotal by remember { mutableStateOf(0.0) }
 
 
     Column(
@@ -77,39 +83,121 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.outline
         )
 
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+
+        // Nombre del producto
         OutlinedTextField(
             value = nombre,
-            onValueChange = {nombre = it },
-            label = { Text("Nombre del producto")},
+            onValueChange = { nombre = it },
+            label = {
+                Text("Nombre del producto")
+            },
             modifier = Modifier.fillMaxWidth()
         )
+
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+
+        // Precio y cantidad en la misma fila
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            OutlinedTextField(
+                value = precio,
+                onValueChange = { precio = it },
+                label = {
+                    Text("Precio (S/)")
+                },
+                modifier = Modifier.weight(1f)
+            )
+
+
+            Spacer(
+                modifier = Modifier.width(16.dp)
+            )
+
+
+            OutlinedTextField(
+                value = cantidad,
+                onValueChange = { cantidad = it },
+                label = {
+                    Text("Cantidad")
+                },
+                modifier = Modifier.weight(1f)
+            )
+        }
+
 
         Spacer(
             modifier = Modifier.height(24.dp)
         )
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-        Row(
+
+        // Botón agregar
+        Button(
+            onClick = {
+
+                val p = precio.toDoubleOrNull() ?: 0.0
+                val c = cantidad.toIntOrNull() ?: 0
+
+                importeTotal = p * c
+                mostrarResumen = true
+
+            },
             modifier = Modifier.fillMaxWidth()
-        ){
-            OutlinedTextField(
-                value = precio,
-                onValueChange = { precio = it },
-                label = { Text("Precio (S/)")},
-                modifier = Modifier.weight(1f)
+        ) {
+
+            Text(
+                text = "AGREGAR PRODUCTO"
             )
+        }
+
+
+        // Card aparece debajo del botón
+        if (mostrarResumen) {
+
             Spacer(
-                modifier = Modifier.width(16.dp)
+                modifier = Modifier.height(16.dp)
             )
 
-            OutlinedTextField(
-                value = cantidad,
-                onValueChange = { cantidad = it },
-                label = { Text("Cantidad") },
-                modifier = Modifier.weight(1f)
-            )
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Text(
+                        text = nombre,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Text(
+                        text = "Precio: S/ %.2f".format(
+                            precio.toDoubleOrNull() ?: 0.0
+                        )
+                    )
+
+                    Text(
+                        text = "Cantidad: $cantidad"
+                    )
+
+                    Text(
+                        text = "Importe total: S/ %.2f".format(importeTotal),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
         }
     }
 }
