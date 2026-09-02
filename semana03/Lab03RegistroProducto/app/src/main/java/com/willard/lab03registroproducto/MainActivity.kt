@@ -6,27 +6,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.willard.lab03registroproducto.ui.theme.Lab03RegistroProductoTheme
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.willard.lab03registroproducto.ui.theme.Lab03RegistroProductoTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -62,8 +61,10 @@ fun PantallaRegistro(
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
+
     var mostrarResumen by remember { mutableStateOf(false) }
     var importeTotal by remember { mutableStateOf(0.0) }
+    var mensajeError by remember { mutableStateOf("") }
 
 
     Column(
@@ -77,6 +78,7 @@ fun PantallaRegistro(
             style = MaterialTheme.typography.headlineSmall
         )
 
+
         Text(
             text = "Completa los datos y presiona Agregar",
             style = MaterialTheme.typography.bodyMedium,
@@ -89,7 +91,6 @@ fun PantallaRegistro(
         )
 
 
-        // Nombre del producto
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
@@ -105,7 +106,6 @@ fun PantallaRegistro(
         )
 
 
-        // Precio y cantidad en la misma fila
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -141,15 +141,28 @@ fun PantallaRegistro(
         )
 
 
-        // Botón agregar
         Button(
             onClick = {
 
-                val p = precio.toDoubleOrNull() ?: 0.0
-                val c = cantidad.toIntOrNull() ?: 0
+                if (
+                    nombre.isBlank() ||
+                    precio.isBlank() ||
+                    cantidad.isBlank()
+                ) {
 
-                importeTotal = p * c
-                mostrarResumen = true
+                    mensajeError = "Complete todos los campos"
+                    mostrarResumen = false
+
+                } else {
+
+                    val p = precio.toDoubleOrNull() ?: 0.0
+                    val c = cantidad.toIntOrNull() ?: 0
+
+                    importeTotal = p * c
+
+                    mensajeError = ""
+                    mostrarResumen = true
+                }
 
             },
             modifier = Modifier.fillMaxWidth()
@@ -161,7 +174,19 @@ fun PantallaRegistro(
         }
 
 
-        // Card aparece debajo del botón
+        if (mensajeError.isNotEmpty()) {
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = mensajeError,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+
         if (mostrarResumen) {
 
             Spacer(
@@ -182,15 +207,18 @@ fun PantallaRegistro(
                         style = MaterialTheme.typography.titleMedium
                     )
 
+
                     Text(
                         text = "Precio: S/ %.2f".format(
                             precio.toDoubleOrNull() ?: 0.0
                         )
                     )
 
+
                     Text(
                         text = "Cantidad: $cantidad"
                     )
+
 
                     Text(
                         text = "Importe total: S/ %.2f".format(importeTotal),
