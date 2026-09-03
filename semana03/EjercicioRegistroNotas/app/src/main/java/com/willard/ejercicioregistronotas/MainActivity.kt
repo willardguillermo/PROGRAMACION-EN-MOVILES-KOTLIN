@@ -42,6 +42,8 @@ fun RegistroNotasScreen() {
     var cursoActivo by remember { mutableStateOf(true) }
     var asistenciaRegistrada by remember { mutableStateOf(false) }
 
+
+
     val promedioFinal =
         (fundamentos * 0.20f) +
                 (poo * 0.25f) +
@@ -311,6 +313,29 @@ fun RegistroNotasScreen() {
                         "Estado: APROBADO ✅"
                     } else {
                         "Estado: DESAPROBADO ❌"
+                    }
+                )
+
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+
+
+                Text(
+                    text = if (cursoActivo) {
+                        "Curso: Activo ✅"
+                    } else {
+                        "Curso: Inactivo ⚠️"
+                    }
+                )
+
+
+                Text(
+                    text = if (asistenciaRegistrada) {
+                        "Asistencia: Registrada ✅"
+                    } else {
+                        "Asistencia: Pendiente ⚠️"
                     }
                 )
 
