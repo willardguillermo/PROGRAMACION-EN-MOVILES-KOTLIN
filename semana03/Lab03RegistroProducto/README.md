@@ -23,11 +23,13 @@ La aplicación utiliza:
 
 ### Pantalla inicial
 
-![pantalla-vacia.png](capturas/pantalla-vacia.png)
+<img width="386" height="513" alt="pantalla-vacia" src="https://github.com/user-attachments/assets/ee3daa18-1bac-4f1d-bfae-71bc60bd19ad" />
+
 
 ### Producto registrado
 
-![producto-registrado.png](capturas/producto-registrado.png)
+<img width="385" height="824" alt="producto-registrado" src="https://github.com/user-attachments/assets/64039360-ed5e-4d8f-b208-03f132c6e9bc" />
+
 
 ## Pregunta de reflexión
 
