@@ -174,6 +174,29 @@ fun PantallaRegistro(
             )
         }
 
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Button(
+            onClick = {
+
+                nombre = ""
+                precio = ""
+                cantidad = ""
+                mensajeError = ""
+                mostrarResumen = false
+                importeTotal = 0.0
+
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Text(
+                text = "LIMPIAR"
+            )
+        }
+
 
         if (mensajeError.isNotEmpty()) {
 
