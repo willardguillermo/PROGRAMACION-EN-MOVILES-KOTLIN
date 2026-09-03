@@ -151,18 +151,26 @@ fun PantallaRegistro(
                     cantidad.isBlank()
                 ) {
 
-                    mensajeError = "Complete todos los campos"
+                    mensajeError = "Completa todos los campos"
                     mostrarResumen = false
 
                 } else {
 
-                    val p = precio.toDoubleOrNull() ?: 0.0
-                    val c = cantidad.toIntOrNull() ?: 0
+                    val p = precio.toDoubleOrNull()
+                    val c = cantidad.toIntOrNull()
 
-                    importeTotal = p * c
+                    if (p == null || c == null || p <= 0 || c <= 0) {
 
-                    mensajeError = ""
-                    mostrarResumen = true
+                        mensajeError = "Ingrese valores numéricos válidos"
+                        mostrarResumen = false
+
+                    } else {
+
+                        importeTotal = p * c
+
+                        mensajeError = ""
+                        mostrarResumen = true
+                    }
                 }
 
             },
