@@ -26,7 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.willard.lab03registroproducto.ui.theme.Lab03RegistroProductoTheme
-
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
 
@@ -195,7 +196,11 @@ fun PantallaRegistro(
 
 
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+
             ) {
 
                 Column(
@@ -206,7 +211,6 @@ fun PantallaRegistro(
                         text = nombre,
                         style = MaterialTheme.typography.titleMedium
                     )
-
 
                     Text(
                         text = "Precio: S/ %.2f".format(
@@ -223,6 +227,11 @@ fun PantallaRegistro(
                     Text(
                         text = "Importe total: S/ %.2f".format(importeTotal),
                         style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Text(
+                        text = "✓ Producto registrado correctamente",
+                        color = Color(0xFF2E7D32)
                     )
                 }
             }
