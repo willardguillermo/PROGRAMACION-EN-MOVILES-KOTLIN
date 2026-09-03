@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.willard.ejercicioregistronotas.ui.theme.EjercicioRegistroNotasTheme
-
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Switch
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,8 @@ fun RegistroNotasScreen() {
     var poo by remember { mutableStateOf(0f) }
     var moviles by remember { mutableStateOf(0f) }
     var baseDatos by remember { mutableStateOf(0f) }
+    var cursoActivo by remember { mutableStateOf(true) }
+    var asistenciaRegistrada by remember { mutableStateOf(false) }
 
 
     Column(
@@ -207,6 +210,64 @@ fun RegistroNotasScreen() {
 
             Text(
                 text = baseDatos.toInt().toString()
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(24.dp)
+        )
+
+
+        Text(
+            text = "Estado del curso",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                text = if (cursoActivo) {
+                    "Activo"
+                } else {
+                    "Inactivo"
+                }
+            )
+
+
+            Switch(
+                checked = cursoActivo,
+                onCheckedChange = {
+                    cursoActivo = it
+                }
+            )
+        }
+
+
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Checkbox(
+                checked = asistenciaRegistrada,
+                onCheckedChange = {
+                    asistenciaRegistrada = it
+                }
+            )
+
+
+            Text(
+                text = "Asistencia registrada",
+                modifier = Modifier.padding(top = 12.dp)
             )
         }
 
