@@ -42,6 +42,12 @@ fun RegistroNotasScreen() {
     var cursoActivo by remember { mutableStateOf(true) }
     var asistenciaRegistrada by remember { mutableStateOf(false) }
 
+    val promedioFinal =
+        (fundamentos * 0.20f) +
+                (poo * 0.25f) +
+                (moviles * 0.30f) +
+                (baseDatos * 0.25f)
+
 
     Column(
         modifier = Modifier
@@ -269,6 +275,46 @@ fun RegistroNotasScreen() {
                 text = "Asistencia registrada",
                 modifier = Modifier.padding(top = 12.dp)
             )
+        }
+
+        Spacer(
+            modifier = Modifier.height(24.dp)
+        )
+
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                Text(
+                    text = "Resumen académico",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+
+
+                Text(
+                    text = "Promedio final: %.2f".format(promedioFinal)
+                )
+
+
+                Text(
+                    text = if (promedioFinal >= 11) {
+                        "Estado: APROBADO ✅"
+                    } else {
+                        "Estado: DESAPROBADO ❌"
+                    }
+                )
+
+            }
         }
 
     }
