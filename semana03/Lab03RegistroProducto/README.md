@@ -31,6 +31,24 @@ La aplicación utiliza:
 <img width="385" height="824" alt="producto-registrado" src="https://github.com/user-attachments/assets/64039360-ed5e-4d8f-b208-03f132c6e9bc" />
 
 
+# Mejora con IA
+
+## Descripción
+
+En la rama `mejora-ia` se agregó una mejora al registro de productos:
+- Validación de campos vacíos.
+- Validación de valores numéricos.
+- Botón limpiar formulario.
+
+## Tabla de decisiones
+
+| Prompt que usé | Qué generó Gemini | Qué acepté o corregí |
+|---|---|---|
+| Agregar validación de campos vacíos y botón limpiar en PantallaRegistro sin modificar la estructura existente | Generó la validación de campos vacíos y un botón Limpiar para reiniciar los valores del formulario | Acepté la lógica del botón Limpiar y ajusté los mensajes de validación |
+| Revisar la validación de precio y cantidad | Propuso convertir los valores usando toDoubleOrNull y toIntOrNull | Corregí la lógica porque el uso de ?: 0.0 ocultaba errores de datos inválidos. Implementé una validación con null antes de calcular el importe |
+
+
+
 ## Pregunta de reflexión
 
 ### ¿Qué pasaría si declaras las variables de los campos SIN remember?
