@@ -14,6 +14,8 @@ import com.willard.ejercicioregistronotas.ui.theme.EjercicioRegistroNotasTheme
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.graphics.Color
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -291,8 +293,13 @@ fun RegistroNotasScreen() {
 
 
         Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        )
+
+        {
 
             Column(
                 modifier = Modifier.padding(16.dp)
@@ -319,6 +326,11 @@ fun RegistroNotasScreen() {
                         "Estado: APROBADO ✅"
                     } else {
                         "Estado: DESAPROBADO ❌"
+                    },
+                    color = if (promedioFinal >= 11) {
+                        Color(0xFF2E7D32)
+                    } else {
+                        Color.Red
                     }
                 )
 
