@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.willard.ejercicioregistronotas.ui.theme.EjercicioRegistroNotasTheme
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Switch
+import androidx.compose.runtime.saveable.rememberSaveable
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +36,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RegistroNotasScreen() {
 
-    var fundamentos by remember { mutableStateOf(0f) }
-    var poo by remember { mutableStateOf(0f) }
-    var moviles by remember { mutableStateOf(0f) }
-    var baseDatos by remember { mutableStateOf(0f) }
-    var cursoActivo by remember { mutableStateOf(true) }
-    var asistenciaRegistrada by remember { mutableStateOf(false) }
+    var fundamentos by rememberSaveable { mutableStateOf(0f) }
+
+    var poo by rememberSaveable { mutableStateOf(0f) }
+
+    var moviles by rememberSaveable { mutableStateOf(0f) }
+
+    var baseDatos by rememberSaveable { mutableStateOf(0f) }
+
+    var cursoActivo by rememberSaveable { mutableStateOf(true) }
+
+    var asistenciaRegistrada by rememberSaveable { mutableStateOf(false) }
 
 
 
