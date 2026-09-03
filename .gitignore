@@ -1,0 +1,14 @@
+# Android Studio
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+local.properties
+
+# Build
+build/
+**/build/
+
+# Capturas del laboratorio (NO ignorar)
+# capturas/
