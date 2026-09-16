@@ -42,6 +42,10 @@ fun PantallaCarrito() {
 
     val productos = remember { mutableStateListOf<Producto>() }
 
+    val subtotal = productos.sumOf { it.precio * it.cantidad }
+    val igv = subtotal * 0.18
+    val total = subtotal + igv
+
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
         OutlinedTextField(
@@ -91,17 +95,77 @@ fun PantallaCarrito() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        if (productos.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Tu carrito está vacío", color = Color.Gray)
+                    Text(
+                        "Agrega tu primer producto",
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(productos) { producto ->
+                    TarjetaProducto(
+                        producto = producto,
+                        onEliminar = { productos.remove(producto) }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            items(productos) { producto ->
-                TarjetaProducto(
-                    producto = producto,
-                    onEliminar = { productos.remove(producto) }
-                )
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Productos: ${productos.size}", color = Color.Gray)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Subtotal")
+                    Text("S/ ${"%.2f".format(subtotal)}")
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("IGV (18%)")
+                    Text("S/ ${"%.2f".format(igv)}")
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "TOTAL",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "S/ ${"%.2f".format(total)}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
