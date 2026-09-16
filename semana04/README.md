@@ -10,8 +10,15 @@ con tarjetas individuales, eliminarlos, y ver el subtotal, IGV (18%) y total
 calculados en tiempo real. Muestra un estado vacío cuando no hay productos.
 
 ## Capturas
-![Carrito vacío](ruta/a/tu/imagen1.png)
-![Carrito con productos](ruta/a/tu/imagen2.png)
+<img width="728" height="1600" alt="image" src="https://github.com/user-attachments/assets/4abc4c07-8cc0-45aa-91fe-a8bbec66eb30" />
+
+
+
+
+
+
+<img width="721" height="1600" alt="image" src="https://github.com/user-attachments/assets/957919f4-bd67-441b-9675-39a6a1540b8b" />
+
 
 ## Respuestas conceptuales
 
