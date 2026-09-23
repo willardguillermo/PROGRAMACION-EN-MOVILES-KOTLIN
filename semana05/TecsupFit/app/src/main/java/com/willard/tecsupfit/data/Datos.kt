@@ -19,9 +19,8 @@ data class Clase(
     val horarios: List<Horario>     // entre estos elige el usuario (selección única)
 )
 
-// Estados de una reserva
-enum class EstadoReserva { CONFIRMADA, COMPLETADA }
-
+// Estados de una reserva (CANCELADA se agregó para poder cancelar reservas)
+enum class EstadoReserva { CONFIRMADA, COMPLETADA, CANCELADA }
 // Reserva hecha por el usuario
 data class Reserva(
     val id: Int,

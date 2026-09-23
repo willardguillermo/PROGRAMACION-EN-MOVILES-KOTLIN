@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.tecsupfit.data.EstadoReserva
@@ -29,8 +30,12 @@ fun PerfilScreen(
     // Activas = reservas confirmadas que todavía no se hacen
     val activas = reservas.count { it.estado == EstadoReserva.CONFIRMADA }
 
+    // Canceladas = reservas que el usuario canceló
+    val canceladas = reservas.count { it.estado == EstadoReserva.CANCELADA }
+
     // Racha = completadas seguidas contando desde la más reciente.
     // Ignoro las confirmadas porque todavía no se hacen (no rompen la racha).
+    // Las CANCELADAS sí pasan el filter, y takeWhile se detiene en ellas: rompen la racha.
     val racha = reservas
         .filter { it.estado != EstadoReserva.CONFIRMADA }
         .reversed()
@@ -87,6 +92,7 @@ fun PerfilScreen(
             )
 
             //TARJETAS DE ESTADISTICAS
+            // 4 estadísticas en 2 filas de 2 para que los textos no se amontonen
             Spacer(Modifier.height(24.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -94,7 +100,18 @@ fun PerfilScreen(
             ) {
                 TarjetaEstadistica("Clases", clasesTomadas, Modifier.weight(1f))
                 TarjetaEstadistica("Racha", racha, Modifier.weight(1f))
+            }
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 TarjetaEstadistica("Activas", activas, Modifier.weight(1f))
+                // Las canceladas en rojo para diferenciarlas
+                TarjetaEstadistica(
+                    "Canceladas", canceladas, Modifier.weight(1f),
+                    colorNumero = Color(0xFFC62828)
+                )
             }
 
             //DATOS PERSONALES
@@ -115,8 +132,14 @@ fun PerfilScreen(
 
 //TARJETA DE ESTADISTICA
 // Número grande arriba y el nombre abajo
+// colorNumero es opcional: si no se envía usa el color principal
 @Composable
-fun TarjetaEstadistica(titulo: String, valor: Int, modifier: Modifier = Modifier) {
+fun TarjetaEstadistica(
+    titulo: String,
+    valor: Int,
+    modifier: Modifier = Modifier,
+    colorNumero: Color = MaterialTheme.colorScheme.primary
+) {
     Card(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -128,7 +151,7 @@ fun TarjetaEstadistica(titulo: String, valor: Int, modifier: Modifier = Modifier
                 valor.toString(),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = colorNumero
             )
             Text(titulo, style = MaterialTheme.typography.bodySmall)
         }

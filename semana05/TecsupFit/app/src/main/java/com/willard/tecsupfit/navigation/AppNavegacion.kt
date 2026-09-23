@@ -176,6 +176,14 @@ fun AppNavegacion() {
                     if (posicion != -1) {
                         reservas[posicion] = reservas[posicion].copy(estado = EstadoReserva.COMPLETADA)
                     }
+                },
+                onCancelar = { reservaId ->
+                    // Igual que completar, pero el estado nuevo es CANCELADA.
+                    // Al dejar de ser CONFIRMADA, el cupo se devuelve solo.
+                    val posicion = reservas.indexOfFirst { it.id == reservaId }
+                    if (posicion != -1) {
+                        reservas[posicion] = reservas[posicion].copy(estado = EstadoReserva.CANCELADA)
+                    }
                 }
             )
         }
@@ -211,6 +219,7 @@ private fun irAPestana(navController: NavHostController, ruta: String) {
 //GUARDAR RESERVAS AL GIRAR LA PANTALLA
 // Android solo guarda datos simples (números y textos), no objetos Reserva.
 // Por eso convierto cada reserva en 4 datos simples y al volver la reconstruyo.
+// El estado se guarda como texto (estado.name), así que CANCELADA funciona sin cambios.
 private val reservasSaver = listSaver<SnapshotStateList<Reserva>, Any>(
     save = { lista ->
         // Cada reserva se guarda como: id, id de la clase, horario, estado
