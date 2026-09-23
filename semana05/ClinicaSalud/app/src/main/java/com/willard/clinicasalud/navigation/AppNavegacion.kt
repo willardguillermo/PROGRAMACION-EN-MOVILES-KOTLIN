@@ -195,6 +195,13 @@ fun AppNavegacion() {
                         if (posicion != -1) {
                             citas[posicion] = citas[posicion].copy(estado = EstadoCita.COMPLETADA)
                         }
+                    },
+                    onCancelar = { citaId ->
+                        // Igual que completar, pero el estado nuevo es CANCELADA
+                        val posicion = citas.indexOfFirst { it.id == citaId }
+                        if (posicion != -1) {
+                            citas[posicion] = citas[posicion].copy(estado = EstadoCita.CANCELADA)
+                        }
                     }
                 )
             }

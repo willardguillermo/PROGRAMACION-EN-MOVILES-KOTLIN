@@ -11,8 +11,8 @@ data class Medico(
     val descripcion: String
 )
 
-// Estados de cita
-enum class EstadoCita { CONFIRMADA, COMPLETADA }
+// Estados de cita (CANCELADA se agregó para poder cancelar citas)
+enum class EstadoCita { CONFIRMADA, COMPLETADA, CANCELADA }
 
 // Cita agendada por el paciente
 data class Cita(

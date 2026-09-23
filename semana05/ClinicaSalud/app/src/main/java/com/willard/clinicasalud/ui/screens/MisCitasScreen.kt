@@ -11,6 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,8 +26,9 @@ import com.willard.clinicasalud.data.EstadoCita
 @Composable
 fun MisCitasScreen(
     citas: List<Cita>,              // la lista viene desde AppNavegacion
-    onAbrirMenu: () -> Unit,        // abrirá el menú lateral
-    onCompletar: (Int) -> Unit      // envía el id de la cita a completar
+    onAbrirMenu: () -> Unit,        // abre el menú lateral
+    onCompletar: (Int) -> Unit,     // envía el id de la cita a completar
+    onCancelar: (Int) -> Unit       // envía el id de la cita a cancelar
 ) {
     Scaffold(
         //TOP BAR
@@ -57,7 +62,11 @@ fun MisCitasScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(citas.reversed(), key = { it.id }) { cita ->
-                    TarjetaCita(cita = cita, onCompletar = { onCompletar(cita.id) })
+                    TarjetaCita(
+                        cita = cita,
+                        onCompletar = { onCompletar(cita.id) },
+                        onCancelar = { onCancelar(cita.id) }
+                    )
                 }
             }
         }
@@ -65,13 +74,34 @@ fun MisCitasScreen(
 }
 
 @Composable
-fun TarjetaCita(cita: Cita, onCompletar: () -> Unit) {
+fun TarjetaCita(
+    cita: Cita,
+    onCompletar: () -> Unit,
+    onCancelar: () -> Unit
+) {
     val confirmada = cita.estado == EstadoCita.CONFIRMADA
 
-    //COLORES SEGUN ESTADO
-    // Confirmada = verde, Completada = gris
-    val colorTexto = if (confirmada) Color(0xFF2E7D32) else Color(0xFF616161)
-    val colorFondo = if (confirmada) Color(0xFFE8F5E9) else Color(0xFFEEEEEE)
+    // Controla si el AlertDialog está visible
+    // rememberSaveable para que no se cierre solo al girar la pantalla
+    var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
+
+    //TEXTO Y COLORES SEGUN ESTADO
+    // Confirmada = verde, Completada = gris, Cancelada = rojo
+    val textoEstado = when (cita.estado) {
+        EstadoCita.CONFIRMADA -> "Confirmada"
+        EstadoCita.COMPLETADA -> "Completada"
+        EstadoCita.CANCELADA -> "Cancelada"
+    }
+    val colorTexto = when (cita.estado) {
+        EstadoCita.CONFIRMADA -> Color(0xFF2E7D32)
+        EstadoCita.COMPLETADA -> Color(0xFF616161)
+        EstadoCita.CANCELADA -> Color(0xFFC62828)
+    }
+    val colorFondo = when (cita.estado) {
+        EstadoCita.CONFIRMADA -> Color(0xFFE8F5E9)
+        EstadoCita.COMPLETADA -> Color(0xFFEEEEEE)
+        EstadoCita.CANCELADA -> Color(0xFFFFEBEE)
+    }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
@@ -93,25 +123,27 @@ fun TarjetaCita(cita: Cita, onCompletar: () -> Unit) {
                 Text(cita.medico.especialidad, style = MaterialTheme.typography.bodySmall)
                 Text("${cita.fecha}, ${cita.hora}", style = MaterialTheme.typography.bodyMedium)
 
+                //ETIQUETA DE ESTADO
                 Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    //ETIQUETA DE ESTADO
-                    Text(
-                        text = if (confirmada) "Confirmada" else "Completada",
-                        color = colorTexto,
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier
-                            .background(colorFondo, RoundedCornerShape(50))
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
-                    )
+                Text(
+                    text = textoEstado,
+                    color = colorTexto,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier
+                        .background(colorFondo, RoundedCornerShape(50))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                )
 
-                    //BOTON COMPLETAR
-                    // Solo aparece mientras la cita sigue confirmada
-                    if (confirmada) {
+                //BOTONES DE ACCION
+                // Solo aparecen mientras la cita sigue confirmada
+                if (confirmada) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = { mostrarDialogo = true }) {
+                            Text("Cancelar cita", color = Color(0xFFC62828))
+                        }
                         TextButton(onClick = onCompletar) {
                             Text("Marcar como completada")
                         }
@@ -119,5 +151,28 @@ fun TarjetaCita(cita: Cita, onCompletar: () -> Unit) {
                 }
             }
         }
+    }
+
+    //DIALOGO DE CONFIRMACION
+    // Si toca fuera del diálogo o "No", solo se cierra
+    if (mostrarDialogo) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogo = false },
+            title = { Text("Cancelar cita") },
+            text = { Text("¿Estás seguro de que deseas cancelar esta cita?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    mostrarDialogo = false
+                    onCancelar()
+                }) {
+                    Text("Sí, cancelar", color = Color(0xFFC62828))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDialogo = false }) {
+                    Text("No")
+                }
+            }
+        )
     }
 }
