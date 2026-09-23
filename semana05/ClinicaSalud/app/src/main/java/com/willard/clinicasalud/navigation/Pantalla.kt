@@ -17,4 +17,11 @@ sealed class Pantalla(val ruta: String) {
     object AgendarCita : Pantalla("agendar/{medicoId}") {
         fun crearRuta(medicoId: Int): String = "agendar/$medicoId"   // ej: "agendar/5"
     }
+
+    //CONFIRMACION
+    // Aquí viajan 3 datos: el médico, la fecha y la hora elegidas
+    object Confirmacion : Pantalla("confirmacion/{medicoId}/{fechaIndex}/{horaIndex}") {
+        fun crearRuta(medicoId: Int, fechaIndex: Int, horaIndex: Int): String =
+            "confirmacion/$medicoId/$fechaIndex/$horaIndex"   // ej: "confirmacion/5/1/2"
+    }
 }

@@ -1,12 +1,18 @@
 package com.willard.clinicasalud.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.willard.clinicasalud.data.Cita
+import com.willard.clinicasalud.data.DatosClinica
+import com.willard.clinicasalud.data.EstadoCita
 import com.willard.clinicasalud.ui.screens.AgendarCitaScreen
+import com.willard.clinicasalud.ui.screens.ConfirmacionScreen
 import com.willard.clinicasalud.ui.screens.InicioScreen
 import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
 
@@ -14,6 +20,10 @@ import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
 fun AppNavegacion() {
     // El navController guarda el historial de pantallas
     val navController = rememberNavController()
+
+    //LISTA DE CITAS
+    // La creo aquí para que todas las pantallas usen la misma lista (sin ViewModel)
+    val citas = remember { mutableStateListOf<Cita>() }
 
     NavHost(
         navController = navController,
@@ -63,7 +73,52 @@ fun AppNavegacion() {
             AgendarCitaScreen(
                 medicoId = medicoId,
                 onVolver = { navController.popBackStack() },
-                onConfirmar = { _, _ -> }   // pendiente: ir a Confirmación
+                onConfirmar = { fechaIndex, horaIndex ->
+                    // Guardo la cita en la lista como CONFIRMADA
+                    val medico = DatosClinica.buscarMedico(medicoId)
+                    if (medico != null) {
+                        citas.add(
+                            Cita(
+                                id = citas.size + 1,
+                                medico = medico,
+                                fecha = DatosClinica.fechas[fechaIndex],
+                                hora = DatosClinica.horas[horaIndex],
+                                estado = EstadoCita.CONFIRMADA
+                            )
+                        )
+                    }
+                    // popUpTo quita Perfil y Agendar del historial,
+                    // así con "atrás" no se vuelve a agendar la misma cita
+                    navController.navigate(
+                        Pantalla.Confirmacion.crearRuta(medicoId, fechaIndex, horaIndex)
+                    ) {
+                        popUpTo(Pantalla.Inicio.ruta)
+                    }
+                }
+            )
+        }
+
+        //PANTALLA CONFIRMACION
+        composable(
+            route = Pantalla.Confirmacion.ruta,
+            arguments = listOf(
+                navArgument("medicoId") { type = NavType.IntType },
+                navArgument("fechaIndex") { type = NavType.IntType },
+                navArgument("horaIndex") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val medicoId = backStackEntry.arguments?.getInt("medicoId") ?: 0
+            val fechaIndex = backStackEntry.arguments?.getInt("fechaIndex") ?: 0
+            val horaIndex = backStackEntry.arguments?.getInt("horaIndex") ?: 0
+
+            ConfirmacionScreen(
+                medicoId = medicoId,
+                fechaIndex = fechaIndex,
+                horaIndex = horaIndex,
+                // Regreso a Inicio sin apilar otra pantalla
+                onVolverInicio = {
+                    navController.popBackStack(Pantalla.Inicio.ruta, inclusive = false)
+                }
             )
         }
     }
