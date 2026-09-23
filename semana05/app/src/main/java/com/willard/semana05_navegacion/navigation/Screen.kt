@@ -1,30 +1,26 @@
 package com.willard.semana05_navegacion.navigation
 
-// Clase sellada que actúa como contrato central de navegación.
-// Recibe "route" como parámetro — es el identificador único de cada pantalla.
-// Al ser sealed, el compilador conoce todas las rutas posibles en tiempo de compilación.
+// Clase sellada que actúa como contrato central de navegación del portal académico.
+// Cada object es una ruta única; Detail lleva un argumento tipado (el id del alumno).
 sealed class Screen(val route: String) {
 
     // Desarrollado por: Guillermo Willard
-    // Pantalla de inicio — punto de entrada de la app
+
+    // Pantalla de acceso — punto de entrada de la app
+    object Login : Screen(route = "login")
+
+    // Pantalla de bienvenida con las opciones del portal
     object Home : Screen(route = "home")
 
-    // Pantalla que muestra la lista de elementos
+    // Directorio de alumnos (lista)
     object List : Screen(route = "list")
 
-    // Pantalla del perfil del usuario
+    // Configuración de perfil del usuario
     object Profile : Screen(route = "profile")
 
-    // ---------------------------------------------------
-    // RUTA CON ARGUMENTO
-    // {itemId} es el placeholder que Navigation reemplaza
-    // con el valor real al momento de navegar
-    // ---------------------------------------------------
+    // Expediente académico — ruta con argumento {itemId} (id del alumno)
     object Detail : Screen(route = "detail/{itemId}") {
-
-        // Construye la ruta final sustituyendo el placeholder por el valor real.
-        // Ejemplo: createRoute(5) -> devuelve "detail/5"
-        // Este String es el que se pasa a navController.navigate(...)
+        // createRoute(3) -> "detail/3"
         fun createRoute(itemId: Int): String = "detail/$itemId"
     }
 }
