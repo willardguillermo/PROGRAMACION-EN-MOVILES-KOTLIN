@@ -24,6 +24,8 @@ import com.willard.tecsupfit.ui.screens.DetalleClaseScreen
 import com.willard.tecsupfit.ui.screens.InicioScreen
 import com.willard.tecsupfit.ui.screens.ReservarCupoScreen
 import com.willard.tecsupfit.ui.screens.ReservasScreen
+import androidx.compose.material.icons.filled.FitnessCenter
+import com.willard.tecsupfit.ui.screens.RutinasScreen
 
 @Composable
 fun AppNavegacion() {
@@ -38,7 +40,8 @@ fun AppNavegacion() {
     // Pestañas que aparecen abajo
     val pestanas = listOf(
         Pestana(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
-        Pestana(Pantalla.Reservas.ruta, "Reservas", Icons.Default.EventAvailable)
+        Pestana(Pantalla.Reservas.ruta, "Reservas", Icons.Default.EventAvailable),
+        Pestana(Pantalla.Rutinas.ruta, "Rutinas", Icons.Default.FitnessCenter)
     )
 
     // Ruta de la pantalla actual: con ella la barra sabe qué pestaña resaltar
@@ -163,6 +166,11 @@ fun AppNavegacion() {
                     }
                 }
             )
+        }
+
+        //PANTALLA RUTINAS
+        composable(Pantalla.Rutinas.ruta) {
+            RutinasScreen(barraInferior = barraInferior)
         }
     }
 }

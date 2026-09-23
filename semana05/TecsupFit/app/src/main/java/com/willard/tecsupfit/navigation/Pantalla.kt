@@ -27,4 +27,7 @@ sealed class Pantalla(val ruta: String) {
 
     //RESERVAS (pestaña)
     object Reservas : Pantalla("reservas")
+
+    //RUTINAS (pestaña)
+    object Rutinas : Pantalla("rutinas")
 }
