@@ -28,6 +28,8 @@ import com.willard.clinicasalud.ui.screens.ConfirmacionScreen
 import com.willard.clinicasalud.ui.screens.InicioScreen
 import com.willard.clinicasalud.ui.screens.MisCitasScreen
 import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
+import androidx.compose.material.icons.filled.History
+import com.willard.clinicasalud.ui.screens.HistorialScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,7 +51,8 @@ fun AppNavegacion() {
     // Opciones que aparecen en el menú
     val opcionesMenu = listOf(
         OpcionMenu(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
-        OpcionMenu(Pantalla.MisCitas.ruta, "Mis citas", Icons.Default.DateRange)
+        OpcionMenu(Pantalla.MisCitas.ruta, "Mis citas", Icons.Default.DateRange),
+        OpcionMenu(Pantalla.Historial.ruta, "Historial médico", Icons.Default.History)
     )
 
     // Ruta de la pantalla actual, para resaltar la opción del menú
@@ -188,6 +191,14 @@ fun AppNavegacion() {
                             citas[posicion] = citas[posicion].copy(estado = EstadoCita.COMPLETADA)
                         }
                     }
+                )
+            }
+
+            //PANTALLA HISTORIAL
+            composable(Pantalla.Historial.ruta) {
+                HistorialScreen(
+                    citas = citas,   // uso la misma lista, así ve las que se completaron
+                    onAbrirMenu = { scope.launch { drawerState.open() } }
                 )
             }
         }

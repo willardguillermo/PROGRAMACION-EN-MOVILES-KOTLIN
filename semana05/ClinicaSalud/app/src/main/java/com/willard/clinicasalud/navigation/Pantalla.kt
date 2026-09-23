@@ -26,4 +26,7 @@ sealed class Pantalla(val ruta: String) {
     }
     //MIS CITAS
     object MisCitas : Pantalla("mis_citas")
+
+    //HISTORIAL
+    object Historial : Pantalla("historial")
 }
