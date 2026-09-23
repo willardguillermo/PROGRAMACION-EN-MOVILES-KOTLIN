@@ -31,7 +31,9 @@ import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
 import androidx.compose.material.icons.filled.History
 import com.willard.clinicasalud.ui.screens.HistorialScreen
 import kotlinx.coroutines.launch
-
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 @Composable
 fun AppNavegacion() {
     // El navController guarda el historial de pantallas
@@ -39,8 +41,8 @@ fun AppNavegacion() {
 
     //LISTA DE CITAS
     // La creo aquí para que todas las pantallas usen la misma lista (sin ViewModel)
-    // Empieza vacía: solo tiene las citas que agenda el usuario
-    val citas = remember { mutableStateListOf<Cita>() }
+    // rememberSaveable + citasSaver para que no se borren al girar la pantalla
+    val citas = rememberSaveable(saver = citasSaver) { mutableStateListOf<Cita>() }
 
     //MENU LATERAL
     // drawerState guarda si el menú está abierto o cerrado
@@ -216,4 +218,39 @@ private fun irASeccion(navController: NavHostController, ruta: String) {
             launchSingleTop = true          // no abre dos veces la misma pantalla
         }
     }
+
+
 }
+
+
+
+//GUARDAR CITAS AL GIRAR LA PANTALLA
+// Android solo guarda datos simples (números y textos), no objetos Cita.
+// Por eso convierto cada cita en 5 datos simples y al volver la reconstruyo.
+private val citasSaver = listSaver<SnapshotStateList<Cita>, Any>(
+    save = { lista ->
+        // Cada cita se guarda como: id, id del médico, fecha, hora, estado
+        lista.flatMap { cita ->
+            listOf(cita.id, cita.medico.id, cita.fecha, cita.hora, cita.estado.name)
+        }
+    },
+    restore = { guardado ->
+        val lista = mutableStateListOf<Cita>()
+        // Tomo los datos de 5 en 5 y armo cada cita otra vez
+        guardado.chunked(5).forEach { datos ->
+            val medico = DatosClinica.buscarMedico(datos[1] as Int)
+            if (medico != null) {
+                lista.add(
+                    Cita(
+                        id = datos[0] as Int,
+                        medico = medico,
+                        fecha = datos[2] as String,
+                        hora = datos[3] as String,
+                        estado = EstadoCita.valueOf(datos[4] as String)
+                    )
+                )
+            }
+        }
+        lista
+    }
+)

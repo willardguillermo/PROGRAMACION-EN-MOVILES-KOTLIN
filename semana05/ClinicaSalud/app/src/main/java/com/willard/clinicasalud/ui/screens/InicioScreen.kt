@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.clinicasalud.data.DatosClinica
 import com.willard.clinicasalud.data.Medico
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun InicioScreen(
@@ -26,7 +27,9 @@ fun InicioScreen(
     onAbrirMenu: () -> Unit         // abre menu lateral
 ) {
     // Estado: especialidad elegida en la fila de chips
-    var especialidadSeleccionada by remember { mutableStateOf("Todas") }
+
+    // rememberSaveable para que el chip elegido no se pierda al girar la pantalla
+    var especialidadSeleccionada by rememberSaveable { mutableStateOf("Todas") }
 
     // Se recalcula en cada recomposición según el chip elegido
     val medicosFiltrados = if (especialidadSeleccionada == "Todas") {

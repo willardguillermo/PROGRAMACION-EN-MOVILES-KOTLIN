@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.willard.clinicasalud.data.DatosClinica
-
+import androidx.compose.runtime.saveable.rememberSaveable
 @Composable
 fun AgendarCitaScreen(
     medicoId: Int,
@@ -22,8 +22,10 @@ fun AgendarCitaScreen(
     val medico = DatosClinica.buscarMedico(medicoId)
 
     // Guardo la posición elegida, null = todavía no elige
-    var fechaSeleccionada by remember { mutableStateOf<Int?>(null) }
-    var horaSeleccionada by remember { mutableStateOf<Int?>(null) }
+
+    // rememberSaveable para que no se pierda al girar la pantalla
+    var fechaSeleccionada by rememberSaveable { mutableStateOf<Int?>(null) }
+    var horaSeleccionada by rememberSaveable { mutableStateOf<Int?>(null) }
 
     Scaffold(
         //TOP BAR
