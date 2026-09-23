@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.willard.clinicasalud.ui.screens.InicioScreen
+import com.willard.clinicasalud.navigation.AppNavegacion
 import com.willard.clinicasalud.ui.theme.ClinicaSaludTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ClinicaSaludTheme {
-                InicioScreen(onMedicoClick = {}, onAbrirMenu = {})
+                AppNavegacion()
             }
         }
     }
