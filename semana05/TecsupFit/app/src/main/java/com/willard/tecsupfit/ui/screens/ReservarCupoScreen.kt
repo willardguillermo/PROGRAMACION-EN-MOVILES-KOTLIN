@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.tecsupfit.data.DatosGimnasio
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun ReservarCupoScreen(
@@ -23,7 +24,8 @@ fun ReservarCupoScreen(
     val clase = DatosGimnasio.buscarClase(claseId)
 
     // Guardo la posición del horario elegido, null = todavía no elige
-    var horarioSeleccionado by remember { mutableStateOf<Int?>(null) }
+    // rememberSaveable para que no se pierda al girar la pantalla
+    var horarioSeleccionado by rememberSaveable { mutableStateOf<Int?>(null) }
 
     Scaffold(
         //TOP BAR

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.tecsupfit.data.Clase
 import com.willard.tecsupfit.data.DatosGimnasio
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun InicioScreen(
@@ -26,7 +27,8 @@ fun InicioScreen(
     barraInferior: @Composable () -> Unit   // la barra de pestañas viene desde AppNavegacion
 ) {
     // Filtro elegido en la fila de chips, empieza en "Hoy"
-    var filtroSeleccionado by remember { mutableStateOf("Hoy") }
+    // rememberSaveable para que no se pierda al girar la pantalla
+    var filtroSeleccionado by rememberSaveable { mutableStateOf("Hoy") }
 
     // "Hoy" = solo las clases de hoy, "Esta semana" = todas
     val clasesFiltradas = if (filtroSeleccionado == "Hoy") {

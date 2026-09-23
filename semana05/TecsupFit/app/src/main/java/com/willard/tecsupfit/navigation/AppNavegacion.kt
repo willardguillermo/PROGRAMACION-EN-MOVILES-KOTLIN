@@ -2,11 +2,15 @@ package com.willard.tecsupfit.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,12 +26,10 @@ import com.willard.tecsupfit.ui.components.Pestana
 import com.willard.tecsupfit.ui.screens.ConfirmacionScreen
 import com.willard.tecsupfit.ui.screens.DetalleClaseScreen
 import com.willard.tecsupfit.ui.screens.InicioScreen
+import com.willard.tecsupfit.ui.screens.PerfilScreen
 import com.willard.tecsupfit.ui.screens.ReservarCupoScreen
 import com.willard.tecsupfit.ui.screens.ReservasScreen
-import androidx.compose.material.icons.filled.FitnessCenter
 import com.willard.tecsupfit.ui.screens.RutinasScreen
-import androidx.compose.material.icons.filled.Person
-import com.willard.tecsupfit.ui.screens.PerfilScreen
 
 @Composable
 fun AppNavegacion() {
@@ -36,7 +38,8 @@ fun AppNavegacion() {
 
     //LISTA DE RESERVAS
     // La creo aquí para que todas las pantallas usen la misma lista (sin ViewModel)
-    val reservas = remember { mutableStateListOf<Reserva>() }
+    // rememberSaveable + reservasSaver para que no se borren al girar la pantalla
+    val reservas = rememberSaveable(saver = reservasSaver) { mutableStateListOf<Reserva>() }
 
     //BARRA INFERIOR
     // Pestañas que aparecen abajo
@@ -198,3 +201,33 @@ private fun irAPestana(navController: NavHostController, ruta: String) {
         }
     }
 }
+
+//GUARDAR RESERVAS AL GIRAR LA PANTALLA
+// Android solo guarda datos simples (números y textos), no objetos Reserva.
+// Por eso convierto cada reserva en 4 datos simples y al volver la reconstruyo.
+private val reservasSaver = listSaver<SnapshotStateList<Reserva>, Any>(
+    save = { lista ->
+        // Cada reserva se guarda como: id, id de la clase, horario, estado
+        lista.flatMap { reserva ->
+            listOf(reserva.id, reserva.clase.id, reserva.horario, reserva.estado.name)
+        }
+    },
+    restore = { guardado ->
+        val lista = mutableStateListOf<Reserva>()
+        // Tomo los datos de 4 en 4 y armo cada reserva otra vez
+        guardado.chunked(4).forEach { datos ->
+            val clase = DatosGimnasio.buscarClase(datos[1] as Int)
+            if (clase != null) {
+                lista.add(
+                    Reserva(
+                        id = datos[0] as Int,
+                        clase = clase,
+                        horario = datos[2] as String,
+                        estado = EstadoReserva.valueOf(datos[3] as String)
+                    )
+                )
+            }
+        }
+        lista
+    }
+)
