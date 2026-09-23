@@ -19,7 +19,8 @@ fun ConfirmacionScreen(
     medicoId: Int,
     fechaIndex: Int,
     horaIndex: Int,
-    onVolverInicio: () -> Unit
+    onVolverInicio: () -> Unit,
+    onVerMisCitas: () -> Unit
 ) {
     // Con los 3 datos que llegan por la ruta armo el resumen
     val medico = DatosClinica.buscarMedico(medicoId)
@@ -76,6 +77,15 @@ fun ConfirmacionScreen(
                 modifier = Modifier.fillMaxWidth().height(52.dp)
             ) {
                 Text("Volver al inicio")
+            }
+
+            //BOTON VER MIS CITAS
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = onVerMisCitas,
+                modifier = Modifier.fillMaxWidth().height(52.dp)
+            ) {
+                Text("Ver mis citas")
             }
         }
     }

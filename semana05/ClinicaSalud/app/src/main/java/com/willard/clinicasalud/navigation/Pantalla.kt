@@ -24,4 +24,6 @@ sealed class Pantalla(val ruta: String) {
         fun crearRuta(medicoId: Int, fechaIndex: Int, horaIndex: Int): String =
             "confirmacion/$medicoId/$fechaIndex/$horaIndex"   // ej: "confirmacion/5/1/2"
     }
+    //MIS CITAS
+    object MisCitas : Pantalla("mis_citas")
 }

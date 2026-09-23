@@ -14,6 +14,7 @@ import com.willard.clinicasalud.data.EstadoCita
 import com.willard.clinicasalud.ui.screens.AgendarCitaScreen
 import com.willard.clinicasalud.ui.screens.ConfirmacionScreen
 import com.willard.clinicasalud.ui.screens.InicioScreen
+import com.willard.clinicasalud.ui.screens.MisCitasScreen
 import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
 
 @Composable
@@ -23,6 +24,7 @@ fun AppNavegacion() {
 
     //LISTA DE CITAS
     // La creo aquí para que todas las pantallas usen la misma lista (sin ViewModel)
+    // Empieza vacía: solo tiene las citas que agenda el usuario
     val citas = remember { mutableStateListOf<Cita>() }
 
     NavHost(
@@ -79,7 +81,8 @@ fun AppNavegacion() {
                     if (medico != null) {
                         citas.add(
                             Cita(
-                                id = citas.size + 1,
+                                // id = el mayor que exista + 1, así nunca se repite
+                                id = (citas.maxOfOrNull { it.id } ?: 0) + 1,
                                 medico = medico,
                                 fecha = DatosClinica.fechas[fechaIndex],
                                 hora = DatosClinica.horas[horaIndex],
@@ -118,6 +121,27 @@ fun AppNavegacion() {
                 // Regreso a Inicio sin apilar otra pantalla
                 onVolverInicio = {
                     navController.popBackStack(Pantalla.Inicio.ruta, inclusive = false)
+                },
+                // Voy a Mis citas; con "atrás" se vuelve a Inicio
+                onVerMisCitas = {
+                    navController.navigate(Pantalla.MisCitas.ruta) {
+                        popUpTo(Pantalla.Inicio.ruta)
+                    }
+                }
+            )
+        }
+
+        //PANTALLA MIS CITAS
+        composable(Pantalla.MisCitas.ruta) {
+            MisCitasScreen(
+                citas = citas,
+                onAbrirMenu = { },   // se conecta cuando agregue el menú lateral
+                onCompletar = { citaId ->
+                    // Busco la cita y la reemplazo por una copia con estado COMPLETADA
+                    val posicion = citas.indexOfFirst { it.id == citaId }
+                    if (posicion != -1) {
+                        citas[posicion] = citas[posicion].copy(estado = EstadoCita.COMPLETADA)
+                    }
                 }
             )
         }
