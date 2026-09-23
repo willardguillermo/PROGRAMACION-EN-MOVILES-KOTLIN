@@ -17,4 +17,11 @@ sealed class Pantalla(val ruta: String) {
     object ReservarCupo : Pantalla("reservar/{claseId}") {
         fun crearRuta(claseId: Int): String = "reservar/$claseId"   // ej: "reservar/2"
     }
+
+    //CONFIRMACION
+    // Aquí viajan 2 datos: la clase y la posición del horario elegido
+    object Confirmacion : Pantalla("confirmacion/{claseId}/{horarioIndex}") {
+        fun crearRuta(claseId: Int, horarioIndex: Int): String =
+            "confirmacion/$claseId/$horarioIndex"   // ej: "confirmacion/2/1"
+    }
 }
