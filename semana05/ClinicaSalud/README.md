@@ -90,6 +90,23 @@ Inicio · Mis citas · Historial médico · Perfil
 ## Capturas de ejecucion:
 
 
+<img width="435" height="902" alt="image" src="https://github.com/user-attachments/assets/bfaedd50-fd16-48b8-9f94-51b249b1f3b8" />
+
+
+<img width="423" height="875" alt="image" src="https://github.com/user-attachments/assets/9587a928-aaa5-4678-a584-906f0bcb0322" />
+
+
+<img width="433" height="901" alt="image" src="https://github.com/user-attachments/assets/fc7eee2a-8198-4f76-8c44-40a9cad3f6f3" />
+
+
+<img width="453" height="903" alt="image" src="https://github.com/user-attachments/assets/5002d487-0415-4a05-a1ea-667f161526c7" />
+
+
+<img width="418" height="887" alt="image" src="https://github.com/user-attachments/assets/63fd34e1-e5fb-4fbd-98ac-ea33fa618392" />
+
+
+<img width="453" height="903" alt="image" src="https://github.com/user-attachments/assets/4fd43740-3db7-42ca-bd41-0ead872345e4" />
+
 
 ---
 
