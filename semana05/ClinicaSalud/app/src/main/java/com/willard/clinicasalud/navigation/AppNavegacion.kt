@@ -34,6 +34,8 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.material.icons.filled.Person
+import com.willard.clinicasalud.ui.screens.PerfilPacienteScreen
 @Composable
 fun AppNavegacion() {
     // El navController guarda el historial de pantallas
@@ -54,7 +56,8 @@ fun AppNavegacion() {
     val opcionesMenu = listOf(
         OpcionMenu(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
         OpcionMenu(Pantalla.MisCitas.ruta, "Mis citas", Icons.Default.DateRange),
-        OpcionMenu(Pantalla.Historial.ruta, "Historial médico", Icons.Default.History)
+        OpcionMenu(Pantalla.Historial.ruta, "Historial médico", Icons.Default.History),
+        OpcionMenu(Pantalla.PerfilPaciente.ruta, "Perfil", Icons.Default.Person)
     )
 
     // Ruta de la pantalla actual, para resaltar la opción del menú
@@ -200,6 +203,15 @@ fun AppNavegacion() {
             composable(Pantalla.Historial.ruta) {
                 HistorialScreen(
                     citas = citas,   // uso la misma lista, así ve las que se completaron
+                    onAbrirMenu = { scope.launch { drawerState.open() } }
+                )
+            }
+
+
+            //PANTALLA PERFIL DEL PACIENTE
+            composable(Pantalla.PerfilPaciente.ruta) {
+                PerfilPacienteScreen(
+                    citas = citas,   // para calcular las estadísticas
                     onAbrirMenu = { scope.launch { drawerState.open() } }
                 )
             }

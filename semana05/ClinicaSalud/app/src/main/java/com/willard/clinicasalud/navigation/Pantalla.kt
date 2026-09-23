@@ -29,4 +29,8 @@ sealed class Pantalla(val ruta: String) {
 
     //HISTORIAL
     object Historial : Pantalla("historial")
+
+    //PERFIL DEL PACIENTE
+    // Es distinto de PerfilMedico: este es el perfil del usuario de la app
+    object PerfilPaciente : Pantalla("perfil_paciente")
 }
