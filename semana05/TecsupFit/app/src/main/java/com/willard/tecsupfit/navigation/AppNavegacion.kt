@@ -1,20 +1,29 @@
 package com.willard.tecsupfit.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.willard.tecsupfit.data.DatosGimnasio
 import com.willard.tecsupfit.data.EstadoReserva
 import com.willard.tecsupfit.data.Reserva
+import com.willard.tecsupfit.ui.components.BarraInferior
+import com.willard.tecsupfit.ui.components.Pestana
 import com.willard.tecsupfit.ui.screens.ConfirmacionScreen
 import com.willard.tecsupfit.ui.screens.DetalleClaseScreen
 import com.willard.tecsupfit.ui.screens.InicioScreen
 import com.willard.tecsupfit.ui.screens.ReservarCupoScreen
+import com.willard.tecsupfit.ui.screens.ReservasScreen
 
 @Composable
 fun AppNavegacion() {
@@ -24,6 +33,26 @@ fun AppNavegacion() {
     //LISTA DE RESERVAS
     // La creo aquí para que todas las pantallas usen la misma lista (sin ViewModel)
     val reservas = remember { mutableStateListOf<Reserva>() }
+
+    //BARRA INFERIOR
+    // Pestañas que aparecen abajo
+    val pestanas = listOf(
+        Pestana(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
+        Pestana(Pantalla.Reservas.ruta, "Reservas", Icons.Default.EventAvailable)
+    )
+
+    // Ruta de la pantalla actual: con ella la barra sabe qué pestaña resaltar
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val rutaActual = backStackEntry?.destination?.route
+
+    // Armo la barra una sola vez y se la paso a cada pestaña
+    val barraInferior: @Composable () -> Unit = {
+        BarraInferior(
+            pestanas = pestanas,
+            rutaActual = rutaActual,
+            onPestanaClick = { ruta -> irAPestana(navController, ruta) }
+        )
+    }
 
     NavHost(
         navController = navController,
@@ -36,7 +65,8 @@ fun AppNavegacion() {
                 // Cuando tocan una clase, mando su id al detalle
                 onClaseClick = { claseId ->
                     navController.navigate(Pantalla.DetalleClase.crearRuta(claseId))
-                }
+                },
+                barraInferior = barraInferior
             )
         }
 
@@ -111,12 +141,41 @@ fun AppNavegacion() {
             ConfirmacionScreen(
                 claseId = claseId,
                 horarioIndex = horarioIndex,
-                onVerReservas = { },   // pendiente: ir a la pestaña Reservas
+                // Voy a la pestaña Reservas
+                onVerReservas = { irAPestana(navController, Pantalla.Reservas.ruta) },
                 // Regreso a Inicio sin apilar otra pantalla
                 onVolverInicio = {
                     navController.popBackStack(Pantalla.Inicio.ruta, inclusive = false)
                 }
             )
+        }
+
+        //PANTALLA RESERVAS
+        composable(Pantalla.Reservas.ruta) {
+            ReservasScreen(
+                reservas = reservas,
+                barraInferior = barraInferior,
+                onCompletar = { reservaId ->
+                    // Busco la reserva y la reemplazo por una copia con estado COMPLETADA
+                    val posicion = reservas.indexOfFirst { it.id == reservaId }
+                    if (posicion != -1) {
+                        reservas[posicion] = reservas[posicion].copy(estado = EstadoReserva.COMPLETADA)
+                    }
+                }
+            )
+        }
+    }
+}
+
+//NAVEGAR ENTRE PESTAÑAS
+// Voy a una pestaña sin apilar pantallas repetidas
+private fun irAPestana(navController: NavHostController, ruta: String) {
+    if (ruta == Pantalla.Inicio.ruta) {
+        navController.popBackStack(Pantalla.Inicio.ruta, inclusive = false)
+    } else {
+        navController.navigate(ruta) {
+            popUpTo(Pantalla.Inicio.ruta)   // debajo solo queda Inicio
+            launchSingleTop = true          // no abre dos veces la misma pantalla
         }
     }
 }

@@ -22,7 +22,8 @@ import com.willard.tecsupfit.data.DatosGimnasio
 
 @Composable
 fun InicioScreen(
-    onClaseClick: (Int) -> Unit     // envía el id de la clase elegida
+    onClaseClick: (Int) -> Unit,            // envía el id de la clase elegida
+    barraInferior: @Composable () -> Unit   // la barra de pestañas viene desde AppNavegacion
 ) {
     // Filtro elegido en la fila de chips, empieza en "Hoy"
     var filtroSeleccionado by remember { mutableStateOf("Hoy") }
@@ -49,7 +50,9 @@ fun InicioScreen(
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        }
+        },
+        //BOTTOM BAR
+        bottomBar = barraInferior
     ) { innerPadding ->
 
         //CONTENIDO
