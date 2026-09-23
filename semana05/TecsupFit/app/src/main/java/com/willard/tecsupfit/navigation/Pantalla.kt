@@ -30,4 +30,7 @@ sealed class Pantalla(val ruta: String) {
 
     //RUTINAS (pestaña)
     object Rutinas : Pantalla("rutinas")
+
+    //PERFIL (pestaña)
+    object Perfil : Pantalla("perfil")
 }

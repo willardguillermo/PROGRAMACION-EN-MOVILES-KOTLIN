@@ -26,6 +26,8 @@ import com.willard.tecsupfit.ui.screens.ReservarCupoScreen
 import com.willard.tecsupfit.ui.screens.ReservasScreen
 import androidx.compose.material.icons.filled.FitnessCenter
 import com.willard.tecsupfit.ui.screens.RutinasScreen
+import androidx.compose.material.icons.filled.Person
+import com.willard.tecsupfit.ui.screens.PerfilScreen
 
 @Composable
 fun AppNavegacion() {
@@ -41,7 +43,8 @@ fun AppNavegacion() {
     val pestanas = listOf(
         Pestana(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
         Pestana(Pantalla.Reservas.ruta, "Reservas", Icons.Default.EventAvailable),
-        Pestana(Pantalla.Rutinas.ruta, "Rutinas", Icons.Default.FitnessCenter)
+        Pestana(Pantalla.Rutinas.ruta, "Rutinas", Icons.Default.FitnessCenter),
+        Pestana(Pantalla.Perfil.ruta, "Perfil", Icons.Default.Person)
     )
 
     // Ruta de la pantalla actual: con ella la barra sabe qué pestaña resaltar
@@ -171,6 +174,14 @@ fun AppNavegacion() {
         //PANTALLA RUTINAS
         composable(Pantalla.Rutinas.ruta) {
             RutinasScreen(barraInferior = barraInferior)
+        }
+
+        //PANTALLA PERFIL
+        composable(Pantalla.Perfil.ruta) {
+            PerfilScreen(
+                reservas = reservas,   // para calcular las estadísticas
+                barraInferior = barraInferior
+            )
         }
     }
 }
