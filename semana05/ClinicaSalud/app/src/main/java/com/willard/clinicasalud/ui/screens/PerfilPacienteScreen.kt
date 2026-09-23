@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.clinicasalud.data.Cita
@@ -27,6 +28,7 @@ fun PerfilPacienteScreen(
     // Cuento las citas según su estado para las estadísticas
     val confirmadas = citas.count { it.estado == EstadoCita.CONFIRMADA }
     val completadas = citas.count { it.estado == EstadoCita.COMPLETADA }
+    val canceladas = citas.count { it.estado == EstadoCita.CANCELADA }
 
     Scaffold(
         //TOP BAR
@@ -83,7 +85,8 @@ fun PerfilPacienteScreen(
             )
 
             //ESTADISTICAS
-            // Se calculan con la lista de citas, cambian al agendar o completar
+            // Se calculan con la lista de citas, cambian al agendar, completar o cancelar
+            // Van en 2 filas de 2 para que los textos no queden apretados
             Spacer(Modifier.height(24.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -91,7 +94,18 @@ fun PerfilPacienteScreen(
             ) {
                 TarjetaEstadistica("Total", citas.size, Modifier.weight(1f))
                 TarjetaEstadistica("Confirmadas", confirmadas, Modifier.weight(1f))
+            }
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 TarjetaEstadistica("Completadas", completadas, Modifier.weight(1f))
+                // Las canceladas en rojo para diferenciarlas
+                TarjetaEstadistica(
+                    "Canceladas", canceladas, Modifier.weight(1f),
+                    colorNumero = Color(0xFFC62828)
+                )
             }
 
             //DATOS PERSONALES
@@ -112,8 +126,14 @@ fun PerfilPacienteScreen(
 
 //TARJETA DE ESTADISTICA
 // Número grande arriba y el nombre abajo
+// colorNumero es opcional: si no se envía usa el color principal
 @Composable
-fun TarjetaEstadistica(titulo: String, valor: Int, modifier: Modifier = Modifier) {
+fun TarjetaEstadistica(
+    titulo: String,
+    valor: Int,
+    modifier: Modifier = Modifier,
+    colorNumero: Color = MaterialTheme.colorScheme.primary
+) {
     Card(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -125,7 +145,7 @@ fun TarjetaEstadistica(titulo: String, valor: Int, modifier: Modifier = Modifier
                 valor.toString(),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = colorNumero
             )
             Text(titulo, style = MaterialTheme.typography.bodySmall)
         }
