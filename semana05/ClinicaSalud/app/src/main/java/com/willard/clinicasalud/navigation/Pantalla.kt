@@ -11,4 +11,10 @@ sealed class Pantalla(val ruta: String) {
     object PerfilMedico : Pantalla("perfil/{medicoId}") {
         fun crearRuta(medicoId: Int): String = "perfil/$medicoId"   // ej: "perfil/5"
     }
+
+    //AGENDAR
+    // Sigo enviando el id del médico para saber con quién es la cita
+    object AgendarCita : Pantalla("agendar/{medicoId}") {
+        fun crearRuta(medicoId: Int): String = "agendar/$medicoId"   // ej: "agendar/5"
+    }
 }

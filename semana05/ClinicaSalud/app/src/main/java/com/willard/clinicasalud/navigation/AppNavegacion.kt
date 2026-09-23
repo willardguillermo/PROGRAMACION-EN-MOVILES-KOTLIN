@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.willard.clinicasalud.ui.screens.AgendarCitaScreen
 import com.willard.clinicasalud.ui.screens.InicioScreen
 import com.willard.clinicasalud.ui.screens.PerfilMedicoScreen
 
@@ -43,7 +44,26 @@ fun AppNavegacion() {
             PerfilMedicoScreen(
                 medicoId = medicoId,
                 onVolver = { navController.popBackStack() },
-                onAgendarClick = {  }
+                // Paso el mismo id a la pantalla de agendar
+                onAgendarClick = { id ->
+                    navController.navigate(Pantalla.AgendarCita.crearRuta(id))
+                }
+            )
+        }
+
+        //PANTALLA AGENDAR
+        composable(
+            route = Pantalla.AgendarCita.ruta,
+            arguments = listOf(
+                navArgument("medicoId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val medicoId = backStackEntry.arguments?.getInt("medicoId") ?: 0
+
+            AgendarCitaScreen(
+                medicoId = medicoId,
+                onVolver = { navController.popBackStack() },
+                onConfirmar = { _, _ -> }   // pendiente: ir a Confirmación
             )
         }
     }
