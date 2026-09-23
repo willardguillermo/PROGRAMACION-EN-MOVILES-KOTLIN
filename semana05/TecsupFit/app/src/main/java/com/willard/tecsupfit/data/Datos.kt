@@ -148,4 +148,18 @@ object DatosGimnasio {
 
     // Busca una clase por su id (se usa al recibir el parámetro de navegación)
     fun buscarClase(id: Int): Clase? = clases.find { it.id == id }
+
+
+    //CUPOS EN TIEMPO REAL
+    // Cupos que quedan = cupos base - reservas CONFIRMADAS de esa clase y ese horario.
+    // Como se calcula con la lista de reservas, al reservar baja solo.
+    fun cuposRestantes(clase: Clase, horario: Horario, reservas: List<Reserva>): Int {
+        val ocupados = reservas.count {
+            it.clase.id == clase.id &&
+                    it.horario == horario.hora &&
+                    it.estado == EstadoReserva.CONFIRMADA
+        }
+        // coerceAtLeast(0) evita que salga un número negativo
+        return (horario.cuposDisponibles - ocupados).coerceAtLeast(0)
+    }
 }

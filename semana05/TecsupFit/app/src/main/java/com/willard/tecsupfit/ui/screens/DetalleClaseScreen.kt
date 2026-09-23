@@ -19,10 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.tecsupfit.data.DatosGimnasio
+import com.willard.tecsupfit.data.Reserva
 
 @Composable
 fun DetalleClaseScreen(
     claseId: Int,                     // llega desde el NavHost
+    reservas: List<Reserva>,          // para calcular los cupos reales
     onVolver: () -> Unit,
     onReservarClick: (Int) -> Unit    // enviará el id a Reservar cupo
 ) {
@@ -52,8 +54,10 @@ fun DetalleClaseScreen(
                 Text("Clase no encontrada")
             }
         } else {
-            // Sumo los cupos de todos los horarios para saber si se puede reservar
-            val cuposTotales = clase.horarios.sumOf { it.cuposDisponibles }
+            // Sumo los cupos REALES de todos los horarios para saber si se puede reservar
+            val cuposTotales = clase.horarios.sumOf { horario ->
+                DatosGimnasio.cuposRestantes(clase, horario, reservas)
+            }
 
             Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
 
@@ -110,6 +114,8 @@ fun DetalleClaseScreen(
                             Text("Horarios", fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(8.dp))
                             clase.horarios.forEach { horario ->
+                                // Cupos que quedan después de restar las reservas confirmadas
+                                val cupos = DatosGimnasio.cuposRestantes(clase, horario, reservas)
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -118,8 +124,8 @@ fun DetalleClaseScreen(
                                 ) {
                                     Text(horario.hora)
                                     // Si no quedan cupos lo muestro en rojo
-                                    if (horario.cuposDisponibles > 0) {
-                                        Text("${horario.cuposDisponibles} cupos")
+                                    if (cupos > 0) {
+                                        Text("$cupos cupos")
                                     } else {
                                         Text("Sin cupos", color = Color(0xFFC62828))
                                     }

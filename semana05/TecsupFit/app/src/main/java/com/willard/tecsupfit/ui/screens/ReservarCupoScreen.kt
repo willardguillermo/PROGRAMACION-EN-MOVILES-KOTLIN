@@ -7,17 +7,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.willard.tecsupfit.data.DatosGimnasio
-import androidx.compose.runtime.saveable.rememberSaveable
+import com.willard.tecsupfit.data.Reserva
 
 @Composable
 fun ReservarCupoScreen(
     claseId: Int,
+    reservas: List<Reserva>,        // para calcular los cupos reales
     onVolver: () -> Unit,
     onConfirmar: (Int) -> Unit      // envía la posición del horario elegido
 ) {
@@ -67,7 +69,9 @@ fun ReservarCupoScreen(
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     clase.horarios.forEachIndexed { index, horario ->
-                        val hayCupos = horario.cuposDisponibles > 0
+                        // Cupos reales: base menos las reservas confirmadas de este horario
+                        val cupos = DatosGimnasio.cuposRestantes(clase, horario, reservas)
+                        val hayCupos = cupos > 0
                         FilterChip(
                             selected = horarioSeleccionado == index,
                             onClick = { horarioSeleccionado = index },   // al elegir uno, los demás se desmarcan
@@ -83,7 +87,7 @@ fun ReservarCupoScreen(
                                     // Debajo de la hora muestro los cupos que quedan
                                     if (hayCupos) {
                                         Text(
-                                            "${horario.cuposDisponibles} cupos",
+                                            "$cupos cupos",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     } else {

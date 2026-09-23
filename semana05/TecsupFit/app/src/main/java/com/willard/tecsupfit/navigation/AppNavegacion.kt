@@ -91,6 +91,7 @@ fun AppNavegacion() {
 
             DetalleClaseScreen(
                 claseId = claseId,
+                reservas = reservas,   // para calcular los cupos reales
                 onVolver = { navController.popBackStack() },
                 // Paso el mismo id a la pantalla de reservar
                 onReservarClick = { id ->
@@ -110,20 +111,25 @@ fun AppNavegacion() {
 
             ReservarCupoScreen(
                 claseId = claseId,
+                reservas = reservas,   // para calcular los cupos reales
                 onVolver = { navController.popBackStack() },
                 onConfirmar = { horarioIndex ->
-                    // Guardo la reserva en la lista como CONFIRMADA
                     val clase = DatosGimnasio.buscarClase(claseId)
                     if (clase != null) {
-                        reservas.add(
-                            Reserva(
-                                // id = el mayor que exista + 1, así nunca se repite
-                                id = (reservas.maxOfOrNull { it.id } ?: 0) + 1,
-                                clase = clase,
-                                horario = clase.horarios[horarioIndex].hora,
-                                estado = EstadoReserva.CONFIRMADA
+                        val horario = clase.horarios[horarioIndex]
+                        // Vuelvo a revisar que quede cupo antes de guardar
+                        if (DatosGimnasio.cuposRestantes(clase, horario, reservas) > 0) {
+                            // Guardo la reserva como CONFIRMADA (esto descuenta un cupo)
+                            reservas.add(
+                                Reserva(
+                                    // id = el mayor que exista + 1, así nunca se repite
+                                    id = (reservas.maxOfOrNull { it.id } ?: 0) + 1,
+                                    clase = clase,
+                                    horario = horario.hora,
+                                    estado = EstadoReserva.CONFIRMADA
+                                )
                             )
-                        )
+                        }
                     }
                     // popUpTo quita Detalle y Reservar del historial,
                     // así con "atrás" no se vuelve a reservar la misma clase
