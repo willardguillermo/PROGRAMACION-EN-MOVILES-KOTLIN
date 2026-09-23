@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.willard.tecsupfit.ui.screens.InicioScreen
+import com.willard.tecsupfit.navigation.AppNavegacion
 import com.willard.tecsupfit.ui.theme.TecsupFitTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,8 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TecsupFitTheme {
-                // Temporal: en el siguiente commit aquí irá el NavHost
-                InicioScreen(onClaseClick = {})
+                AppNavegacion()
             }
         }
     }
