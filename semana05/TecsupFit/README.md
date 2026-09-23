@@ -86,9 +86,28 @@ Inicio · Reservas · Rutinas · Perfil
 
 ---
 
-## Capturas
+## Capturas de ejecucion
 
-<!-- Agregar las capturas aquí (Inicio, Detalle, Reservar, Confirmación, Reservas, Rutinas, Perfil) -->
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/c214f8be-b875-4d47-9e96-123dfb976a68" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/9c895eca-5a66-428e-94b2-58e24c4d763a" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/2dc63444-3c5a-4649-bc9b-411c2b63ffb3" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/30839cdf-e5e0-475f-92b0-d52b8345c768" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/a7dd63b2-a26b-49e1-a75d-867d9ae88ff3" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/f98229c5-2e8c-4974-8b40-a0e19b90e735" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/184a851e-9d9b-4945-8eaf-086e9dd51227" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/cab5efd6-5703-4250-89c4-62915d1e3393" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/8464de43-d6c0-45ba-83e9-ebcf3f5e5ee4" />
+
+<img width="1344" height="2992" alt="image" src="https://github.com/user-attachments/assets/8af121c0-d75c-4a4e-b387-84fdc8e271cf" />
 
 ---
 
