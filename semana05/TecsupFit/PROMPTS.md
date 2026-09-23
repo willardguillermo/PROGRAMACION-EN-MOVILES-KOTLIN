@@ -139,6 +139,14 @@ copiar y pegar directamente sin perder fragmentos.
 
 ## Capturas de pruebas realizadas
 
+<img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/0818d670-d1d4-49ef-abea-cd3ff0d7e0eb" />
+
+<img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/9b239c89-3e5a-4117-ac41-6ef1ea6a01a0" />
+
+<img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/df38a94c-1ec7-4b1f-b8f2-4b1aad48f1c4" />
+
+<img width="718" height="1600" alt="image" src="https://github.com/user-attachments/assets/00b05b54-9ef4-4a10-87b2-63c0e082ca7f" />
+
 ---
 
 ## Lo que aprendí
