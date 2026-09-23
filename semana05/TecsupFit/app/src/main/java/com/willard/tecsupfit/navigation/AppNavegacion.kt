@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.willard.tecsupfit.ui.screens.DetalleClaseScreen
 import com.willard.tecsupfit.ui.screens.InicioScreen
+import com.willard.tecsupfit.ui.screens.ReservarCupoScreen
 
 @Composable
 fun AppNavegacion() {
@@ -42,7 +43,26 @@ fun AppNavegacion() {
             DetalleClaseScreen(
                 claseId = claseId,
                 onVolver = { navController.popBackStack() },
-                onReservarClick = { }   // pendiente: ir a Reservar cupo
+                // Paso el mismo id a la pantalla de reservar
+                onReservarClick = { id ->
+                    navController.navigate(Pantalla.ReservarCupo.crearRuta(id))
+                }
+            )
+        }
+
+        //PANTALLA RESERVAR
+        composable(
+            route = Pantalla.ReservarCupo.ruta,
+            arguments = listOf(
+                navArgument("claseId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val claseId = backStackEntry.arguments?.getInt("claseId") ?: 0
+
+            ReservarCupoScreen(
+                claseId = claseId,
+                onVolver = { navController.popBackStack() },
+                onConfirmar = { }   // pendiente: ir a Confirmación
             )
         }
     }
