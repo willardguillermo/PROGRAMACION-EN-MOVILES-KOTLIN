@@ -69,7 +69,7 @@ fun ProfileScreen(navController: NavController) {
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = "Juan León Suiyon",
+                    text = "Guillermo Willard Castillo",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -77,14 +77,14 @@ fun ProfileScreen(navController: NavController) {
 
             Column(modifier = Modifier.padding(24.dp)) {
                 Seccion("Información Personal")
-                FilaDato(Icons.Default.Person, "Nombre Completo", "Juan León Suiyon")
-                FilaDato(Icons.Default.Email, "Correo", "juan.leon@tecsup.edu.pe")
-                FilaDato(Icons.Default.Phone, "Teléfono", "+51 987 654 321")
+                FilaDato(Icons.Default.Person, "Nombre Completo", "Guillermo Willard Castillo")
+                FilaDato(Icons.Default.Email, "Correo", "guillermo.willard@tecsup.edu.pe")
+                FilaDato(Icons.Default.Phone, "Teléfono", "+51 913 351 627")
 
                 Spacer(Modifier.height(16.dp))
                 Seccion("Académico")
-                FilaDato(Icons.Default.School, "Carrera", "Ingeniería de Software")
-                FilaDato(Icons.Default.CalendarMonth, "Ciclo Actual", "VI Ciclo")
+                FilaDato(Icons.Default.School, "Carrera", "Diseño y Desarrollo de Software")
+                FilaDato(Icons.Default.CalendarMonth, "Ciclo Actual", "IV Ciclo")
 
                 Spacer(Modifier.height(32.dp))
                 OutlinedButton(

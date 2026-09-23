@@ -33,7 +33,7 @@ fun HomeScreen(navController: NavController) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "Juan León",
+            text = "Guillermo Willard",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
