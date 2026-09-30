@@ -1,5 +1,6 @@
 package com.willard.Lab04CarritoTecsup
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,13 +34,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavegacion() {
-
     val navController = rememberNavController()
+
 
     val productos = remember { mutableStateListOf<Producto>() }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val opcionesMenu = listOf(
         OpcionMenu(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
@@ -46,6 +49,7 @@ fun AppNavegacion() {
         OpcionMenu(Pantalla.Favoritos.ruta, "Favoritos", Icons.Default.Favorite),
         OpcionMenu(Pantalla.Perfil.ruta, "Perfil", Icons.Default.Person)
     )
+
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val rutaActual = backStackEntry?.destination?.route
@@ -59,6 +63,10 @@ fun AppNavegacion() {
                 onOpcionClick = { ruta ->
                     scope.launch { drawerState.close() }
                     irASeccion(navController, ruta)
+                },
+                onCerrarSesion = {
+                    scope.launch { drawerState.close() }
+                    Toast.makeText(context, "Sesión cerrada", Toast.LENGTH_SHORT).show()
                 }
             )
         }
@@ -103,6 +111,7 @@ fun AppNavegacion() {
         }
     }
 }
+
 
 private fun irASeccion(navController: NavHostController, ruta: String) {
     if (ruta == Pantalla.Inicio.ruta) {
