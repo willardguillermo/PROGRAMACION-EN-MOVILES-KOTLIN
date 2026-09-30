@@ -31,14 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PantallaCarrito() {
+fun PantallaCarrito(productos: MutableList<Producto>) {
     val context = LocalContext.current
 
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
 
-    val productos = remember { mutableStateListOf<Producto>() }
 
     val subtotal = productos.sumOf { it.precio * it.cantidad }
     val igv = subtotal * 0.18
