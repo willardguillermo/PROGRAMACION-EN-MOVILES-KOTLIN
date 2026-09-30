@@ -49,6 +49,11 @@ lista los productos marcados y permite quitarlos.
 
 ## Capturas
 
+<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/cd0e5949-fc89-41a7-9d9c-023738b34cc0" />
+
+
+<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/c951d823-8455-4679-8568-9af696fb9842" />
+
 
 ## Preguntas de reflexión
 
