@@ -129,7 +129,11 @@ fun AppNavegacion() {
                     PantallaSimple("Mis pedidos", Icons.Default.ShoppingCart)
                 }
                 composable(Pantalla.Favoritos.ruta) {
-                    PantallaSimple("Favoritos", Icons.Default.Favorite)
+                    PantallaFavoritos(
+                        productos = productos,
+                        favoritos = favoritos,
+                        onToggleFavorito = onToggleFavorito
+                    )
                 }
                 composable(Pantalla.Perfil.ruta) {
                     PantallaSimple("Perfil", Icons.Default.Person)
