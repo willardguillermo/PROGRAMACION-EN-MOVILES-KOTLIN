@@ -1,5 +1,6 @@
 package com.willard.Lab04CarritoTecsup
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun PantallaCarrito() {
+    val context = LocalContext.current
+
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
@@ -115,6 +119,12 @@ fun PantallaCarrito() {
                 items(productos) { producto ->
                     TarjetaProducto(
                         producto = producto,
+                        onFavorito = {
+                            Toast.makeText(context, "${producto.nombre} agregado a favoritos", Toast.LENGTH_SHORT).show()
+                        },
+                        onCompartir = {
+                            Toast.makeText(context, "Compartiendo ${producto.nombre}", Toast.LENGTH_SHORT).show()
+                        },
                         onEliminar = { productos.remove(producto) }
                     )
                 }

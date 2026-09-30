@@ -1,31 +1,39 @@
 package com.willard.Lab04CarritoTecsup
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+
 @Composable
-fun TarjetaProducto(producto: Producto, onEliminar: () -> Unit) {
+fun TarjetaProducto(
+    producto: Producto,
+    onFavorito: () -> Unit,
+    onCompartir: () -> Unit,
+    onEliminar: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
+
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -48,17 +56,36 @@ fun TarjetaProducto(producto: Producto, onEliminar: () -> Unit) {
                 "S/ ${"%.2f".format(producto.precio * producto.cantidad)}",
                 fontWeight = FontWeight.Bold
             )
-            IconButton(onClick = onEliminar) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
 
             Box {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Agregar a favoritos") },
+                        onClick = {
+                            expanded = false
+                            onFavorito()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Compartir") },
+                        onClick = {
+                            expanded = false
+                            onCompartir()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Eliminar") },
+                        onClick = {
+                            expanded = false
+                            onEliminar()
+                        }
+                    )
                 }
             }
         }
