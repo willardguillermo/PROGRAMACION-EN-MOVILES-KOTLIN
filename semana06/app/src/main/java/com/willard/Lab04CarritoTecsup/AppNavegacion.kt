@@ -8,6 +8,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -74,6 +76,7 @@ fun AppNavegacion() {
             AppDrawer(
                 opciones = opcionesMenu,
                 rutaActual = rutaActual,
+                cantidadFavoritos = favoritos.size,
                 onOpcionClick = { ruta ->
                     scope.launch { drawerState.close() }
                     irASeccion(navController, ruta)
@@ -97,7 +100,13 @@ fun AppNavegacion() {
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
+                            BadgedBox(
+                                badge = {
+                                    if (favoritos.isNotEmpty()) Badge()
+                                }
+                            ) {
+                                Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
+                            }
                         }
                     }
                 )

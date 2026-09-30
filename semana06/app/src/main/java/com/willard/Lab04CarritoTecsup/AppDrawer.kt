@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +26,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-// Cada opción del menú tiene su ruta, su texto y su ícono
 data class OpcionMenu(
     val ruta: String,
     val titulo: String,
@@ -36,23 +36,25 @@ data class OpcionMenu(
 fun AppDrawer(
     opciones: List<OpcionMenu>,
     rutaActual: String?,
+    cantidadFavoritos: Int,
     onOpcionClick: (String) -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     ModalDrawerSheet {
-
-        //ENCABEZADO DEL USUARIO
         EncabezadoDrawer()
         Spacer(Modifier.height(12.dp))
 
-        //OPCIONES DEL MENU
-        // La opción de la pantalla actual sale resaltada con color de fondo distinto
         opciones.forEach { opcion ->
             NavigationDrawerItem(
                 label = { Text(opcion.titulo) },
                 icon = { Icon(opcion.icono, contentDescription = null) },
                 selected = rutaActual == opcion.ruta,
                 onClick = { onOpcionClick(opcion.ruta) },
+                badge = {
+                    if (opcion.ruta == Pantalla.Favoritos.ruta && cantidadFavoritos > 0) {
+                        Badge { Text("$cantidadFavoritos") }
+                    }
+                },
                 colors = NavigationDrawerItemDefaults.colors(
                     selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     selectedIconColor = MaterialTheme.colorScheme.primary,
@@ -62,8 +64,6 @@ fun AppDrawer(
             )
         }
 
-        //CERRAR SESION (abajo del todo)
-        // weight(1f) ocupa todo el espacio libre y empuja lo siguiente al fondo
         Spacer(Modifier.weight(1f))
         HorizontalDivider()
         NavigationDrawerItem(
@@ -85,7 +85,6 @@ private fun EncabezadoDrawer() {
             .background(MaterialTheme.colorScheme.primary)
             .padding(24.dp)
     ) {
-        // Avatar con iniciales
         Box(
             modifier = Modifier
                 .size(64.dp)
