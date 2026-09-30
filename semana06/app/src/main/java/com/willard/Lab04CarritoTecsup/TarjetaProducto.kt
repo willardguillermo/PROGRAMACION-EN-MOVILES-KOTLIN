@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TarjetaProducto(
     producto: Producto,
+    esFavorito: Boolean,
     onFavorito: () -> Unit,
     onCompartir: () -> Unit,
     onEliminar: () -> Unit
@@ -46,11 +49,23 @@ fun TarjetaProducto(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    producto.nombre,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        producto.nombre,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (esFavorito) {
+                        Icon(
+                            Icons.Default.Favorite,
+                            contentDescription = "Favorito",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .padding(start = 6.dp)
+                                .size(16.dp)
+                        )
+                    }
+                }
                 Text(
                     "S/ ${"%.2f".format(producto.precio)} x ${producto.cantidad}",
                     color = Color.Gray
@@ -70,9 +85,14 @@ fun TarjetaProducto(
                     onDismissRequest = { expanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Agregar a favoritos") },
+                        text = {
+                            Text(if (esFavorito) "Quitar de favoritos" else "Agregar a favoritos")
+                        },
                         leadingIcon = {
-                            Icon(Icons.Default.FavoriteBorder, contentDescription = null)
+                            Icon(
+                                if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = null
+                            )
                         },
                         onClick = {
                             expanded = false

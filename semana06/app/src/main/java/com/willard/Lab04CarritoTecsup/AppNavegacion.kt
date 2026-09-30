@@ -36,12 +36,27 @@ import kotlinx.coroutines.launch
 fun AppNavegacion() {
     val navController = rememberNavController()
 
-
     val productos = remember { mutableStateListOf<Producto>() }
+    val favoritos = remember { mutableStateListOf<Long>() }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val onToggleFavorito: (Producto) -> Unit = { producto ->
+        if (producto.id in favoritos) {
+            favoritos.remove(producto.id)
+            Toast.makeText(context, "${producto.nombre} quitado de favoritos", Toast.LENGTH_SHORT).show()
+        } else {
+            favoritos.add(producto.id)
+            Toast.makeText(context, "${producto.nombre} agregado a favoritos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val onEliminar: (Producto) -> Unit = { producto ->
+        productos.remove(producto)
+        favoritos.remove(producto.id)
+    }
 
     val opcionesMenu = listOf(
         OpcionMenu(Pantalla.Inicio.ruta, "Inicio", Icons.Default.Home),
@@ -49,7 +64,6 @@ fun AppNavegacion() {
         OpcionMenu(Pantalla.Favoritos.ruta, "Favoritos", Icons.Default.Favorite),
         OpcionMenu(Pantalla.Perfil.ruta, "Perfil", Icons.Default.Person)
     )
-
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val rutaActual = backStackEntry?.destination?.route
@@ -74,7 +88,6 @@ fun AppNavegacion() {
         Scaffold(
             topBar = {
                 TopAppBar(
-
                     title = {
                         Text(
                             opcionesMenu.find { it.ruta == rutaActual }
@@ -96,7 +109,12 @@ fun AppNavegacion() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Pantalla.Inicio.ruta) {
-                    PantallaCarrito(productos)
+                    PantallaCarrito(
+                        productos = productos,
+                        favoritos = favoritos,
+                        onToggleFavorito = onToggleFavorito,
+                        onEliminar = onEliminar
+                    )
                 }
                 composable(Pantalla.MisPedidos.ruta) {
                     PantallaSimple("Mis pedidos", Icons.Default.ShoppingCart)
@@ -111,7 +129,6 @@ fun AppNavegacion() {
         }
     }
 }
-
 
 private fun irASeccion(navController: NavHostController, ruta: String) {
     if (ruta == Pantalla.Inicio.ruta) {

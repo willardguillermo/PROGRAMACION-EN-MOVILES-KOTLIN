@@ -19,7 +19,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,13 +30,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PantallaCarrito(productos: MutableList<Producto>) {
+fun PantallaCarrito(
+    productos: MutableList<Producto>,
+    favoritos: List<Long>,
+    onToggleFavorito: (Producto) -> Unit,
+    onEliminar: (Producto) -> Unit
+) {
     val context = LocalContext.current
 
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
-
 
     val subtotal = productos.sumOf { it.precio * it.cantidad }
     val igv = subtotal * 0.18
@@ -115,16 +118,15 @@ fun PantallaCarrito(productos: MutableList<Producto>) {
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(productos) { producto ->
+                items(productos, key = { it.id }) { producto ->
                     TarjetaProducto(
                         producto = producto,
-                        onFavorito = {
-                            Toast.makeText(context, "${producto.nombre} agregado a favoritos", Toast.LENGTH_SHORT).show()
-                        },
+                        esFavorito = producto.id in favoritos,
+                        onFavorito = { onToggleFavorito(producto) },
                         onCompartir = {
                             Toast.makeText(context, "Compartiendo ${producto.nombre}", Toast.LENGTH_SHORT).show()
                         },
-                        onEliminar = { productos.remove(producto) }
+                        onEliminar = { onEliminar(producto) }
                     )
                 }
             }
