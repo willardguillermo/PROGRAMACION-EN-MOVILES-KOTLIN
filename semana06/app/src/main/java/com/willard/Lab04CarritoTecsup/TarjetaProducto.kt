@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +71,9 @@ fun TarjetaProducto(
                 ) {
                     DropdownMenuItem(
                         text = { Text("Agregar a favoritos") },
+                        leadingIcon = {
+                            Icon(Icons.Default.FavoriteBorder, contentDescription = null)
+                        },
                         onClick = {
                             expanded = false
                             onFavorito()
@@ -74,13 +81,26 @@ fun TarjetaProducto(
                     )
                     DropdownMenuItem(
                         text = { Text("Compartir") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Share, contentDescription = null)
+                        },
                         onClick = {
                             expanded = false
                             onCompartir()
                         }
                     )
+
+                    HorizontalDivider()
+
                     DropdownMenuItem(
-                        text = { Text("Eliminar") },
+                        text = { Text("Eliminar", color = MaterialTheme.colorScheme.error) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        },
                         onClick = {
                             expanded = false
                             onEliminar()
