@@ -34,7 +34,8 @@ fun PantallaCarrito(
     productos: MutableList<Producto>,
     favoritos: List<Long>,
     onToggleFavorito: (Producto) -> Unit,
-    onEliminar: (Producto) -> Unit
+    onEliminar: (Producto) -> Unit,
+    onFinalizarCompra: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -172,6 +173,16 @@ fun PantallaCarrito(
                     )
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onFinalizarCompra,
+            enabled = productos.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("FINALIZAR COMPRA")
         }
     }
 }

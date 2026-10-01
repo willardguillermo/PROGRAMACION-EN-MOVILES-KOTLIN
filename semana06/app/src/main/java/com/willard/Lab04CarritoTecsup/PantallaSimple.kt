@@ -14,7 +14,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PantallaSimple(titulo: String, icono: ImageVector) {
+fun PantallaSimple(
+    titulo: String,
+    icono: ImageVector,
+    mensaje: String = "Próximamente"
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -27,6 +31,6 @@ fun PantallaSimple(titulo: String, icono: ImageVector) {
             tint = MaterialTheme.colorScheme.primary
         )
         Text(titulo, style = MaterialTheme.typography.headlineSmall)
-        Text("Próximamente", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(mensaje, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

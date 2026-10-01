@@ -26,7 +26,7 @@ fun PantallaFavoritos(
     val productosFavoritos = productos.filter { it.id in favoritos }
 
     if (productosFavoritos.isEmpty()) {
-        PantallaSimple("Aún no tienes favoritos", Icons.Default.Favorite)
+        PantallaSimple("Aún no tienes favoritos", Icons.Default.Favorite, "Marcalos desde el menu : de cada producto")
         return
     }
 

@@ -32,6 +32,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,7 @@ fun AppNavegacion() {
 
     val productos = remember { mutableStateListOf<Producto>() }
     val favoritos = remember { mutableStateListOf<Long>() }
+    val pedidos = remember { mutableStateListOf<Pedido>() }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -58,6 +62,26 @@ fun AppNavegacion() {
     val onEliminar: (Producto) -> Unit = { producto ->
         productos.remove(producto)
         favoritos.remove(producto.id)
+    }
+
+    val onFinalizarCompra: () -> Unit = {
+        if (productos.isNotEmpty()) {
+            val subtotal = productos.sumOf { it.precio * it.cantidad }
+            val numero = pedidos.size + 1
+            pedidos.add(
+                0,
+                Pedido(
+                    numero = numero,
+                    fecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date()),
+                    productos = productos.toList(),
+                    total = subtotal * 1.18
+                )
+            )
+            favoritos.removeAll(productos.map { it.id }.toSet())
+            productos.clear()
+            Toast.makeText(context, "Pedido #$numero registrado", Toast.LENGTH_SHORT).show()
+            irASeccion(navController, Pantalla.MisPedidos.ruta)
+        }
     }
 
     val opcionesMenu = listOf(
@@ -122,11 +146,12 @@ fun AppNavegacion() {
                         productos = productos,
                         favoritos = favoritos,
                         onToggleFavorito = onToggleFavorito,
-                        onEliminar = onEliminar
+                        onEliminar = onEliminar,
+                        onFinalizarCompra = onFinalizarCompra
                     )
                 }
                 composable(Pantalla.MisPedidos.ruta) {
-                    PantallaSimple("Mis pedidos", Icons.Default.ShoppingCart)
+                    PantallaPedidos(pedidos)
                 }
                 composable(Pantalla.Favoritos.ruta) {
                     PantallaFavoritos(
