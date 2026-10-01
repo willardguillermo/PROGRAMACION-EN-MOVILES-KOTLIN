@@ -161,7 +161,7 @@ fun AppNavegacion() {
                     )
                 }
                 composable(Pantalla.Perfil.ruta) {
-                    PantallaSimple("Perfil", Icons.Default.Person)
+                    PantallaPerfil(cantidadProductos = productos.size, cantidadFavoritos = favoritos.size, pedidos = pedidos)
                 }
             }
         }

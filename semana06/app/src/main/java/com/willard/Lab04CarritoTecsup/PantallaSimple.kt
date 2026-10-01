@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun PantallaSimple(
     titulo: String,
     icono: ImageVector,
-    mensaje: String = "Próximamente"
+    mensaje: String
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
