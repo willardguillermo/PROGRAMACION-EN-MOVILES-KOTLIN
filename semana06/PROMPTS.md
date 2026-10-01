@@ -24,5 +24,20 @@ que muestra un punto cuando hay al menos un favorito.
 
 Resultado: PantallaFavoritos con LazyColumn, conectada a la ruta Favoritos del NavHost.
 
+## Prompt 4 — Mis pedidos
+"Las pantallas Mis pedidos y Perfil solo dicen 'Próximamente'. Quiero completar la app:
+agrega un botón para finalizar la compra que guarde el pedido y lo muestre en Mis pedidos."
+
+Resultado: data class Pedido con número, fecha, productos y total con IGV. El botón
+"FINALIZAR COMPRA" del carrito registra el pedido, vacía el carrito, limpia los favoritos de
+esos productos y navega a Mis pedidos, donde PantallaPedidos los lista del más reciente al
+más antiguo.
+
+## Prompt 5 — Perfil
+"Completa la pantalla de Perfil con los datos del usuario y un resumen de su actividad."
+
+Resultado: PantallaPerfil con avatar de iniciales, nombre, y tarjetas con productos en el
+carrito, favoritos, pedidos realizados, total gastado y el último pedido.
+
 ## Capturas de pantalla
 

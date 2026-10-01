@@ -23,29 +23,38 @@ La opción "Eliminar" reemplaza a "Reportar" porque tiene más sentido dentro de
 | Rama | Contenido |
 |---|---|
 | `main` | **Fase 1:** DropdownMenu y NavigationDrawer desarrollados sin IA |
-| `mejora-ia-lab06` | **Fase 2:** badge con contador de favoritos en el drawer, hecho con IA + `PROMPTS.md` |
+| `mejora-ia-lab06` | **Fase 2:** mejoras hechas con IA + `PROMPTS.md` |
 
 La rama de la Fase 2 se llama `mejora-ia-lab06` porque en el repositorio ya existía una rama
 `mejora-ia` de un laboratorio anterior.
 
-## Mejora con IA (Fase 2)
-Al marcar un producto como favorito desde su DropdownMenu, el ítem "Favoritos" del drawer
-muestra un badge con la cantidad, y el ícono ☰ muestra un punto. La opción del menú cambia a
-"Quitar de favoritos" y aparece un corazón junto al nombre del producto. La sección Favoritos
-lista los productos marcados y permite quitarlos.
+## Mejoras con IA (Fase 2)
+
+- **Badge de favoritos (mejora obligatoria):** al marcar un producto como favorito desde su
+  DropdownMenu, el ítem "Favoritos" del drawer muestra la cantidad y el ícono ☰ muestra un
+  punto. La opción cambia a "Quitar de favoritos" y aparece un corazón junto al producto.
+- **Favoritos:** lista los productos marcados y permite quitarlos.
+- **Mis pedidos:** el botón "FINALIZAR COMPRA" registra el pedido con número, fecha,
+  productos y total con IGV, vacía el carrito y lleva a la lista de pedidos.
+- **Perfil:** datos del usuario y resumen de su actividad: productos en el carrito,
+  favoritos, pedidos realizados, total gastado y último pedido.
 
 ## Estructura de archivos
 
 | Archivo | Qué hace |
 |---|---|
 | `MainActivity.kt` | Carga el tema y llama a `AppNavegacion()` |
-| `AppNavegacion.kt` | `ModalNavigationDrawer` que envuelve al `Scaffold` y al `NavHost`; guarda las listas de productos y favoritos |
+| `AppNavegacion.kt` | `ModalNavigationDrawer` que envuelve al `Scaffold` y al `NavHost`; guarda las listas de productos, favoritos y pedidos |
 | `AppDrawer.kt` | Contenido del drawer (`ModalDrawerSheet`): encabezado, opciones, badge y cerrar sesión |
 | `Pantalla.kt` | Sealed class con las rutas de la app |
-| `PantallaCarrito.kt` | Formulario, lista de productos y totales con IGV |
+| `Producto.kt` | Modelo de producto con id único |
+| `Pedido.kt` | Modelo de pedido: número, fecha, productos y total |
+| `PantallaCarrito.kt` | Formulario, lista de productos, totales con IGV y botón finalizar compra |
 | `TarjetaProducto.kt` | Tarjeta de cada producto con su DropdownMenu |
-| `PantallaFavoritos.kt` | Lista de productos marcados como favoritos (Fase 2) |
-| `PantallaSimple.kt` | Pantalla genérica para Mis pedidos y Perfil |
+| `PantallaFavoritos.kt` | Productos marcados como favoritos |
+| `PantallaPedidos.kt` | Historial de pedidos realizados |
+| `PantallaPerfil.kt` | Datos del usuario y resumen de actividad |
+| `PantallaSimple.kt` | Mensaje para los estados vacíos |
 
 ## Capturas
 
