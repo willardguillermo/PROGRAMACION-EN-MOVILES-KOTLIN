@@ -17,7 +17,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.LocalDrink
@@ -44,15 +47,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.BarraInferior
 import com.tecsup.mibodega.ui.cliente.Rutas
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.cliente.modelo.filtrarProductos
 import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.ProductoCard
@@ -62,8 +69,8 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 3: Inicio / Productos (mockup "Cliente").
- * La más completa: Scaffold (topBar + bottomBar), LazyRow de categorías
- * y LazyVerticalGrid de productos.
+ * La más completa: Scaffold (topBar + bottomBar), buscador, LazyRow de
+ * categorías y LazyVerticalGrid de productos.
  *
  * @param productos lista completa (fake por ahora, luego vendrá de un ViewModel)
  * @param cantidadCarrito para el badge del carrito en la topBar
@@ -79,23 +86,17 @@ fun InicioScreen(
     onNavegarBarra: (String) -> Unit
 ) {
     // rememberSaveable (y no remember): al ir a Detalle y volver, la categoría
-    // elegida se conserva porque Navigation guarda el estado de esta pantalla.
+    // y el texto se conservan porque Navigation guarda el estado de esta pantalla.
     var categoriaSeleccionada by rememberSaveable { mutableStateOf(listaCategorias.first()) }
-    // rememberSaveable: lo escrito se conserva al ir a Detalle y volver
     var textoBusqueda by rememberSaveable { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
 
     // Fase 2 (IA): los DOS filtros se aplican juntos (AND), ninguno reemplaza al otro.
     // remember(...) recalcula la lista solo cuando cambia una de sus llaves,
     // es decir, en tiempo real con cada letra que escribe el usuario.
+    // La lógica vive en FiltroProductos.kt para poder probarla con JUnit.
     val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
-        val texto = textoBusqueda.trim()
-        productos.filter { producto ->
-            val coincideCategoria =
-                categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
-            val coincideBusqueda =
-                texto.isEmpty() || producto.nombre.contains(texto, ignoreCase = true)
-            coincideCategoria && coincideBusqueda
-        }
+        filtrarProductos(productos, categoriaSeleccionada, textoBusqueda)
     }
 
     Scaffold(
@@ -141,7 +142,18 @@ fun InicioScreen(
                     .padding(top = 8.dp),
                 placeholder = { Text("Buscar productos...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                // Botón X para limpiar: solo aparece cuando hay texto
+                trailingIcon = {
+                    if (textoBusqueda.isNotEmpty()) {
+                        IconButton(onClick = { textoBusqueda = "" }) {
+                            Icon(Icons.Default.Close, contentDescription = "Limpiar búsqueda")
+                        }
+                    }
+                },
                 singleLine = true,
+                // La tecla "buscar" del teclado solo lo cierra: el filtro ya es en tiempo real
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = GrisClaro,
@@ -182,19 +194,27 @@ fun InicioScreen(
                 )
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(productosFiltrados) { producto ->
-                    ProductoCard(
-                        producto = producto,
-                        onClick = { onProductoClick(producto) },
-                        onAgregar = { onAgregarProducto(producto) }
-                    )
+            if (productosFiltrados.isEmpty()) {
+                SinResultados(
+                    texto = textoBusqueda.trim(),
+                    categoria = categoriaSeleccionada
+                )
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // key = id: Compose sabe qué tarjeta es cuál cuando la lista cambia
+                    items(productosFiltrados, key = { it.id }) { producto ->
+                        ProductoCard(
+                            producto = producto,
+                            onClick = { onProductoClick(producto) },
+                            onAgregar = { onAgregarProducto(producto) }
+                        )
+                    }
                 }
             }
         }
@@ -235,6 +255,22 @@ private fun ChipCategoria(
             fontWeight = FontWeight.Medium
         )
     }
+}
+
+/** Mensaje cuando la combinación búsqueda + categoría no tiene productos. */
+@Composable
+private fun SinResultados(texto: String, categoria: String) {
+    val donde = if (categoria == "Todos") "" else " en $categoria"
+    Text(
+        text = if (texto.isEmpty()) "No hay productos$donde."
+        else "No encontramos \"$texto\"$donde.\nPrueba con otra palabra o categoría.",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 48.dp)
+    )
 }
 
 /** Ícono de cada categoría. */

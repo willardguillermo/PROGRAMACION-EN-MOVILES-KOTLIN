@@ -3,8 +3,8 @@ package com.tecsup.mibodega.ui.cliente.modelo
 import java.text.Normalizer
 
 /**
- * Quita tildes y pasa a minúsculas: "Azúcar" -> "azucar".
- * Así el cliente encuentra el producto aunque escriba sin tildes.
+ * Quita tildes, espacios y pasa a minúsculas: "Azúcar" -> "azucar", "1 L" -> "1l".
+ * Así el cliente encuentra el producto aunque escriba sin tildes o sin espacios.
  */
 fun String.normalizarBusqueda(): String =
     Normalizer.normalize(this, Normalizer.Form.NFD)
@@ -18,7 +18,7 @@ fun String.normalizarBusqueda(): String =
  *
  * - categoria "Todos" = no filtra por categoría.
  * - texto vacío = no filtra por texto.
- * - el texto se busca en nombre y descripción, sin importar tildes ni mayúsculas.
+ * - el texto se busca en nombre y descripción, sin importar tildes, espacios ni mayúsculas.
  */
 fun filtrarProductos(
     productos: List<Producto>,
