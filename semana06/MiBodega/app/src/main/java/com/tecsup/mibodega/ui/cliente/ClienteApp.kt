@@ -4,6 +4,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.tecsup.mibodega.ui.cliente.modelo.COSTO_DELIVERY
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Pedido
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
@@ -23,12 +25,13 @@ import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
 import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
+import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
+import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
 import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
-import androidx.compose.runtime.LaunchedEffect
 
 /**
  * "Director de orquesta" de la app cliente:
@@ -202,8 +205,51 @@ fun ClienteApp() {
                     carrito = carrito.filterNot { it.producto.id == producto.id }
                 },
                 onVaciar = { carrito = emptyList() },
-                onContinuarPedido = { /* TODO: navegar a DatosEntregaScreen */ }
+                onContinuarPedido = { navController.navigate(Rutas.ENTREGA) }
             )
+        }
+
+        composable(Rutas.ENTREGA) {
+            DatosEntregaScreen(
+                usuario = usuario,
+                total = carrito.sumOf { it.producto.precio * it.cantidad } + COSTO_DELIVERY,
+                onVolver = { navController.popBackStack() },
+                onConfirmar = { datos, metodoPago ->
+                    val pedido = Pedido(
+                        id = 1024 + pedidos.size, // correlativo simple: #1024, #1025...
+                        items = carrito,
+                        direccion = datos.direccion,
+                        referencia = datos.referencia,
+                        metodoPago = metodoPago
+                    )
+                    pedidos.add(pedido)
+                    usuario = datos        // recordamos los últimos datos de entrega
+                    carrito = emptyList()  // la compra terminó: carrito limpio
+
+                    navController.navigate(Rutas.confirmacion(pedido.id)) {
+                        // popUpTo: saca Detalle, Carrito y Entrega de la pila.
+                        // Así "atrás" en Confirmación vuelve a Inicio y no a un
+                        // formulario de un pedido que ya se envió.
+                        popUpTo(Rutas.INICIO)
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Rutas.CONFIRMACION,
+            arguments = listOf(navArgument("pedidoId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val pedidoId = backStackEntry.arguments?.getInt("pedidoId") ?: 0
+            val pedido = pedidos.find { it.id == pedidoId }
+
+            if (pedido != null) {
+                ConfirmacionScreen(
+                    pedido = pedido,
+                    onVerEstado = { navegarBarra(Rutas.PEDIDOS) },
+                    onVolverInicio = { navegarBarra(Rutas.INICIO) }
+                )
+            }
         }
     }
 }
