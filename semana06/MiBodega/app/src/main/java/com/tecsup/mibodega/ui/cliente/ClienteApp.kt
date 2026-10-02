@@ -201,6 +201,7 @@ fun ClienteApp() {
                 onEliminar = { producto ->
                     carrito = carrito.filterNot { it.producto.id == producto.id }
                 },
+                onVaciar = { carrito = emptyList() },
                 onContinuarPedido = { /* TODO: navegar a DatosEntregaScreen */ }
             )
         }

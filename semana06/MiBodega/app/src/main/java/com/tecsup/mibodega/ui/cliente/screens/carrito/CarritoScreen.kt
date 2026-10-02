@@ -30,23 +30,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tecsup.mibodega.ui.cliente.modelo.COSTO_DELIVERY
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
+import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
+import com.tecsup.mibodega.ui.theme.GrisBorde
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
-
-private const val COSTO_DELIVERY = 4.00
 
 /**
  * Pantalla 5: Mi carrito (mockup "Cliente").
  * No guarda estado propio: el carrito viene de ClienteApp y cualquier
- * cambio (sumar, restar, eliminar) se avisa hacia arriba con callbacks.
+ * cambio (sumar, restar, eliminar, vaciar) se avisa hacia arriba con callbacks.
  */
 @Composable
 fun CarritoScreen(
@@ -55,8 +57,12 @@ fun CarritoScreen(
     onIncrementar: (Producto) -> Unit,
     onDecrementar: (Producto) -> Unit,
     onEliminar: (Producto) -> Unit,
+    onVaciar: () -> Unit,
     onContinuarPedido: () -> Unit
 ) {
+    // Cálculo reactivo: NO hay botón "recalcular". Cada vez que ClienteApp
+    // cambia el carrito, esta función se vuelve a ejecutar (recomposición)
+    // y subtotal/total se calculan de nuevo con las cantidades actuales.
     val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
     val total = subtotal + COSTO_DELIVERY
 
@@ -65,38 +71,51 @@ fun CarritoScreen(
             .fillMaxSize()
             .safeDrawingPadding()
     ) {
-        EncabezadoCarrito(onVolver = onVolver)
-
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(carrito, key = { it.producto.id }) { item ->
-                FilaCarrito(
-                    item = item,
-                    onIncrementar = { onIncrementar(item.producto) },
-                    onDecrementar = { onDecrementar(item.producto) },
-                    onEliminar = { onEliminar(item.producto) }
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            }
-        }
-
-        ResumenYBoton(
-            subtotal = subtotal,
-            delivery = COSTO_DELIVERY,
-            total = total,
-            onContinuarPedido = onContinuarPedido
+        EncabezadoCarrito(
+            mostrarVaciar = carrito.isNotEmpty(),
+            onVolver = onVolver,
+            onVaciar = onVaciar
         )
+
+        if (carrito.isEmpty()) {
+            CarritoVacio(onSeguirComprando = onVolver)
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                // key = id del producto: Compose sabe qué fila es cuál al eliminar
+                items(carrito, key = { it.producto.id }) { item ->
+                    FilaCarrito(
+                        item = item,
+                        onIncrementar = { onIncrementar(item.producto) },
+                        onDecrementar = { onDecrementar(item.producto) },
+                        onEliminar = { onEliminar(item.producto) }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                }
+            }
+
+            ResumenYBoton(
+                subtotal = subtotal,
+                delivery = COSTO_DELIVERY,
+                total = total,
+                onContinuarPedido = onContinuarPedido
+            )
+        }
     }
 }
 
 // Sub-composables PRIVADOS: solo los usa esta pantalla.
 
 @Composable
-private fun EncabezadoCarrito(onVolver: () -> Unit) {
+private fun EncabezadoCarrito(
+    mostrarVaciar: Boolean,
+    onVolver: () -> Unit,
+    onVaciar: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,8 +128,45 @@ private fun EncabezadoCarrito(onVolver: () -> Unit) {
         Text(
             text = "Mi carrito",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f)
         )
+        if (mostrarVaciar) {
+            IconButton(onClick = onVaciar) {
+                Icon(Icons.Default.Delete, contentDescription = "Vaciar carrito")
+            }
+        }
+    }
+}
+
+@Composable
+private fun CarritoVacio(onSeguirComprando: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.ShoppingBasket,
+            contentDescription = null,
+            tint = GrisBorde,
+            modifier = Modifier.size(80.dp)
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = "Tu carrito está vacío",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "Agrega productos desde Inicio para hacer tu pedido.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(24.dp))
+        BotonSecundario(texto = "Seguir comprando", onClick = onSeguirComprando)
     }
 }
 
@@ -155,10 +211,13 @@ private fun FilaCarrito(
             )
         }
 
+        // minimo = 0: con cantidad 1 el "−" sigue activo y, al tocarlo,
+        // ClienteApp quita el producto del carrito.
         SelectorCantidad(
             cantidad = item.cantidad,
             onIncrementar = onIncrementar,
-            onDecrementar = onDecrementar
+            onDecrementar = onDecrementar,
+            minimo = 0
         )
 
         IconButton(onClick = onEliminar) {
@@ -224,10 +283,11 @@ private fun FilaResumen(etiqueta: String, valor: Double) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun CarritoPreview() {
+    // Buscamos por id (no por posición) porque reordenamos DatosFake.kt
     val carritoEjemplo = listOf(
-        ItemCarrito(listaProductosFake[4], 1), // Coca-Cola
-        ItemCarrito(listaProductosFake[0], 2), // Arroz Costeño
-        ItemCarrito(listaProductosFake[2], 1)  // Leche Gloria
+        ItemCarrito(listaProductosFake.first { it.id == 5 }, 1), // Coca-Cola
+        ItemCarrito(listaProductosFake.first { it.id == 1 }, 2), // Arroz Costeño
+        ItemCarrito(listaProductosFake.first { it.id == 3 }, 1)  // Leche Gloria
     )
     BodegaTheme {
         CarritoScreen(
@@ -236,8 +296,8 @@ private fun CarritoPreview() {
             onIncrementar = {},
             onDecrementar = {},
             onEliminar = {},
+            onVaciar = {},
             onContinuarPedido = {}
         )
     }
 }
-
