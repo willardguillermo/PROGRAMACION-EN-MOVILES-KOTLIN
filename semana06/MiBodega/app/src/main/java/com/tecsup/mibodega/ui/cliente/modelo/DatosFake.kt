@@ -1,11 +1,6 @@
 package com.tecsup.mibodega.ui.cliente.modelo
 
-/**
- * Datos de ejemplo (fake) para mostrar la UI sin base de datos.
- * Cuando conecten Room o una API, este archivo se reemplaza por
- * un Repository real, pero las pantallas no cambian porque ya
- * reciben una List<Producto> como parámetro.
- */
+
 val listaCategorias = listOf("Todos", "Bebidas", "Abarrotes", "Snacks")
 
 val listaProductosFake = listOf(

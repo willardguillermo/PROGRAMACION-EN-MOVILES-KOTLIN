@@ -42,8 +42,13 @@ import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisBorde
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.tecsup.mibodega.ui.cliente.modelo.imagenRes
 
 /**
  * Pantalla 5: Mi carrito (mockup "Cliente").
@@ -181,20 +186,15 @@ private fun FilaCarrito(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Placeholder de imagen: reemplázalo por Image(painterResource(...))
-        Box(
+        Image(
+            painter = painterResource(item.producto.imagenRes()),
+            contentDescription = item.producto.nombre,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(56.dp)
-                .background(GrisClaro, RoundedCornerShape(10.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.ShoppingBasket,
-                contentDescription = item.producto.nombre,
-                tint = VerdeBodega,
-                modifier = Modifier.size(26.dp)
-            )
-        }
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+        )
 
         Spacer(Modifier.width(12.dp))
 

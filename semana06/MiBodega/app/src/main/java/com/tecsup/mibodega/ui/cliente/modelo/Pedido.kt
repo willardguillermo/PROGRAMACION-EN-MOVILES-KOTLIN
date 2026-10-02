@@ -1,12 +1,9 @@
 package com.tecsup.mibodega.ui.cliente.modelo
 
-/** Costo fijo de delivery (mockup: S/ 4.00). Lo usan Carrito, Entrega y Pedido. */
+
 const val COSTO_DELIVERY = 4.00
 
-/**
- * Un pedido ya confirmado. Vive en memoria (mutableStateListOf en ClienteApp),
- * así que se pierde al cerrar la app: es intencional hasta ver Room.
- */
+
 data class Pedido(
     val id: Int,
     val items: List<ItemCarrito>,

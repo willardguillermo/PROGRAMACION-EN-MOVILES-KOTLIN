@@ -37,6 +37,12 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.tecsup.mibodega.ui.cliente.modelo.imagenRes
 
 /**
  * Destino "Categorías" de la NavigationBar.
@@ -92,19 +98,15 @@ private fun FilaProducto(producto: Producto, onClick: () -> Unit) {
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        Image(
+            painter = painterResource(producto.imagenRes()),
+            contentDescription = producto.nombre,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(44.dp)
-                .background(GrisClaro, RoundedCornerShape(10.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.ShoppingBasket,
-                contentDescription = null,
-                tint = VerdeBodega,
-                modifier = Modifier.size(22.dp)
-            )
-        }
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+        )
         Spacer(Modifier.width(12.dp))
         Text(
             text = producto.nombre,
