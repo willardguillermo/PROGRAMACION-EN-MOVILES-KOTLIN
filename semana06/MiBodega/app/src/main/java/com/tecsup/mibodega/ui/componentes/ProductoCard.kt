@@ -1,8 +1,8 @@
 package com.tecsup.mibodega.ui.componentes
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ShoppingBasket
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,18 +24,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
-import com.tecsup.mibodega.ui.theme.GrisClaro
+import com.tecsup.mibodega.ui.cliente.modelo.imagenRes
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
-/**
- * Tarjeta de producto usada en el grid de Inicio.
- * Solo muestra datos y avisa cuando la tocan o cuando tocan "+";
- * no sabe nada de navegación ni del carrito.
- */
 @Composable
 fun ProductoCard(
     producto: Producto,
@@ -52,22 +50,17 @@ fun ProductoCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
-            // Placeholder de imagen: reemplázalo por Image(painterResource(...))
-            // cuando tengan las fotos reales de cada producto.
-            Box(
+            // Foto real del producto (res/drawable), elegida por su id
+            Image(
+                painter = painterResource(producto.imagenRes()),
+                contentDescription = producto.nombre,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.3f)
-                    .background(GrisClaro, RoundedCornerShape(10.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingBasket,
-                    contentDescription = producto.nombre,
-                    tint = VerdeBodega,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -81,7 +74,7 @@ fun ProductoCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -106,4 +99,3 @@ fun ProductoCard(
         }
     }
 }
-
