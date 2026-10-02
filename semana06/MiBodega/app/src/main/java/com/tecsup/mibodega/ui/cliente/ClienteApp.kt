@@ -1,5 +1,8 @@
 package com.tecsup.mibodega.ui.cliente
 
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
+import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
@@ -27,7 +32,6 @@ import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
  * Ninguna Screen navega sola ni modifica el carrito directamente:
  * todas reciben funciones (lambdas) desde aquí (state hoisting).
  */
-
 @Composable
 fun ClienteApp() {
     val navController = rememberNavController()
@@ -35,23 +39,52 @@ fun ClienteApp() {
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
 
+    // Usuario "logueado" (null = nadie ha entrado todavía).
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
+
     NavHost(
         navController = navController,
         startDestination = Rutas.BIENVENIDA
     ) {
         composable(Rutas.BIENVENIDA) {
+            var mostrarTerminos by remember { mutableStateOf(false) }
+
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
-                onIniciarSesion = { /* TODO: pantalla de login, aún no está en el mockup */ },
-                onTerminos = { /* TODO: abrir términos y condiciones */ }
+                onIniciarSesion = {
+                    // Login simulado: sin backend, entramos con un usuario de prueba
+                    usuario = usuarioDemo
+                    navController.navigate(Rutas.INICIO) {
+                        // Bienvenida sale de la pila: "atrás" desde Inicio cierra la app
+                        popUpTo(Rutas.BIENVENIDA) { inclusive = true }
+                    }
+                },
+                onTerminos = { mostrarTerminos = true }
             )
+
+            if (mostrarTerminos) {
+                AlertDialog(
+                    onDismissRequest = { mostrarTerminos = false },
+                    title = { Text("Términos y Condiciones") },
+                    text = {
+                        Text(
+                            "Mi Bodega es una app de práctica del curso Programación en Móviles. " +
+                                    "Los productos, precios y pedidos son de ejemplo y no generan compras reales."
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { mostrarTerminos = false }) { Text("Entendido") }
+                    }
+                )
+            }
         }
 
         composable(Rutas.REGISTRO) {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
                 onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // TODO: guardar estos datos cuando exista el registro real
+                    // Guardamos los datos en memoria (se pierden al cerrar la app)
+                    usuario = Usuario(nombre, telefono, direccion, referencia)
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }

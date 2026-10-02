@@ -52,6 +52,9 @@ fun RegistroScreen(
     var telefono by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
+    // Se recalcula sola en cada recomposición (cada vez que cambia un campo)
+    val telefonoValido = telefono.filter { it.isDigit() }.length == 9
+    val formularioValido = nombre.isNotBlank() && telefonoValido && direccion.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -96,6 +99,15 @@ fun RegistroScreen(
             placeholder = "987 654 321",
             teclado = KeyboardType.Phone
         )
+
+        if (telefono.isNotEmpty() && !telefonoValido) {
+            Text(
+                text = "El teléfono debe tener 9 dígitos",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
@@ -117,7 +129,10 @@ fun RegistroScreen(
 
         BotonPrimario(
             texto = "Crear cuenta",
-            onClick = { onCrearCuenta(nombre, telefono, direccion, referencia) }
+            habilitado = formularioValido,
+            onClick = {
+                onCrearCuenta(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+            }
         )
 
         Spacer(Modifier.height(24.dp))
