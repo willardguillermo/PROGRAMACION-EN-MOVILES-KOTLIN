@@ -42,6 +42,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ import com.tecsup.mibodega.ui.componentes.ProductoCard
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
+import androidx.compose.ui.text.withStyle
 
 /**
  * Pantalla 3: Inicio / Productos (mockup "Cliente").
@@ -74,15 +77,21 @@ fun InicioScreen(
     var textoBusqueda by remember { mutableStateOf("") }
 
     val productosFiltrados = productos.filter { producto ->
-        val coincideCategoria = categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
-        val coincideBusqueda = producto.nombre.contains(textoBusqueda, ignoreCase = true)
-        coincideCategoria && coincideBusqueda
+        categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mi Bodega", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Mi ")
+                            withStyle(SpanStyle(color = VerdeBodega)) { append("Bodega") }
+                        },
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 actions = {
                     IconButton(onClick = onVerCarrito) {
                         BadgedBox(
