@@ -28,6 +28,7 @@ import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
 import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
+import androidx.compose.runtime.LaunchedEffect
 
 /**
  * "Director de orquesta" de la app cliente:
@@ -158,17 +159,25 @@ fun ClienteApp() {
             route = Rutas.DETALLE,
             arguments = listOf(navArgument("productoId") { type = NavType.IntType })
         ) { backStackEntry ->
+            // 1) Leemos el parámetro que viene en la ruta "detalle/{productoId}"
             val productoId = backStackEntry.arguments?.getInt("productoId") ?: 0
-            val producto = listaProductosFake.first { it.id == productoId }
+            // 2) Buscamos el producto. find() devuelve null si no existe
+            //    (first() lanzaría una excepción y cerraría la app).
+            val producto = listaProductosFake.find { it.id == productoId }
 
-            DetalleProductoScreen(
-                producto = producto,
-                onVolver = { navController.popBackStack() },
-                onAgregarAlCarrito = { productoSeleccionado, cantidad ->
-                    carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
-                    navController.popBackStack()
-                }
-            )
+            if (producto == null) {
+                // Id inválido: no hay nada que mostrar, regresamos
+                LaunchedEffect(Unit) { navController.popBackStack() }
+            } else {
+                DetalleProductoScreen(
+                    producto = producto,
+                    onVolver = { navController.popBackStack() },
+                    onAgregarAlCarrito = { productoSeleccionado, cantidad ->
+                        carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         composable(Rutas.CARRITO) {
