@@ -55,6 +55,9 @@ import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 import androidx.compose.ui.text.withStyle
+import com.tecsup.mibodega.ui.cliente.Rutas
+import com.tecsup.mibodega.ui.cliente.BarraInferior
+
 
 /**
  * Pantalla 3: Inicio / Productos (mockup "Cliente").
@@ -71,7 +74,8 @@ fun InicioScreen(
     cantidadCarrito: Int,
     onVerCarrito: () -> Unit,
     onProductoClick: (Producto) -> Unit,
-    onAgregarProducto: (Producto) -> Unit
+    onAgregarProducto: (Producto) -> Unit,
+    onNavegarBarra: (String) -> Unit
 ) {
     var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
     var textoBusqueda by remember { mutableStateOf("") }
@@ -107,7 +111,7 @@ fun InicioScreen(
                 }
             )
         },
-        bottomBar = { BarraInferior() }
+        bottomBar = { BarraInferior(rutaActual = Rutas.INICIO, onNavegar = onNavegarBarra) }
     ) { paddingInterno ->
         Column(
             modifier = Modifier
@@ -225,7 +229,8 @@ private fun InicioPreview() {
             cantidadCarrito = 3,
             onVerCarrito = {},
             onProductoClick = {},
-            onAgregarProducto = {}
+            onAgregarProducto = {},
+            onNavegarBarra = {}
         )
     }
 }

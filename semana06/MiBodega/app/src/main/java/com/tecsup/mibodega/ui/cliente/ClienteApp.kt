@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -14,14 +15,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
+import com.tecsup.mibodega.ui.cliente.modelo.Pedido
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
+import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
+import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
+import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
 
 /**
@@ -41,6 +46,18 @@ fun ClienteApp() {
 
     // Usuario "logueado" (null = nadie ha entrado todavía).
     var usuario by remember { mutableStateOf<Usuario?>(null) }
+
+    // Historial de pedidos confirmados (lista observable: add() redibuja la UI).
+    val pedidos = remember { mutableStateListOf<Pedido>() }
+
+    // Navegación del menú inferior: Inicio queda siempre como base de la pila,
+    // así las pestañas no se apilan y "atrás" desde cualquiera vuelve a Inicio.
+    val navegarBarra: (String) -> Unit = { ruta ->
+        navController.navigate(ruta) {
+            popUpTo(Rutas.INICIO)
+            launchSingleTop = true // no duplicar la pestaña si ya estoy en ella
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -101,7 +118,39 @@ fun ClienteApp() {
                 },
                 onAgregarProducto = { producto ->
                     carrito = agregarOSumarProducto(carrito, producto, 1)
-                }
+                },
+                onNavegarBarra = navegarBarra
+            )
+        }
+
+        composable(Rutas.CATEGORIAS) {
+            CategoriasScreen(
+                onProductoClick = { producto ->
+                    navController.navigate(Rutas.detalle(producto.id))
+                },
+                onNavegarBarra = navegarBarra
+            )
+        }
+
+        composable(Rutas.PEDIDOS) {
+            PedidosScreen(
+                pedidos = pedidos,
+                onNavegarBarra = navegarBarra
+            )
+        }
+
+        composable(Rutas.PERFIL) {
+            PerfilScreen(
+                usuario = usuario,
+                onCerrarSesion = {
+                    usuario = null
+                    carrito = emptyList()
+                    navController.navigate(Rutas.BIENVENIDA) {
+                        // Limpia TODA la pila: "atrás" no debe regresar a la app logueada
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                },
+                onNavegarBarra = navegarBarra
             )
         }
 
