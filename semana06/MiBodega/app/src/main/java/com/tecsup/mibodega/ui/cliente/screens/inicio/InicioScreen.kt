@@ -81,12 +81,21 @@ fun InicioScreen(
     // rememberSaveable (y no remember): al ir a Detalle y volver, la categoría
     // elegida se conserva porque Navigation guarda el estado de esta pantalla.
     var categoriaSeleccionada by rememberSaveable { mutableStateOf(listaCategorias.first()) }
-    var textoBusqueda by remember { mutableStateOf("") }
+    // rememberSaveable: lo escrito se conserva al ir a Detalle y volver
+    var textoBusqueda by rememberSaveable { mutableStateOf("") }
 
-    // Fase 1: solo se filtra por categoría.
-    // El buscador (textoBusqueda) se conecta en la Fase 2, en la rama de IA.
-    val productosFiltrados = productos.filter { producto ->
-        categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
+    // Fase 2 (IA): los DOS filtros se aplican juntos (AND), ninguno reemplaza al otro.
+    // remember(...) recalcula la lista solo cuando cambia una de sus llaves,
+    // es decir, en tiempo real con cada letra que escribe el usuario.
+    val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
+        val texto = textoBusqueda.trim()
+        productos.filter { producto ->
+            val coincideCategoria =
+                categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
+            val coincideBusqueda =
+                texto.isEmpty() || producto.nombre.contains(texto, ignoreCase = true)
+            coincideCategoria && coincideBusqueda
+        }
     }
 
     Scaffold(
