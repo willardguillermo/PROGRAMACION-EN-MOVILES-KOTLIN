@@ -242,15 +242,17 @@ fun ClienteApp() {
         composable(Rutas.ENTREGA) {
             DatosEntregaScreen(
                 usuario = usuario,
-                total = carrito.sumOf { it.producto.precio * it.cantidad } + COSTO_DELIVERY,
+                subtotal = carrito.sumOf { it.producto.precio * it.cantidad },
                 onVolver = { navController.popBackStack() },
-                onConfirmar = { datos, metodoPago ->
+                onConfirmar = { datos, metodoPago, esDelivery ->
                     val pedido = Pedido(
                         id = 1024 + pedidos.size, // correlativo simple: #1024, #1025...
                         items = carrito,
                         direccion = datos.direccion,
                         referencia = datos.referencia,
-                        metodoPago = metodoPago
+                        metodoPago = metodoPago,
+                        esDelivery = esDelivery,
+                        costoEnvio = if (esDelivery) COSTO_DELIVERY else 0.0
                     )
                     pedidos.add(pedido)
                     usuario = datos        // recordamos los últimos datos de entrega

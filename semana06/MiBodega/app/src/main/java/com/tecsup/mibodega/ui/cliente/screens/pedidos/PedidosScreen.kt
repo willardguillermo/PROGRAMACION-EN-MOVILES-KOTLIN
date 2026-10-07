@@ -106,7 +106,7 @@ private fun TarjetaPedido(pedido: Pedido) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "${pedido.direccion} (${pedido.referencia})",
+                text = pedido.lugarEntrega,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

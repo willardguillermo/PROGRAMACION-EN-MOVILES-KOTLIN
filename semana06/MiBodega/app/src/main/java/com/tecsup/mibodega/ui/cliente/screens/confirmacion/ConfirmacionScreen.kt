@@ -118,12 +118,12 @@ private fun ResumenPedido(pedido: Pedido) {
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Dirección",
+                text = if (pedido.esDelivery) "Dirección" else "Entrega",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "${pedido.direccion} (${pedido.referencia})",
+                text = pedido.lugarEntrega,
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.height(8.dp))
