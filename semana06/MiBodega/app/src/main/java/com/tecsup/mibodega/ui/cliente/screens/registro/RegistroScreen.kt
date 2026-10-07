@@ -49,8 +49,10 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun RegistroScreen(
     onVolver: () -> Unit,
-    onCrearCuenta: (nombre: String, telefono: String, direccion: String, referencia: String) -> Unit
+    onCrearCuenta: (usuario: String, clave: String, nombre: String, telefono: String, direccion: String, referencia: String) -> Unit
 ) {
+    var usuario by rememberSaveable { mutableStateOf("") }
+    var clave by rememberSaveable { mutableStateOf("") }
     var nombre by rememberSaveable { mutableStateOf("") }
     var telefono by rememberSaveable { mutableStateOf("") }
     var direccion by rememberSaveable { mutableStateOf("") }
@@ -60,6 +62,8 @@ fun RegistroScreen(
     // Así los campos no aparecen en rojo apenas se abre la pantalla.
     var mostrarErrores by rememberSaveable { mutableStateOf(false) }
 
+    val usuarioValido = usuario.isNotBlank()
+    val claveValida = clave.isNotBlank()
     val nombreValido = nombre.isNotBlank()
     val telefonoValido = telefono.filter { it.isDigit() }.length == 9
     val direccionValida = direccion.isNotBlank()
@@ -91,6 +95,27 @@ fun RegistroScreen(
         }
 
         Spacer(Modifier.height(28.dp))
+
+        CampoTexto(
+            etiqueta = "Usuario",
+            valor = usuario,
+            onValorCambia = { usuario = it },
+            placeholder = "jperez",
+            esError = mostrarErrores && !usuarioValido,
+            mensajeError = "Ingresa tu usuario"
+        )
+        Spacer(Modifier.height(16.dp))
+
+        CampoTexto(
+            etiqueta = "Contraseña",
+            valor = clave,
+            onValorCambia = { clave = it },
+            placeholder = "********",
+            esContrasena = true,
+            esError = mostrarErrores && !claveValida,
+            mensajeError = "Ingresa una contraseña"
+        )
+        Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Nombre completo",
@@ -135,8 +160,8 @@ fun RegistroScreen(
         BotonPrimario(
             texto = "Crear cuenta",
             onClick = {
-                if (nombreValido && telefonoValido && direccionValida) {
-                    onCrearCuenta(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+                if (usuarioValido && claveValida && nombreValido && telefonoValido && direccionValida) {
+                    onCrearCuenta(usuario.trim(), clave, nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
                 } else {
                     mostrarErrores = true // no avanza: pinta en rojo lo que falta
                 }
@@ -182,6 +207,6 @@ private fun EncabezadoRegistro(onVolver: () -> Unit) {
 @Composable
 private fun RegistroPreview() {
     BodegaTheme {
-        RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _ -> })
+        RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _, _, _ -> })
     }
 }
