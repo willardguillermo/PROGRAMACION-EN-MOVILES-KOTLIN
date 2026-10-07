@@ -173,7 +173,7 @@ fun DatosEntregaScreen(
             texto = "Confirmar pedido",
             onClick = {
                 if (nombreValido && telefonoValido && direccionValida) {
-                    val datos = Usuario(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+                    val datos = Usuario(usuario?.usuario ?: "", usuario?.clave ?: "", nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
                     onConfirmar(datos, metodoPago, esDelivery)
                 } else {
                     mostrarErrores = true // no avanza: pinta en rojo lo que falta
