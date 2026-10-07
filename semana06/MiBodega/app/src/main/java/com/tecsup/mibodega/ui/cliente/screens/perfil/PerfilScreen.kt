@@ -2,6 +2,7 @@ package com.tecsup.mibodega.ui.cliente.screens.perfil
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +12,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -30,7 +34,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
@@ -41,6 +44,8 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun PerfilScreen(
     usuario: Usuario?,
+    modoOscuro: Boolean,
+    onCambiarModoOscuro: (Boolean) -> Unit,
     onCerrarSesion: () -> Unit,
     onNavegarBarra: (String) -> Unit
 ) {
@@ -62,7 +67,7 @@ fun PerfilScreen(
                 tint = VerdeBodega,
                 modifier = Modifier
                     .size(96.dp)
-                    .background(GrisClaro, CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                     .padding(4.dp)
             )
             Spacer(Modifier.height(12.dp))
@@ -75,6 +80,32 @@ fun PerfilScreen(
             DatoPerfil("Teléfono", usuario?.telefono)
             DatoPerfil("Dirección de entrega", usuario?.direccion)
             DatoPerfil("Referencia", usuario?.referencia)
+
+            // Switch de modo oscuro: avisa hacia arriba (MainActivity) el nuevo valor
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DarkMode,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Modo oscuro",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp)
+                )
+                Switch(
+                    checked = modoOscuro,
+                    onCheckedChange = onCambiarModoOscuro,
+                    colors = SwitchDefaults.colors(checkedTrackColor = VerdeBodega)
+                )
+            }
 
             Spacer(Modifier.weight(1f))
             BotonSecundario(texto = "Cerrar sesión", onClick = onCerrarSesion)
@@ -108,6 +139,12 @@ private fun DatoPerfil(etiqueta: String, valor: String?) {
 @Composable
 private fun PerfilPreview() {
     BodegaTheme {
-        PerfilScreen(usuario = usuarioDemo, onCerrarSesion = {}, onNavegarBarra = {})
+        PerfilScreen(
+            usuario = usuarioDemo,
+            modoOscuro = false,
+            onCambiarModoOscuro = {},
+            onCerrarSesion = {},
+            onNavegarBarra = {}
+        )
     }
 }

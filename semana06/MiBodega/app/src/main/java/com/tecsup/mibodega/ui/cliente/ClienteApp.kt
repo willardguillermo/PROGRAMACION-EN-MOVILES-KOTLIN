@@ -44,7 +44,10 @@ import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
  * todas reciben funciones (lambdas) desde aquí (state hoisting).
  */
 @Composable
-fun ClienteApp() {
+fun ClienteApp(
+    modoOscuro: Boolean = false,
+    onCambiarModoOscuro: (Boolean) -> Unit = {}
+) {
     val navController = rememberNavController()
 
     // El carrito vive aquí arriba, no en ninguna Screen.
@@ -162,6 +165,8 @@ fun ClienteApp() {
         composable(Rutas.PERFIL) {
             PerfilScreen(
                 usuario = usuario,
+                modoOscuro = modoOscuro,
+                onCambiarModoOscuro = onCambiarModoOscuro,
                 onCerrarSesion = {
                     usuario = null
                     carrito = emptyList()

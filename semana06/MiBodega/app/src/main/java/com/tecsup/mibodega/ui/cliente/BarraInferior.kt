@@ -13,7 +13,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /** Un destino del menú inferior: a qué ruta va, qué texto y qué ícono muestra. */
@@ -52,7 +51,7 @@ fun BarraInferior(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = VerdeBodega,
                     selectedTextColor = VerdeBodega,
-                    indicatorColor = GrisClaro
+                    indicatorColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
         }

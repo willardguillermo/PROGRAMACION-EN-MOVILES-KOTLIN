@@ -33,7 +33,6 @@ import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.AzulEnlace
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.FondoClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
@@ -51,7 +50,7 @@ fun BienvenidaScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(FondoClaro, MaterialTheme.colorScheme.background),
+                    colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.background),
                     endY = 900f
                 )
             )

@@ -38,7 +38,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Pedido
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.FondoClaro
 import com.tecsup.mibodega.ui.theme.GrisBorde
 import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
@@ -95,7 +94,7 @@ private fun TarjetaPedido(pedido: Pedido) {
                     style = MaterialTheme.typography.bodySmall,
                     color = VerdeBodega,
                     modifier = Modifier
-                        .background(FondoClaro, RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
