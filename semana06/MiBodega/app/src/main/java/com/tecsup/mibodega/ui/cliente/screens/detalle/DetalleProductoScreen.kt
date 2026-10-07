@@ -25,7 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +47,7 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 4: Detalle del producto (mockup "Cliente").
- * Guarda su propia cantidad seleccionada (remember) mientras el usuario
+ * Guarda su propia cantidad seleccionada (rememberSaveable) mientras el usuario
  * decide cuánto quiere; solo al tocar "Agregar al carrito" le avisa
  * a ClienteApp cuánto agregar.
  * El favorito (❤️) NO se guarda aquí: viene de ClienteApp para que la
@@ -61,7 +61,7 @@ fun DetalleProductoScreen(
     onVolver: () -> Unit,
     onAgregarAlCarrito: (Producto, Int) -> Unit
 ) {
-    var cantidad by remember { mutableStateOf(1) }
+    var cantidad by rememberSaveable { mutableStateOf(1) }
 
     Column(
         modifier = Modifier

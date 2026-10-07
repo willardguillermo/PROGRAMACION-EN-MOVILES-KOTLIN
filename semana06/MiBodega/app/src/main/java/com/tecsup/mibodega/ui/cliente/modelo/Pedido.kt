@@ -1,5 +1,7 @@
 package com.tecsup.mibodega.ui.cliente.modelo
 
+import java.io.Serializable
+
 
 const val COSTO_DELIVERY = 4.00
 
@@ -14,7 +16,7 @@ data class Pedido(
     val esDelivery: Boolean = true,
     val costoEnvio: Double = COSTO_DELIVERY,
     val estado: String = "En preparación"
-) {
+) : Serializable {
     // Propiedades calculadas: no se guardan, se calculan a partir de items
     val subtotal: Double get() = items.sumOf { it.producto.precio * it.cantidad }
     val total: Double get() = subtotal + costoEnvio

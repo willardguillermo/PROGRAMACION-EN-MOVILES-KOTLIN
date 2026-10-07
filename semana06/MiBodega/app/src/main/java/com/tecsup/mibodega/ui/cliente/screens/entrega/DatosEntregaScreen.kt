@@ -25,7 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,12 +67,12 @@ fun DatosEntregaScreen(
     onVolver: () -> Unit,
     onConfirmar: (datos: Usuario, metodoPago: String, esDelivery: Boolean) -> Unit
 ) {
-    var nombre by remember { mutableStateOf(usuario?.nombre ?: "") }
-    var telefono by remember { mutableStateOf(usuario?.telefono ?: "") }
-    var direccion by remember { mutableStateOf(usuario?.direccion ?: "") }
-    var referencia by remember { mutableStateOf(usuario?.referencia ?: "") }
-    var tipoEntrega by remember { mutableStateOf(OPCION_DELIVERY) }
-    var metodoPago by remember { mutableStateOf(metodosPago.first()) }
+    var nombre by rememberSaveable { mutableStateOf(usuario?.nombre ?: "") }
+    var telefono by rememberSaveable { mutableStateOf(usuario?.telefono ?: "") }
+    var direccion by rememberSaveable { mutableStateOf(usuario?.direccion ?: "") }
+    var referencia by rememberSaveable { mutableStateOf(usuario?.referencia ?: "") }
+    var tipoEntrega by rememberSaveable { mutableStateOf(OPCION_DELIVERY) }
+    var metodoPago by rememberSaveable { mutableStateOf(metodosPago.first()) }
 
     // Cálculo reactivo: cambiar el RadioButton cambia envío y total al instante
     val esDelivery = tipoEntrega == OPCION_DELIVERY
@@ -80,7 +80,7 @@ fun DatosEntregaScreen(
     val total = subtotal + costoEnvio
 
     // Igual que en Registro: los errores se muestran recién al intentar confirmar
-    var mostrarErrores by remember { mutableStateOf(false) }
+    var mostrarErrores by rememberSaveable { mutableStateOf(false) }
     val nombreValido = nombre.isNotBlank()
     val telefonoValido = telefono.filter { it.isDigit() }.length == 9
     val direccionValida = !esDelivery || direccion.isNotBlank() // solo se exige con delivery

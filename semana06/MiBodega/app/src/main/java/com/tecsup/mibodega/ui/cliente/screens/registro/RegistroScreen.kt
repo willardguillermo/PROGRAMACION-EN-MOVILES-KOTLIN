@@ -25,7 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +40,7 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 2: Registro de datos (mockup "Cliente").
- * Guarda su propio estado de formulario (remember) porque solo esta
+ * Guarda su propio estado de formulario (rememberSaveable) porque solo esta
  * pantalla lo necesita. Al enviar, entrega los datos ya listos.
  *
  * Validación: si el usuario toca "Crear cuenta" con campos vacíos o
@@ -51,14 +51,14 @@ fun RegistroScreen(
     onVolver: () -> Unit,
     onCrearCuenta: (nombre: String, telefono: String, direccion: String, referencia: String) -> Unit
 ) {
-    var nombre by remember { mutableStateOf("") }
-    var telefono by remember { mutableStateOf("") }
-    var direccion by remember { mutableStateOf("") }
-    var referencia by remember { mutableStateOf("") }
+    var nombre by rememberSaveable { mutableStateOf("") }
+    var telefono by rememberSaveable { mutableStateOf("") }
+    var direccion by rememberSaveable { mutableStateOf("") }
+    var referencia by rememberSaveable { mutableStateOf("") }
 
     // Se vuelve true la primera vez que intentan enviar el formulario.
     // Así los campos no aparecen en rojo apenas se abre la pantalla.
-    var mostrarErrores by remember { mutableStateOf(false) }
+    var mostrarErrores by rememberSaveable { mutableStateOf(false) }
 
     val nombreValido = nombre.isNotBlank()
     val telefonoValido = telefono.filter { it.isDigit() }.length == 9

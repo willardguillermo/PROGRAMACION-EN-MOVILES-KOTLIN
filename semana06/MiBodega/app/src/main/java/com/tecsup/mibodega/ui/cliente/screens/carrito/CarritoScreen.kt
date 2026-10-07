@@ -37,7 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,8 +84,8 @@ fun CarritoScreen(
     val total = subtotal + COSTO_DELIVERY
 
     // Confirmaciones: guardan QUÉ se quiere borrar hasta que el usuario acepte.
-    var productoAEliminar by remember { mutableStateOf<Producto?>(null) }
-    var confirmarVaciar by remember { mutableStateOf(false) }
+    var productoAEliminar by rememberSaveable { mutableStateOf<Producto?>(null) }
+    var confirmarVaciar by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier

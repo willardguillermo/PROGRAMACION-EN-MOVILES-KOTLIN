@@ -1,12 +1,14 @@
 package com.tecsup.mibodega.ui.cliente.modelo
 
+import java.io.Serializable
+
 
 data class Usuario(
     val nombre: String,
     val telefono: String,
     val direccion: String,
     val referencia: String
-)
+) : Serializable
 
 
 // Credenciales FIJAS del login (no hay backend todavía)

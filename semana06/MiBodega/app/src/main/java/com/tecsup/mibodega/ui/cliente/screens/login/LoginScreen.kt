@@ -19,7 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,9 +41,9 @@ fun LoginScreen(
     onVolver: () -> Unit,
     onIngresar: () -> Unit
 ) {
-    var usuario by remember { mutableStateOf("") }
-    var clave by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
+    var usuario by rememberSaveable { mutableStateOf("") }
+    var clave by rememberSaveable { mutableStateOf("") }
+    var error by rememberSaveable { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier

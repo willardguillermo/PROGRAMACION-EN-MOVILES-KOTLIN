@@ -10,9 +10,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -58,18 +57,20 @@ fun ClienteApp(
     val navController = rememberNavController()
 
     // El carrito vive aquí arriba, no en ninguna Screen.
-    var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
+    // rememberSaveable (y no remember): sobrevive al girar la pantalla.
+    // Funciona porque Producto, ItemCarrito, Usuario y Pedido son Serializable.
+    var carrito by rememberSaveable { mutableStateOf<List<ItemCarrito>>(emptyList()) }
 
     // Usuario "logueado" (null = nadie ha entrado todavía).
-    var usuario by remember { mutableStateOf<Usuario?>(null) }
+    var usuario by rememberSaveable { mutableStateOf<Usuario?>(null) }
 
-    // Historial de pedidos confirmados (lista observable: add() redibuja la UI).
-    val pedidos = remember { mutableStateListOf<Pedido>() }
+    // Historial de pedidos confirmados. Se agrega con "pedidos + pedido" (lista nueva).
+    var pedidos by rememberSaveable { mutableStateOf<List<Pedido>>(emptyList()) }
 
-    // Ids de los productos marcados con ❤️ (lista observable).
-    val favoritos = remember { mutableStateListOf<Int>() }
+    // Ids de los productos marcados con ❤️ (Set: no se repiten).
+    var favoritos by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
     val alternarFavorito: (Producto) -> Unit = { producto ->
-        if (producto.id in favoritos) favoritos.remove(producto.id) else favoritos.add(producto.id)
+        favoritos = if (producto.id in favoritos) favoritos - producto.id else favoritos + producto.id
     }
 
     // Navegación del menú inferior: Inicio queda siempre como base de la pila,
@@ -106,7 +107,7 @@ fun ClienteApp(
         }
     ) {
         composable(Rutas.BIENVENIDA) {
-            var mostrarTerminos by remember { mutableStateOf(false) }
+            var mostrarTerminos by rememberSaveable { mutableStateOf(false) }
 
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
@@ -241,7 +242,7 @@ fun ClienteApp(
                 onProductoClick = { producto ->
                     navController.navigate(Rutas.detalle(producto.id))
                 },
-                onQuitarFavorito = { producto -> favoritos.remove(producto.id) }
+                onQuitarFavorito = { producto -> favoritos = favoritos - producto.id }
             )
         }
 
@@ -286,7 +287,7 @@ fun ClienteApp(
                         esDelivery = esDelivery,
                         costoEnvio = if (esDelivery) COSTO_DELIVERY else 0.0
                     )
-                    pedidos.add(pedido)
+                    pedidos = pedidos + pedido
                     usuario = datos        // recordamos los últimos datos de entrega
                     carrito = emptyList()  // la compra terminó: carrito limpio
 
