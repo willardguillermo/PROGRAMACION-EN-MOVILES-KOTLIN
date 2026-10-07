@@ -50,15 +50,18 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
  * Guarda su propia cantidad seleccionada (remember) mientras el usuario
  * decide cuánto quiere; solo al tocar "Agregar al carrito" le avisa
  * a ClienteApp cuánto agregar.
+ * El favorito (❤️) NO se guarda aquí: viene de ClienteApp para que la
+ * pantalla "Mis favoritos" vea los mismos datos.
  */
 @Composable
 fun DetalleProductoScreen(
     producto: Producto,
+    esFavorito: Boolean,
+    onFavorito: () -> Unit,
     onVolver: () -> Unit,
     onAgregarAlCarrito: (Producto, Int) -> Unit
 ) {
     var cantidad by remember { mutableStateOf(1) }
-    var esFavorito by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -68,7 +71,7 @@ fun DetalleProductoScreen(
         EncabezadoDetalle(
             esFavorito = esFavorito,
             onVolver = onVolver,
-            onFavorito = { esFavorito = !esFavorito }
+            onFavorito = onFavorito // el favorito ya no vive aquí: lo guarda ClienteApp
         )
 
         // Foto real del producto (res/drawable), elegida por su id
@@ -183,6 +186,8 @@ private fun DetalleProductoPreview() {
     BodegaTheme {
         DetalleProductoScreen(
             producto = listaProductosFake.first { it.nombre == "Coca-Cola Original" },
+            esFavorito = true,
+            onFavorito = {},
             onVolver = {},
             onAgregarAlCarrito = { _, _ -> }
         )

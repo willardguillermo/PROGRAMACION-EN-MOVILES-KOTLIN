@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Search
@@ -83,6 +84,7 @@ fun InicioScreen(
     onVerCarrito: () -> Unit,
     onProductoClick: (Producto) -> Unit,
     onAgregarProducto: (Producto) -> Unit,
+    onVerFavoritos: () -> Unit,
     onNavegarBarra: (String) -> Unit
 ) {
     // rememberSaveable (y no remember): al ir a Detalle y volver, la categoría
@@ -112,6 +114,9 @@ fun InicioScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onVerFavoritos) {
+                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Mis favoritos")
+                    }
                     IconButton(onClick = onVerCarrito) {
                         BadgedBox(
                             badge = {
@@ -290,6 +295,7 @@ private fun InicioPreview() {
             onVerCarrito = {},
             onProductoClick = {},
             onAgregarProducto = {},
+            onVerFavoritos = {},
             onNavegarBarra = {}
         )
     }

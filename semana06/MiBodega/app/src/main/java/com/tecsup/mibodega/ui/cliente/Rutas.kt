@@ -22,6 +22,7 @@ object Rutas {
     const val CARRITO = "carrito"
     const val ENTREGA = "entrega"
     const val CONFIRMACION = "confirmacion/{pedidoId}"
+    const val FAVORITOS = "favoritos"
 
     // Arman la ruta real reemplazando el parámetro
     fun detalle(productoId: Int) = "detalle/$productoId"

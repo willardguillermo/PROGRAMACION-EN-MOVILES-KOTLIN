@@ -28,6 +28,7 @@ import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
 import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
+import com.tecsup.mibodega.ui.cliente.screens.favoritos.FavoritosScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
@@ -54,6 +55,12 @@ fun ClienteApp() {
 
     // Historial de pedidos confirmados (lista observable: add() redibuja la UI).
     val pedidos = remember { mutableStateListOf<Pedido>() }
+
+    // Ids de los productos marcados con ❤️ (lista observable).
+    val favoritos = remember { mutableStateListOf<Int>() }
+    val alternarFavorito: (Producto) -> Unit = { producto ->
+        if (producto.id in favoritos) favoritos.remove(producto.id) else favoritos.add(producto.id)
+    }
 
     // Navegación del menú inferior: Inicio queda siempre como base de la pila,
     // así las pestañas no se apilan y "atrás" desde cualquiera vuelve a Inicio.
@@ -131,6 +138,7 @@ fun ClienteApp() {
                 onAgregarProducto = { producto ->
                     carrito = agregarOSumarProducto(carrito, producto, 1)
                 },
+                onVerFavoritos = { navController.navigate(Rutas.FAVORITOS) },
                 onNavegarBarra = navegarBarra
             )
         }
@@ -182,6 +190,8 @@ fun ClienteApp() {
             } else {
                 DetalleProductoScreen(
                     producto = producto,
+                    esFavorito = producto.id in favoritos,
+                    onFavorito = { alternarFavorito(producto) },
                     onVolver = { navController.popBackStack() },
                     onAgregarAlCarrito = { productoSeleccionado, cantidad ->
                         carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
@@ -189,6 +199,18 @@ fun ClienteApp() {
                     }
                 )
             }
+        }
+
+        composable(Rutas.FAVORITOS) {
+            FavoritosScreen(
+                // Convertimos los ids guardados en productos para mostrarlos
+                favoritos = listaProductosFake.filter { it.id in favoritos },
+                onVolver = { navController.popBackStack() },
+                onProductoClick = { producto ->
+                    navController.navigate(Rutas.detalle(producto.id))
+                },
+                onQuitarFavorito = { producto -> favoritos.remove(producto.id) }
+            )
         }
 
         composable(Rutas.CARRITO) {
