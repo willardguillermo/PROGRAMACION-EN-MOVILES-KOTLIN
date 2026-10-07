@@ -1,5 +1,9 @@
 package com.tecsup.mibodega.ui.cliente
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,6 +38,9 @@ import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
 import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
+
+/** Duración (ms) de la animación entre pantallas. */
+private const val DURACION_ANIMACION = 300
 
 /**
  * "Director de orquesta" de la app cliente:
@@ -74,9 +81,29 @@ fun ClienteApp(
         }
     }
 
+    // NavHost anima cada cambio de pantalla con AnimatedContent por dentro.
+    // Aquí le decimos CÓMO animar: deslizar + desvanecer en 300 ms.
+    //  - enter/exit: al avanzar (navigate) la nueva entra desde la derecha.
+    //  - popEnter/popExit: al volver (atrás) la anterior regresa desde la izquierda.
     NavHost(
         navController = navController,
-        startDestination = Rutas.BIENVENIDA
+        startDestination = Rutas.BIENVENIDA,
+        enterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(DURACION_ANIMACION)) +
+                fadeIn(tween(DURACION_ANIMACION))
+        },
+        exitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(DURACION_ANIMACION)) +
+                fadeOut(tween(DURACION_ANIMACION))
+        },
+        popEnterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(DURACION_ANIMACION)) +
+                fadeIn(tween(DURACION_ANIMACION))
+        },
+        popExitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(DURACION_ANIMACION)) +
+                fadeOut(tween(DURACION_ANIMACION))
+        }
     ) {
         composable(Rutas.BIENVENIDA) {
             var mostrarTerminos by remember { mutableStateOf(false) }

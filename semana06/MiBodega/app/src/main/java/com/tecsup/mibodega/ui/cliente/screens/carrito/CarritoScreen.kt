@@ -1,5 +1,11 @@
 package com.tecsup.mibodega.ui.cliente.screens.carrito
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -300,11 +306,21 @@ private fun ResumenYBoton(
                 text = "Total",
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "S/ %.2f".format(total),
-                style = MaterialTheme.typography.titleMedium,
-                color = VerdeBodega
-            )
+            // AnimatedContent: cuando el total cambia, el número viejo sale
+            // hacia arriba y el nuevo entra desde abajo (efecto "contador").
+            AnimatedContent(
+                targetState = total,
+                transitionSpec = {
+                    (slideInVertically { it } + fadeIn()) togetherWith (slideOutVertically { -it } + fadeOut())
+                },
+                label = "total"
+            ) { totalAnimado ->
+                Text(
+                    text = "S/ %.2f".format(totalAnimado),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = VerdeBodega
+                )
+            }
         }
 
         Spacer(Modifier.height(16.dp))
