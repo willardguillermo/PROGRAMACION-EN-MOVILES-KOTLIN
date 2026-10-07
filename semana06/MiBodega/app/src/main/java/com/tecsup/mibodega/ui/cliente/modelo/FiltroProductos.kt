@@ -34,3 +34,17 @@ fun filtrarProductos(
         coincideCategoria && coincideTexto
     }
 }
+
+/** Opciones de orden para la lista de Inicio. */
+enum class OrdenPrecio(val etiqueta: String) {
+    NINGUNO("Sin ordenar"),
+    MENOR_A_MAYOR("Precio: menor a mayor"),
+    MAYOR_A_MENOR("Precio: mayor a menor")
+}
+
+/** Devuelve la lista ordenada por precio según la opción elegida (no modifica la original). */
+fun List<Producto>.ordenarPor(orden: OrdenPrecio): List<Producto> = when (orden) {
+    OrdenPrecio.NINGUNO -> this
+    OrdenPrecio.MENOR_A_MAYOR -> sortedBy { it.precio }
+    OrdenPrecio.MAYOR_A_MENOR -> sortedByDescending { it.precio }
+}

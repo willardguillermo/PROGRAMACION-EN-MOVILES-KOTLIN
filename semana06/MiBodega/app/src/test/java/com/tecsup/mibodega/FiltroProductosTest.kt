@@ -1,7 +1,9 @@
 package com.tecsup.mibodega
 
+import com.tecsup.mibodega.ui.cliente.modelo.OrdenPrecio
 import com.tecsup.mibodega.ui.cliente.modelo.filtrarProductos
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
+import com.tecsup.mibodega.ui.cliente.modelo.ordenarPor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -40,5 +42,17 @@ class FiltroProductosTest {
     fun textoQueNoExiste_devuelveListaVacia() {
         val resultado = filtrarProductos(listaProductosFake, "Todos", "pizza")
         assertTrue(resultado.isEmpty())
+    }
+
+    @Test
+    fun ordenarMenorAMayor_elPrimeroEsElMasBarato() {
+        val resultado = listaProductosFake.ordenarPor(OrdenPrecio.MENOR_A_MAYOR)
+        assertEquals(listaProductosFake.minOf { it.precio }, resultado.first().precio, 0.001)
+    }
+
+    @Test
+    fun ordenarMayorAMenor_elPrimeroEsElMasCaro() {
+        val resultado = listaProductosFake.ordenarPor(OrdenPrecio.MAYOR_A_MENOR)
+        assertEquals(listaProductosFake.maxOf { it.precio }, resultado.first().precio, 0.001)
     }
 }

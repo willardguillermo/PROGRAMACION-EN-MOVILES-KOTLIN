@@ -3,6 +3,7 @@ package com.tecsup.mibodega.ui.cliente.screens.inicio
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,8 +29,11 @@ import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,10 +63,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.BarraInferior
 import com.tecsup.mibodega.ui.cliente.Rutas
+import com.tecsup.mibodega.ui.cliente.modelo.OrdenPrecio
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.filtrarProductos
 import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
+import com.tecsup.mibodega.ui.cliente.modelo.ordenarPor
 import com.tecsup.mibodega.ui.componentes.ProductoCard
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
@@ -91,14 +97,17 @@ fun InicioScreen(
     // y el texto se conservan porque Navigation guarda el estado de esta pantalla.
     var categoriaSeleccionada by rememberSaveable { mutableStateOf(listaCategorias.first()) }
     var textoBusqueda by rememberSaveable { mutableStateOf("") }
+    var orden by rememberSaveable { mutableStateOf(OrdenPrecio.NINGUNO) }
+    var menuOrdenAbierto by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     // Fase 2 (IA): los DOS filtros se aplican juntos (AND), ninguno reemplaza al otro.
     // remember(...) recalcula la lista solo cuando cambia una de sus llaves,
     // es decir, en tiempo real con cada letra que escribe el usuario.
     // La lógica vive en FiltroProductos.kt para poder probarla con JUnit.
-    val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
-        filtrarProductos(productos, categoriaSeleccionada, textoBusqueda)
+    // Primero se filtra (categoría + texto) y luego se ordena por precio.
+    val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda, orden) {
+        filtrarProductos(productos, categoriaSeleccionada, textoBusqueda).ordenarPor(orden)
     }
 
     Scaffold(
@@ -192,11 +201,42 @@ fun InicioScreen(
                     text = if (categoriaSeleccionada == "Todos") "Productos destacados" else categoriaSeleccionada,
                     style = MaterialTheme.typography.titleMedium
                 )
-                Text(
-                    text = "${productosFiltrados.size} productos",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "${productosFiltrados.size} productos",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    // Botón "ordenar" con su DropdownMenu de opciones
+                    Box {
+                        IconButton(onClick = { menuOrdenAbierto = true }) {
+                            Icon(
+                                imageVector = Icons.Default.SwapVert,
+                                contentDescription = "Ordenar por precio",
+                                tint = if (orden == OrdenPrecio.NINGUNO) MaterialTheme.colorScheme.onSurfaceVariant else VerdeBodega
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuOrdenAbierto,
+                            onDismissRequest = { menuOrdenAbierto = false }
+                        ) {
+                            OrdenPrecio.entries.forEach { opcion ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = opcion.etiqueta,
+                                            fontWeight = if (opcion == orden) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    onClick = {
+                                        orden = opcion
+                                        menuOrdenAbierto = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             if (productosFiltrados.isEmpty()) {
