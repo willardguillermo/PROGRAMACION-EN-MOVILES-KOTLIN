@@ -24,7 +24,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Pedido
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
-import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
 import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
@@ -63,6 +62,9 @@ fun ClienteApp(
 
     // Usuario "logueado" (null = nadie ha entrado todavía).
     var usuario by rememberSaveable { mutableStateOf<Usuario?>(null) }
+    
+    // Cuenta registrada en la app (para validar en el login)
+    var usuarioRegistrado by rememberSaveable { mutableStateOf<Usuario?>(null) }
 
     // Historial de pedidos confirmados. Se agrega con "pedidos + pedido" (lista nueva).
     var pedidos by rememberSaveable { mutableStateOf<List<Pedido>>(emptyList()) }
@@ -134,10 +136,11 @@ fun ClienteApp(
 
         composable(Rutas.LOGIN) {
             LoginScreen(
+                usuarioRegistrado = usuarioRegistrado,
                 onVolver = { navController.popBackStack() },
-                onIngresar = {
-                    // Usuario y contraseña correctos: entramos con los datos de prueba
-                    usuario = usuarioDemo
+                onIngresar = { userToLog ->
+                    // Usuario y contraseña correctos: entramos con los datos validados
+                    usuario = userToLog
                     navController.navigate(Rutas.INICIO) {
                         // Bienvenida y Login salen de la pila: "atrás" desde Inicio cierra la app
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
@@ -149,11 +152,11 @@ fun ClienteApp(
         composable(Rutas.REGISTRO) {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
-                onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // Guardamos los datos en memoria (se pierden al cerrar la app)
-                    usuario = Usuario(nombre, telefono, direccion, referencia)
-                    navController.navigate(Rutas.INICIO) {
-                        popUpTo(Rutas.BIENVENIDA) { inclusive = true }
+                onCrearCuenta = { usuarioReg, claveReg, nombre, telefono, direccion, referencia ->
+                    // Guardamos la cuenta registrada
+                    usuarioRegistrado = Usuario(usuarioReg, claveReg, nombre, telefono, direccion, referencia)
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(Rutas.BIENVENIDA)
                     }
                 }
             )

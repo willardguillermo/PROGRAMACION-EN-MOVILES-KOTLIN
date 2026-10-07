@@ -27,19 +27,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.modelo.CLAVE_LOGIN
 import com.tecsup.mibodega.ui.cliente.modelo.USUARIO_LOGIN
+import com.tecsup.mibodega.ui.cliente.modelo.Usuario
+import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 
 /**
- * Login con usuario y contraseña FIJOS en el código (USUARIO_LOGIN / CLAVE_LOGIN).
+ * Login con usuario y contraseña (valida contra el registrado o el demo).
  * Si no coinciden, muestra el error en rojo y NO deja entrar.
- * (Todavía no hay backend: en un proyecto real esto se valida en un servidor.)
  */
 @Composable
 fun LoginScreen(
+    usuarioRegistrado: Usuario?,
     onVolver: () -> Unit,
-    onIngresar: () -> Unit
+    onIngresar: (Usuario) -> Unit
 ) {
     var usuario by rememberSaveable { mutableStateOf("") }
     var clave by rememberSaveable { mutableStateOf("") }
@@ -65,11 +67,19 @@ fun LoginScreen(
         }
 
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = "Usuario de prueba: $USUARIO_LOGIN  ·  Contraseña: $CLAVE_LOGIN",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        if (usuarioRegistrado != null) {
+            Text(
+                text = "Inicia sesión con tu cuenta recién creada",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            Text(
+                text = "Usuario de prueba: $USUARIO_LOGIN  ·  Contraseña: $CLAVE_LOGIN",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         Spacer(Modifier.height(24.dp))
 
         CampoTexto(
@@ -94,12 +104,18 @@ fun LoginScreen(
         BotonPrimario(
             texto = "Ingresar",
             onClick = {
+                val inputUsuario = usuario.trim()
                 error = when {
-                    usuario.isBlank() || clave.isBlank() -> "Completa usuario y contraseña"
-                    usuario.trim() != USUARIO_LOGIN || clave != CLAVE_LOGIN -> "Usuario o contraseña incorrectos"
-                    else -> null
+                    inputUsuario.isBlank() || clave.isBlank() -> "Completa usuario y contraseña"
+                    usuarioRegistrado != null && inputUsuario == usuarioRegistrado.usuario && clave == usuarioRegistrado.clave -> null // Login con cuenta registrada
+                    usuarioRegistrado == null && inputUsuario == USUARIO_LOGIN && clave == CLAVE_LOGIN -> null // Login con cuenta demo
+                    else -> "Usuario o contraseña incorrectos"
                 }
-                if (error == null) onIngresar()
+
+                if (error == null) {
+                    val userToLog = if (usuarioRegistrado != null) usuarioRegistrado else usuarioDemo
+                    onIngresar(userToLog)
+                }
             }
         )
     }
@@ -109,6 +125,6 @@ fun LoginScreen(
 @Composable
 private fun LoginPreview() {
     BodegaTheme {
-        LoginScreen(onVolver = {}, onIngresar = {})
+        LoginScreen(usuarioRegistrado = null, onVolver = {}, onIngresar = {})
     }
 }
