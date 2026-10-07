@@ -34,7 +34,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Destino "Perfil" de la NavigationBar: muestra los datos del registro
@@ -64,7 +63,7 @@ fun PerfilScreen(
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
-                tint = VerdeBodega,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(96.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
@@ -103,7 +102,7 @@ fun PerfilScreen(
                 Switch(
                     checked = modoOscuro,
                     onCheckedChange = onCambiarModoOscuro,
-                    colors = SwitchDefaults.colors(checkedTrackColor = VerdeBodega)
+                    colors = SwitchDefaults.colors(checkedTrackColor = MaterialTheme.colorScheme.primary)
                 )
             }
 

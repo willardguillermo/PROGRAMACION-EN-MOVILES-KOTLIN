@@ -32,8 +32,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.RojoPrecio
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 7: Pedido confirmado (mockup "Cliente").
@@ -58,7 +56,7 @@ fun ConfirmacionScreen(
         Icon(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
-            tint = VerdeBodega,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(96.dp)
         )
 
@@ -67,7 +65,7 @@ fun ConfirmacionScreen(
         Text(
             text = "¡Pedido realizado!",
             style = MaterialTheme.typography.titleLarge,
-            color = VerdeBodega
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(Modifier.height(8.dp))
         Text(
@@ -111,7 +109,7 @@ private fun ResumenPedido(pedido: Pedido) {
                 Text("Total", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     text = "S/ %.2f".format(pedido.total),
-                    color = RojoPrecio,
+                    color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold
                 )
             }

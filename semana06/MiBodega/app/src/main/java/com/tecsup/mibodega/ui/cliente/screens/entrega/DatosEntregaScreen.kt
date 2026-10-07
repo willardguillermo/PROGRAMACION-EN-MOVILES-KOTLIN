@@ -40,7 +40,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.usuarioDemo
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /** Tipos de entrega (RadioButton). El texto incluye el costo para que el cliente lo vea. */
 private const val OPCION_DELIVERY = "Delivery a domicilio (+ S/ 4.00)"
@@ -163,7 +162,7 @@ fun DatosEntregaScreen(
             Text(
                 text = "S/ %.2f".format(total),
                 style = MaterialTheme.typography.titleMedium,
-                color = VerdeBodega
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -253,7 +252,7 @@ private fun GrupoRadio(
                 RadioButton(
                     selected = opcion == seleccionado,
                     onClick = null, // el click lo maneja la fila completa
-                    colors = RadioButtonDefaults.colors(selectedColor = VerdeBodega)
+                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                 )
                 Text(
                     text = opcion,

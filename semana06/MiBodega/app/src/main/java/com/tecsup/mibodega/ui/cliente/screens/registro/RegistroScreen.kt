@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 2: Registro de datos (mockup "Cliente").
@@ -86,7 +85,7 @@ fun RegistroScreen(
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Foto de perfil",
-                tint = VerdeBodega,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(84.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)

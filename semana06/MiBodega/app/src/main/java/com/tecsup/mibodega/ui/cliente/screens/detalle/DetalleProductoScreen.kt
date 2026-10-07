@@ -42,8 +42,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.RojoPrecio
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 4: Detalle del producto (mockup "Cliente").
@@ -87,7 +85,7 @@ fun DetalleProductoScreen(
             Text(
                 text = producto.categoria,
                 style = MaterialTheme.typography.bodySmall,
-                color = VerdeBodega
+                color = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -100,7 +98,7 @@ fun DetalleProductoScreen(
             Text(
                 text = "S/ %.2f".format(producto.precio),
                 style = MaterialTheme.typography.displayMedium.copy(fontSize = 26.sp),
-                color = RojoPrecio
+                color = MaterialTheme.colorScheme.error
             )
 
             Spacer(Modifier.height(12.dp))
@@ -154,7 +152,7 @@ private fun EncabezadoDetalle(
             Icon(
                 imageVector = if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = if (esFavorito) "Quitar de favoritos" else "Agregar a favoritos",
-                tint = if (esFavorito) RojoPrecio else MaterialTheme.colorScheme.onSurface
+                tint = if (esFavorito) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
             )
         }
     }

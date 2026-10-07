@@ -46,8 +46,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.imagenRes
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisBorde
-import com.tecsup.mibodega.ui.theme.RojoPrecio
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Lista de productos marcados con ❤️ (en Detalle).
@@ -128,14 +126,14 @@ private fun FilaFavorito(
             Text(
                 text = "S/ %.2f".format(producto.precio),
                 style = MaterialTheme.typography.labelMedium,
-                color = VerdeBodega
+                color = MaterialTheme.colorScheme.primary
             )
         }
         IconButton(onClick = onQuitar) {
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Quitar ${producto.nombre} de favoritos",
-                tint = RojoPrecio
+                tint = MaterialTheme.colorScheme.error
             )
         }
     }

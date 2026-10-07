@@ -71,7 +71,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.modelo.ordenarPor
 import com.tecsup.mibodega.ui.componentes.ProductoCard
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 3: Inicio / Productos (mockup "Cliente").
@@ -116,7 +115,7 @@ fun InicioScreen(
                     Text(
                         text = buildAnnotatedString {
                             append("Mi ")
-                            withStyle(SpanStyle(color = VerdeBodega)) { append("Bodega") }
+                            withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) { append("Bodega") }
                         },
                         fontWeight = FontWeight.Bold
                     )
@@ -172,7 +171,7 @@ fun InicioScreen(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
-                    focusedBorderColor = VerdeBodega
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
@@ -212,7 +211,7 @@ fun InicioScreen(
                             Icon(
                                 imageVector = Icons.Default.SwapVert,
                                 contentDescription = "Ordenar por precio",
-                                tint = if (orden == OrdenPrecio.NINGUNO) MaterialTheme.colorScheme.onSurfaceVariant else VerdeBodega
+                                tint = if (orden == OrdenPrecio.NINGUNO) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
                             )
                         }
                         DropdownMenu(
@@ -275,7 +274,7 @@ private fun ChipCategoria(
     seleccionado: Boolean,
     onClick: () -> Unit
 ) {
-    val fondo = if (seleccionado) VerdeBodega else MaterialTheme.colorScheme.surfaceVariant
+    val fondo = if (seleccionado) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
     val contenido = if (seleccionado) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
     Column(
@@ -289,7 +288,7 @@ private fun ChipCategoria(
         Icon(
             imageVector = icono,
             contentDescription = null,
-            tint = if (seleccionado) contenido else VerdeBodega,
+            tint = if (seleccionado) contenido else MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp)
         )
         Text(

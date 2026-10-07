@@ -33,7 +33,6 @@ import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.AzulEnlace
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 1: Registro / Login (mockup "Cliente").
@@ -122,7 +121,7 @@ private fun TituloMiBodega() {
     Text(
         text = buildAnnotatedString {
             append("Mi ")
-            withStyle(SpanStyle(color = VerdeBodega)) { append("Bodega") }
+            withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) { append("Bodega") }
         },
         style = MaterialTheme.typography.displayMedium,
         color = MaterialTheme.colorScheme.onBackground

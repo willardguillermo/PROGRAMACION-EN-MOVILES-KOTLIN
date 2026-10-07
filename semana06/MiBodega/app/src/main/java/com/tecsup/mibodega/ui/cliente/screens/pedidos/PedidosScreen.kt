@@ -39,8 +39,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Pedido
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisBorde
-import com.tecsup.mibodega.ui.theme.RojoPrecio
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Destino "Pedidos" de la NavigationBar: historial de pedidos confirmados.
@@ -92,7 +90,7 @@ private fun TarjetaPedido(pedido: Pedido) {
                 Text(
                     text = pedido.estado,
                     style = MaterialTheme.typography.bodySmall,
-                    color = VerdeBodega,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -113,7 +111,7 @@ private fun TarjetaPedido(pedido: Pedido) {
             Text(
                 text = "Total: S/ %.2f".format(pedido.total),
                 style = MaterialTheme.typography.labelMedium,
-                color = RojoPrecio
+                color = MaterialTheme.colorScheme.error
             )
         }
     }

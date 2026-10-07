@@ -54,7 +54,6 @@ import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisBorde
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -318,7 +317,7 @@ private fun ResumenYBoton(
                 Text(
                     text = "S/ %.2f".format(totalAnimado),
                     style = MaterialTheme.typography.titleMedium,
-                    color = VerdeBodega
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

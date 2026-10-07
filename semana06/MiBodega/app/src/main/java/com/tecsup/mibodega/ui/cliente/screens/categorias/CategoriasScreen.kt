@@ -36,7 +36,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
-import com.tecsup.mibodega.ui.theme.VerdeBodega
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -76,7 +75,7 @@ fun CategoriasScreen(
                     Text(
                         text = "$categoria (${productosDeCategoria.size})",
                         style = MaterialTheme.typography.titleMedium,
-                        color = VerdeBodega,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                     )
                 }
@@ -116,7 +115,7 @@ private fun FilaProducto(producto: Producto, onClick: () -> Unit) {
         Text(
             text = "S/ %.2f".format(producto.precio),
             style = MaterialTheme.typography.labelMedium,
-            color = VerdeBodega
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
