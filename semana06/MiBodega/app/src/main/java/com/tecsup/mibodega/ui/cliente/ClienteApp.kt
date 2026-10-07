@@ -29,6 +29,7 @@ import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
+import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
 import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
@@ -72,14 +73,7 @@ fun ClienteApp() {
 
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
-                onIniciarSesion = {
-                    // Login simulado: sin backend, entramos con un usuario de prueba
-                    usuario = usuarioDemo
-                    navController.navigate(Rutas.INICIO) {
-                        // Bienvenida sale de la pila: "atrás" desde Inicio cierra la app
-                        popUpTo(Rutas.BIENVENIDA) { inclusive = true }
-                    }
-                },
+                onIniciarSesion = { navController.navigate(Rutas.LOGIN) },
                 onTerminos = { mostrarTerminos = true }
             )
 
@@ -98,6 +92,20 @@ fun ClienteApp() {
                     }
                 )
             }
+        }
+
+        composable(Rutas.LOGIN) {
+            LoginScreen(
+                onVolver = { navController.popBackStack() },
+                onIngresar = {
+                    // Usuario y contraseña correctos: entramos con los datos de prueba
+                    usuario = usuarioDemo
+                    navController.navigate(Rutas.INICIO) {
+                        // Bienvenida y Login salen de la pila: "atrás" desde Inicio cierra la app
+                        popUpTo(Rutas.BIENVENIDA) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(Rutas.REGISTRO) {

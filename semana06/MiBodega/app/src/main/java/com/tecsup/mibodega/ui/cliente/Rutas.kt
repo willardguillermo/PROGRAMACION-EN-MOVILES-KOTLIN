@@ -9,6 +9,7 @@ object Rutas {
     // Acceso
     const val BIENVENIDA = "bienvenida"
     const val REGISTRO = "registro"
+    const val LOGIN = "login"
 
     // Destinos del menú inferior (NavigationBar)
     const val INICIO = "inicio"
