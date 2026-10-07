@@ -21,12 +21,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +77,10 @@ fun CarritoScreen(
     val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
     val total = subtotal + COSTO_DELIVERY
 
+    // Confirmaciones: guardan QUÉ se quiere borrar hasta que el usuario acepte.
+    var productoAEliminar by remember { mutableStateOf<Producto?>(null) }
+    var confirmarVaciar by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +89,7 @@ fun CarritoScreen(
         EncabezadoCarrito(
             mostrarVaciar = carrito.isNotEmpty(),
             onVolver = onVolver,
-            onVaciar = onVaciar
+            onVaciar = { confirmarVaciar = true } // primero pregunta
         )
 
         if (carrito.isEmpty()) {
@@ -96,8 +106,12 @@ fun CarritoScreen(
                     FilaCarrito(
                         item = item,
                         onIncrementar = { onIncrementar(item.producto) },
-                        onDecrementar = { onDecrementar(item.producto) },
-                        onEliminar = { onEliminar(item.producto) }
+                        onDecrementar = {
+                            // Con cantidad 1, restar = eliminar, así que también pregunta
+                            if (item.cantidad == 1) productoAEliminar = item.producto
+                            else onDecrementar(item.producto)
+                        },
+                        onEliminar = { productoAEliminar = item.producto }
                     )
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 }
@@ -110,6 +124,41 @@ fun CarritoScreen(
                 onContinuarPedido = onContinuarPedido
             )
         }
+    }
+
+    // AlertDialog: solo se muestra mientras productoAEliminar no sea null
+    productoAEliminar?.let { producto ->
+        AlertDialog(
+            onDismissRequest = { productoAEliminar = null },
+            title = { Text("Eliminar producto") },
+            text = { Text("¿Quieres quitar ${producto.nombre} de tu carrito?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onEliminar(producto)
+                    productoAEliminar = null
+                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { productoAEliminar = null }) { Text("Cancelar") }
+            }
+        )
+    }
+
+    if (confirmarVaciar) {
+        AlertDialog(
+            onDismissRequest = { confirmarVaciar = false },
+            title = { Text("Vaciar carrito") },
+            text = { Text("Se quitarán todos los productos. ¿Continuar?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onVaciar()
+                    confirmarVaciar = false
+                }) { Text("Vaciar", color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmarVaciar = false }) { Text("Cancelar") }
+            }
+        )
     }
 }
 
