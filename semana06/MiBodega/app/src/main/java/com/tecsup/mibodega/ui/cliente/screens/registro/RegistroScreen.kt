@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -30,18 +30,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 2: Registro de datos (mockup "Cliente").
  * Guarda su propio estado de formulario (remember) porque solo esta
  * pantalla lo necesita. Al enviar, entrega los datos ya listos.
+ *
+ * Validación: si el usuario toca "Crear cuenta" con campos vacíos o
+ * inválidos, NO avanza y esos campos se marcan en rojo con su mensaje.
  */
 @Composable
 fun RegistroScreen(
@@ -52,9 +55,14 @@ fun RegistroScreen(
     var telefono by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
-    // Se recalcula sola en cada recomposición (cada vez que cambia un campo)
+
+    // Se vuelve true la primera vez que intentan enviar el formulario.
+    // Así los campos no aparecen en rojo apenas se abre la pantalla.
+    var mostrarErrores by remember { mutableStateOf(false) }
+
+    val nombreValido = nombre.isNotBlank()
     val telefonoValido = telefono.filter { it.isDigit() }.length == 9
-    val formularioValido = nombre.isNotBlank() && telefonoValido && direccion.isNotBlank()
+    val direccionValida = direccion.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -77,7 +85,7 @@ fun RegistroScreen(
                 tint = VerdeBodega,
                 modifier = Modifier
                     .size(84.dp)
-                    .background(GrisClaro, CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                     .padding(4.dp)
             )
         }
@@ -88,7 +96,9 @@ fun RegistroScreen(
             etiqueta = "Nombre completo",
             valor = nombre,
             onValorCambia = { nombre = it },
-            placeholder = "Juan Pérez"
+            placeholder = "Juan Pérez",
+            esError = mostrarErrores && !nombreValido,
+            mensajeError = "Ingresa tu nombre"
         )
         Spacer(Modifier.height(16.dp))
 
@@ -97,29 +107,24 @@ fun RegistroScreen(
             valor = telefono,
             onValorCambia = { telefono = it },
             placeholder = "987 654 321",
-            teclado = KeyboardType.Phone
+            teclado = KeyboardType.Phone,
+            esError = mostrarErrores && !telefonoValido,
+            mensajeError = "El teléfono debe tener 9 dígitos"
         )
-
-        if (telefono.isNotEmpty() && !telefonoValido) {
-            Text(
-                text = "El teléfono debe tener 9 dígitos",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error
-            )
-        }
-
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
             onValorCambia = { direccion = it },
-            placeholder = "Av. Los Olivos 123"
+            placeholder = "Av. Los Olivos 123",
+            esError = mostrarErrores && !direccionValida,
+            mensajeError = "Ingresa tu dirección"
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
-            etiqueta = "Referencia",
+            etiqueta = "Referencia (opcional)",
             valor = referencia,
             onValorCambia = { referencia = it },
             placeholder = "Frente al parque"
@@ -129,9 +134,12 @@ fun RegistroScreen(
 
         BotonPrimario(
             texto = "Crear cuenta",
-            habilitado = formularioValido,
             onClick = {
-                onCrearCuenta(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+                if (nombreValido && telefonoValido && direccionValida) {
+                    onCrearCuenta(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+                } else {
+                    mostrarErrores = true // no avanza: pinta en rojo lo que falta
+                }
             }
         )
 
@@ -166,7 +174,7 @@ private fun EncabezadoRegistro(onVolver: () -> Unit) {
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.fillMaxWidth(),
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        textAlign = TextAlign.Center
     )
 }
 
@@ -177,4 +185,3 @@ private fun RegistroPreview() {
         RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _ -> })
     }
 }
-

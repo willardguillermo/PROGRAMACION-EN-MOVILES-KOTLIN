@@ -65,9 +65,11 @@ fun DatosEntregaScreen(
     var referencia by remember { mutableStateOf(usuario?.referencia ?: "") }
     var metodoPago by remember { mutableStateOf(metodosPago.first()) }
 
-    val formularioValido = nombre.isNotBlank() &&
-            telefono.filter { it.isDigit() }.length == 9 &&
-            direccion.isNotBlank()
+    // Igual que en Registro: los errores se muestran recién al intentar confirmar
+    var mostrarErrores by remember { mutableStateOf(false) }
+    val nombreValido = nombre.isNotBlank()
+    val telefonoValido = telefono.filter { it.isDigit() }.length == 9
+    val direccionValida = direccion.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -80,18 +82,32 @@ fun DatosEntregaScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        CampoTexto(etiqueta = "Nombre", valor = nombre, onValorCambia = { nombre = it })
+        CampoTexto(
+            etiqueta = "Nombre",
+            valor = nombre,
+            onValorCambia = { nombre = it },
+            esError = mostrarErrores && !nombreValido,
+            mensajeError = "Ingresa tu nombre"
+        )
         Spacer(Modifier.height(12.dp))
         CampoTexto(
             etiqueta = "Teléfono",
             valor = telefono,
             onValorCambia = { telefono = it },
-            teclado = KeyboardType.Phone
+            teclado = KeyboardType.Phone,
+            esError = mostrarErrores && !telefonoValido,
+            mensajeError = "El teléfono debe tener 9 dígitos"
         )
         Spacer(Modifier.height(12.dp))
-        CampoTexto(etiqueta = "Dirección", valor = direccion, onValorCambia = { direccion = it })
+        CampoTexto(
+            etiqueta = "Dirección",
+            valor = direccion,
+            onValorCambia = { direccion = it },
+            esError = mostrarErrores && !direccionValida,
+            mensajeError = "Ingresa la dirección de entrega"
+        )
         Spacer(Modifier.height(12.dp))
-        CampoTexto(etiqueta = "Referencia", valor = referencia, onValorCambia = { referencia = it })
+        CampoTexto(etiqueta = "Referencia (opcional)", valor = referencia, onValorCambia = { referencia = it })
 
         Spacer(Modifier.height(20.dp))
 
@@ -123,10 +139,13 @@ fun DatosEntregaScreen(
 
         BotonPrimario(
             texto = "Confirmar pedido",
-            habilitado = formularioValido,
             onClick = {
-                val datos = Usuario(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
-                onConfirmar(datos, metodoPago)
+                if (nombreValido && telefonoValido && direccionValida) {
+                    val datos = Usuario(nombre.trim(), telefono.trim(), direccion.trim(), referencia.trim())
+                    onConfirmar(datos, metodoPago)
+                } else {
+                    mostrarErrores = true // no avanza: pinta en rojo lo que falta
+                }
             }
         )
 
