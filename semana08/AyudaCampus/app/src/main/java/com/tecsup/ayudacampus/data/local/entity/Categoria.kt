@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Categoria(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nombre: String,
-    val icono: String,        // pc, code, wifi, key, printer, tag
+    val icono: String,
     val activa: Boolean = true
 )
