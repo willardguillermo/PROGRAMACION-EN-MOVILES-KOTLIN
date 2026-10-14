@@ -1,58 +1,87 @@
 package com.tecsup.ayudacampus.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
+import androidx.compose.ui.graphics.Color
+import com.tecsup.ayudacampus.model.Rol
 
 @Composable
-fun AyudaCampusTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+fun AyudaTheme(
+    rol: Rol = Rol.CLIENTE,
+    oscuro: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (oscuro) esquemaOscuro(rol) else esquemaClaro(rol),
         typography = Typography,
         content = content
+    )
+}
+
+private fun esquemaClaro(rol: Rol): ColorScheme {
+    val cliente = rol == Rol.CLIENTE
+    val primario = if (cliente) Cian else Violeta
+    val contenedor = if (cliente) CianContenedor else VioletaContenedor
+    val sobreContenedor = if (cliente) CianOscuro else VioletaOscuro
+    val fondo = if (cliente) CianFondo else VioletaFondo
+    return lightColorScheme(
+        primary = primario,
+        onPrimary = Color.White,
+        primaryContainer = contenedor,
+        onPrimaryContainer = sobreContenedor,
+        secondary = primario,
+        onSecondary = Color.White,
+        secondaryContainer = contenedor,
+        onSecondaryContainer = sobreContenedor,
+        background = fondo,
+        onBackground = TextoPrincipal,
+        surface = Color.White,
+        onSurface = TextoPrincipal,
+        surfaceVariant = Gris100,
+        onSurfaceVariant = TextoSecundario,
+        surfaceContainerLowest = Color.White,
+        surfaceContainerLow = Color.White,
+        surfaceContainer = Color.White,
+        surfaceContainerHigh = Gris100,
+        surfaceContainerHighest = Gris100,
+        outline = Borde,
+        outlineVariant = Borde,
+        error = PrioridadAlta,
+        onError = Color.White
+    )
+}
+
+private fun esquemaOscuro(rol: Rol): ColorScheme {
+    val cliente = rol == Rol.CLIENTE
+    val primario = if (cliente) CianClaro else VioletaClaro
+    val contenedor = if (cliente) CianOscuro else VioletaOscuro
+    val sobreContenedor = if (cliente) CianContenedor else VioletaContenedor
+    return darkColorScheme(
+        primary = primario,
+        onPrimary = FondoOscuro,
+        primaryContainer = contenedor,
+        onPrimaryContainer = sobreContenedor,
+        secondary = primario,
+        onSecondary = FondoOscuro,
+        secondaryContainer = contenedor,
+        onSecondaryContainer = sobreContenedor,
+        background = FondoOscuro,
+        onBackground = Borde,
+        surface = SuperficieOscura,
+        onSurface = Borde,
+        surfaceVariant = BordeOscuro,
+        onSurfaceVariant = Color(0xFF94A3B8),
+        surfaceContainerLowest = SuperficieOscura,
+        surfaceContainerLow = SuperficieOscura,
+        surfaceContainer = SuperficieOscura,
+        surfaceContainerHigh = BordeOscuro,
+        surfaceContainerHighest = BordeOscuro,
+        outline = BordeOscuro,
+        outlineVariant = BordeOscuro,
+        error = Color(0xFFF87171),
+        onError = FondoOscuro
     )
 }
