@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import com.tecsup.ayudacampus.data.prefs.PreferenciasStore
 
 class AyudaApp : Application() {
 
@@ -21,6 +22,8 @@ class AyudaApp : Application() {
             database.ticketDao()
         )
     }
+
+    val preferencias: PreferenciasStore by lazy { PreferenciasStore(this) }
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
