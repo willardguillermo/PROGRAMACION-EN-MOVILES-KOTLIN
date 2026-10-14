@@ -44,6 +44,8 @@ import com.tecsup.ayudacampus.ui.components.AyudaButton
 import com.tecsup.ayudacampus.viewmodel.AyudaViewModelFactory
 import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
+import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
+import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
 
 private data class ItemBarra(val ruta: String, val texto: String, val icono: ImageVector)
 
@@ -132,7 +134,17 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 }
 
                 composable(Rutas.NUEVO_TICKET) {
-                    PantallaPendiente("Nuevo ticket", 8)
+                    val actual = usuario ?: return@composable
+                    val vm: NuevoTicketViewModel = viewModel(
+                        factory = AyudaViewModelFactory {
+                            NuevoTicketViewModel(app.repository, actual.id)
+                        }
+                    )
+                    NuevoTicketScreen(
+                        vm = vm,
+                        alVolver = { nav.popBackStack() },
+                        alEnviado = { irATabCliente(Rutas.MIS_TICKETS) }
+                    )
                 }
 
                 composable(
