@@ -46,6 +46,8 @@ import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
 import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
+import com.tecsup.ayudacampus.ui.cliente.DetalleTicketScreen
+import com.tecsup.ayudacampus.viewmodel.TicketDetalleViewModel
 
 private data class ItemBarra(val ruta: String, val texto: String, val icono: ImageVector)
 
@@ -150,8 +152,19 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 composable(
                     Rutas.DETALLE,
                     arguments = listOf(navArgument("ticketId") { type = NavType.IntType })
-                ) {
-                    PantallaPendiente("Detalle del ticket", 9)
+                ) { backStack ->
+                    val actual = usuario ?: return@composable
+                    val ticketId = backStack.arguments?.getInt("ticketId") ?: return@composable
+                    val vm: TicketDetalleViewModel = viewModel(
+                        factory = AyudaViewModelFactory {
+                            TicketDetalleViewModel(app.repository, ticketId, actual)
+                        }
+                    )
+                    DetalleTicketScreen(
+                        vm = vm,
+                        usuarioId = actual.id,
+                        alVolver = { nav.popBackStack() }
+                    )
                 }
 
                 composable(Rutas.PERFIL) {
