@@ -55,6 +55,11 @@ import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
 import com.tecsup.ayudacampus.viewmodel.PanelViewModel
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 import com.tecsup.ayudacampus.viewmodel.TicketDetalleViewModel
+import com.tecsup.ayudacampus.ui.soporte.AtenderTicketScreen
+import com.tecsup.ayudacampus.ui.soporte.CategoriasScreen
+import com.tecsup.ayudacampus.ui.soporte.FormularioCategoriaScreen
+import com.tecsup.ayudacampus.viewmodel.AtenderViewModel
+import com.tecsup.ayudacampus.viewmodel.CategoriasViewModel
 
 private data class ItemBarra(val ruta: String, val texto: String, val icono: ImageVector)
 
@@ -218,12 +223,48 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 composable(
                     Rutas.ATENDER,
                     arguments = listOf(navArgument("ticketId") { type = NavType.IntType })
-                ) {
-                    PantallaPendiente("Atender ticket", 11)
+                ) { backStack ->
+                    val actual = usuario ?: return@composable
+                    val ticketId = backStack.arguments?.getInt("ticketId") ?: return@composable
+                    val vm: AtenderViewModel = viewModel(
+                        factory = AyudaViewModelFactory {
+                            AtenderViewModel(app.repository, ticketId, actual)
+                        }
+                    )
+                    AtenderTicketScreen(
+                        vm = vm,
+                        usuarioId = actual.id,
+                        alVolver = { nav.popBackStack() }
+                    )
                 }
 
                 composable(Rutas.CATEGORIAS) {
-                    PantallaPendiente("Categorías", 11)
+                    val vm: CategoriasViewModel = viewModel(
+                        factory = AyudaViewModelFactory { CategoriasViewModel(app.repository) }
+                    )
+                    CategoriasScreen(
+                        vm = vm,
+                        alNueva = { nav.navigate(Rutas.formCategoria()) },
+                        alEditar = { id -> nav.navigate(Rutas.formCategoria(id)) }
+                    )
+                }
+
+                composable(
+                    Rutas.FORM_CATEGORIA,
+                    arguments = listOf(navArgument("id") {
+                        type = NavType.IntType
+                        defaultValue = 0
+                    })
+                ) { backStack ->
+                    val id = backStack.arguments?.getInt("id") ?: 0
+                    val vm: CategoriasViewModel = viewModel(
+                        factory = AyudaViewModelFactory { CategoriasViewModel(app.repository) }
+                    )
+                    FormularioCategoriaScreen(
+                        vm = vm,
+                        id = id,
+                        alVolver = { nav.popBackStack() }
+                    )
                 }
 
                 composable(Rutas.AJUSTES) {
