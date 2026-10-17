@@ -1,11 +1,6 @@
 package com.tecsup.ayudacampus.ui.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
@@ -23,12 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -44,22 +36,24 @@ import com.tecsup.ayudacampus.ui.cliente.DetalleTicketScreen
 import com.tecsup.ayudacampus.ui.cliente.LoginScreen
 import com.tecsup.ayudacampus.ui.cliente.MisTicketsScreen
 import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
+import com.tecsup.ayudacampus.ui.cliente.PerfilScreen
 import com.tecsup.ayudacampus.ui.cliente.SplashScreen
-import com.tecsup.ayudacampus.ui.components.AyudaButton
+import com.tecsup.ayudacampus.ui.soporte.AjustesScreen
+import com.tecsup.ayudacampus.ui.soporte.AtenderTicketScreen
 import com.tecsup.ayudacampus.ui.soporte.BandejaScreen
+import com.tecsup.ayudacampus.ui.soporte.CategoriasScreen
+import com.tecsup.ayudacampus.ui.soporte.FormularioCategoriaScreen
 import com.tecsup.ayudacampus.ui.soporte.PanelScreen
+import com.tecsup.ayudacampus.viewmodel.AtenderViewModel
 import com.tecsup.ayudacampus.viewmodel.AyudaViewModelFactory
 import com.tecsup.ayudacampus.viewmodel.BandejaViewModel
+import com.tecsup.ayudacampus.viewmodel.CategoriasViewModel
 import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
 import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
 import com.tecsup.ayudacampus.viewmodel.PanelViewModel
+import com.tecsup.ayudacampus.viewmodel.PerfilViewModel
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 import com.tecsup.ayudacampus.viewmodel.TicketDetalleViewModel
-import com.tecsup.ayudacampus.ui.soporte.AtenderTicketScreen
-import com.tecsup.ayudacampus.ui.soporte.CategoriasScreen
-import com.tecsup.ayudacampus.ui.soporte.FormularioCategoriaScreen
-import com.tecsup.ayudacampus.viewmodel.AtenderViewModel
-import com.tecsup.ayudacampus.viewmodel.CategoriasViewModel
 
 private data class ItemBarra(val ruta: String, val texto: String, val icono: ImageVector)
 
@@ -97,6 +91,10 @@ fun NavAyuda(sesionVm: SesionViewModel) {
         nav.navigate(Rutas.LOGIN) {
             popUpTo(nav.graph.id) { inclusive = true }
         }
+    }
+
+    val cambiarPerfil: () -> Unit = {
+        sesionVm.cambiarPerfil(irAGrafo)
     }
 
     val irATabCliente: (String) -> Unit = { ruta ->
@@ -169,7 +167,11 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                     val actual = usuario ?: return@composable
                     val vm: NuevoTicketViewModel = viewModel(
                         factory = AyudaViewModelFactory {
-                            NuevoTicketViewModel(app.repository, actual.id)
+                            NuevoTicketViewModel(
+                                app.repository,
+                                actual.id,
+                                app.preferencias.recibirTickets
+                            )
                         }
                     )
                     NuevoTicketScreen(
@@ -198,7 +200,18 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 }
 
                 composable(Rutas.PERFIL) {
-                    PantallaPendiente("Perfil", 12, cerrarSesion)
+                    val actual = usuario ?: return@composable
+                    val vm: PerfilViewModel = viewModel(
+                        factory = AyudaViewModelFactory {
+                            PerfilViewModel(app.repository, actual.id)
+                        }
+                    )
+                    PerfilScreen(
+                        vm = vm,
+                        sesionVm = sesionVm,
+                        alCambiarPerfil = cambiarPerfil,
+                        alCerrarSesion = cerrarSesion
+                    )
                 }
             }
 
@@ -268,7 +281,11 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 }
 
                 composable(Rutas.AJUSTES) {
-                    PantallaPendiente("Ajustes", 12, cerrarSesion)
+                    AjustesScreen(
+                        sesionVm = sesionVm,
+                        alCambiarPerfil = cambiarPerfil,
+                        alCerrarSesion = cerrarSesion
+                    )
                 }
             }
         }
@@ -294,28 +311,6 @@ private fun BarraInferior(
                     indicatorColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
-        }
-    }
-}
-
-@Composable
-private fun PantallaPendiente(
-    titulo: String,
-    paso: Int,
-    alCerrarSesion: (() -> Unit)? = null
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Text(titulo, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("Se completa en el Paso $paso", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        if (alCerrarSesion != null) {
-            Spacer(Modifier.height(24.dp))
-            AyudaButton(texto = "Cerrar sesión", alPulsar = alCerrarSesion, contorno = true)
         }
     }
 }

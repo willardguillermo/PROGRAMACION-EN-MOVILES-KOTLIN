@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tecsup.ayudacampus.data.local.entity.Categoria
 import com.tecsup.ayudacampus.data.repository.AyudaRepository
 import com.tecsup.ayudacampus.model.Prioridad
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,8 +28,12 @@ data class FormularioTicket(
 
 class NuevoTicketViewModel(
     private val repo: AyudaRepository,
-    private val clienteId: Int
+    private val clienteId: Int,
+    recibirTickets: Flow<Boolean>
 ) : ViewModel() {
+
+    val mesaAbierta: StateFlow<Boolean> = recibirTickets
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
     val categorias: StateFlow<List<Categoria>> = repo.observarCategoriasActivas()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -60,6 +65,8 @@ class NuevoTicketViewModel(
     }
 
     fun enviar() {
+        if (!mesaAbierta.value) return
+
         val f = _formulario.value
         val categoriaId = f.categoriaId
         val categoriaValida = categoriaId != null && categorias.value.any { it.id == categoriaId }

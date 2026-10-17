@@ -48,7 +48,7 @@ import com.tecsup.ayudacampus.ui.components.AyudaTextField
 import com.tecsup.ayudacampus.ui.components.iconoCategoria
 import com.tecsup.ayudacampus.ui.theme.colorPrioridad
 import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
-
+import androidx.compose.material.icons.outlined.Info
 @Composable
 fun NuevoTicketScreen(
     vm: NuevoTicketViewModel,
@@ -58,6 +58,7 @@ fun NuevoTicketScreen(
     val categorias by vm.categorias.collectAsStateWithLifecycle()
     val form by vm.formulario.collectAsStateWithLifecycle()
     val enviado by vm.enviado.collectAsStateWithLifecycle()
+    val mesaAbierta by vm.mesaAbierta.collectAsStateWithLifecycle()
 
     LaunchedEffect(enviado) {
         if (enviado) {
@@ -80,6 +81,9 @@ fun NuevoTicketScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            if (!mesaAbierta) {
+                MesaCerrada()
+            }
             Text("Categoría", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             ChipsCategoria(
                 categorias = categorias,
@@ -121,7 +125,7 @@ fun NuevoTicketScreen(
         AyudaButton(
             texto = "Enviar ticket",
             alPulsar = vm::enviar,
-            habilitado = !form.enviando,
+            habilitado = !form.enviando && mesaAbierta,
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -212,5 +216,32 @@ private fun TiempoEstimado(prioridad: Prioridad) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+@Composable
+private fun MesaCerrada() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.12f))
+            .padding(12.dp)
+    ) {
+        Icon(Icons.Outlined.Info, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+        Spacer(Modifier.width(8.dp))
+        Column {
+            Text(
+                "Mesa de ayuda cerrada",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error
+            )
+            Text(
+                "Por ahora no se reciben tickets nuevos. Intenta más tarde.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

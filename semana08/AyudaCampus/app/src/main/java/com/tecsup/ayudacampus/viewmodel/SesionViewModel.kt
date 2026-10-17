@@ -31,6 +31,12 @@ class SesionViewModel(
     val modoOscuro: StateFlow<Boolean> = prefs.modoOscuro
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    val notificaciones: StateFlow<Boolean> = prefs.notificaciones
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    val recibirTickets: StateFlow<Boolean> = prefs.recibirTickets
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
     init {
         viewModelScope.launch {
             val perfil = prefs.perfilActivo.first()
@@ -61,6 +67,29 @@ class SesionViewModel(
                 }
             }
         }
+    }
+
+    fun cambiarPerfil(alCambiar: (Rol) -> Unit) {
+        val actual = _usuarioActual.value ?: return
+        val destino = if (actual.rol == Rol.ADMIN.name) Rol.CLIENTE else Rol.ADMIN
+        viewModelScope.launch {
+            val otro = repo.obtenerUsuarioPorRol(destino) ?: return@launch
+            prefs.guardarSesion(destino, otro.id)
+            _usuarioActual.value = otro
+            alCambiar(destino)
+        }
+    }
+
+    fun guardarModoOscuro(activo: Boolean) {
+        viewModelScope.launch { prefs.guardarModoOscuro(activo) }
+    }
+
+    fun guardarNotificaciones(activo: Boolean) {
+        viewModelScope.launch { prefs.guardarNotificaciones(activo) }
+    }
+
+    fun guardarRecibirTickets(activo: Boolean) {
+        viewModelScope.launch { prefs.guardarRecibirTickets(activo) }
     }
 
     fun cerrarSesion() {
