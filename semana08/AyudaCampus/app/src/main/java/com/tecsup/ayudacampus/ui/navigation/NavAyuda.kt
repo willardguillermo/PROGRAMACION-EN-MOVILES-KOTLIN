@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.ConfirmationNumber
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -37,16 +40,20 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.ayudacampus.AyudaApp
 import com.tecsup.ayudacampus.model.Rol
+import com.tecsup.ayudacampus.ui.cliente.DetalleTicketScreen
 import com.tecsup.ayudacampus.ui.cliente.LoginScreen
 import com.tecsup.ayudacampus.ui.cliente.MisTicketsScreen
+import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
 import com.tecsup.ayudacampus.ui.cliente.SplashScreen
 import com.tecsup.ayudacampus.ui.components.AyudaButton
+import com.tecsup.ayudacampus.ui.soporte.BandejaScreen
+import com.tecsup.ayudacampus.ui.soporte.PanelScreen
 import com.tecsup.ayudacampus.viewmodel.AyudaViewModelFactory
+import com.tecsup.ayudacampus.viewmodel.BandejaViewModel
 import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
-import com.tecsup.ayudacampus.viewmodel.SesionViewModel
-import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
 import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
-import com.tecsup.ayudacampus.ui.cliente.DetalleTicketScreen
+import com.tecsup.ayudacampus.viewmodel.PanelViewModel
+import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 import com.tecsup.ayudacampus.viewmodel.TicketDetalleViewModel
 
 private data class ItemBarra(val ruta: String, val texto: String, val icono: ImageVector)
@@ -55,6 +62,13 @@ private val itemsCliente = listOf(
     ItemBarra(Rutas.MIS_TICKETS, "Tickets", Icons.Outlined.ConfirmationNumber),
     ItemBarra(Rutas.NUEVO_TICKET, "Nuevo", Icons.Outlined.AddCircleOutline),
     ItemBarra(Rutas.PERFIL, "Perfil", Icons.Outlined.Person)
+)
+
+private val itemsSoporte = listOf(
+    ItemBarra(Rutas.PANEL, "Panel", Icons.Outlined.BarChart),
+    ItemBarra(Rutas.BANDEJA, "Tickets", Icons.Outlined.ConfirmationNumber),
+    ItemBarra(Rutas.CATEGORIAS, "Categorías", Icons.Outlined.LocalOffer),
+    ItemBarra(Rutas.AJUSTES, "Ajustes", Icons.Outlined.Settings)
 )
 
 @Composable
@@ -88,11 +102,22 @@ fun NavAyuda(sesionVm: SesionViewModel) {
         }
     }
 
+    val irATabSoporte: (String) -> Unit = { ruta ->
+        nav.navigate(ruta) {
+            popUpTo(Rutas.PANEL) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (itemsCliente.any { it.ruta == rutaActual }) {
-                BarraInferior(itemsCliente, rutaActual, irATabCliente)
+            when {
+                itemsCliente.any { it.ruta == rutaActual } ->
+                    BarraInferior(itemsCliente, rutaActual, irATabCliente)
+                itemsSoporte.any { it.ruta == rutaActual } ->
+                    BarraInferior(itemsSoporte, rutaActual, irATabSoporte)
             }
         }
     ) { padding ->
@@ -174,7 +199,35 @@ fun NavAyuda(sesionVm: SesionViewModel) {
 
             navigation(startDestination = Rutas.PANEL, route = Rutas.GRAFO_SOPORTE) {
                 composable(Rutas.PANEL) {
-                    PantallaPendiente("Panel de soporte", 10, cerrarSesion)
+                    val vm: PanelViewModel = viewModel(
+                        factory = AyudaViewModelFactory { PanelViewModel(app.repository) }
+                    )
+                    PanelScreen(vm = vm, alVerBandeja = { irATabSoporte(Rutas.BANDEJA) })
+                }
+
+                composable(Rutas.BANDEJA) {
+                    val vm: BandejaViewModel = viewModel(
+                        factory = AyudaViewModelFactory { BandejaViewModel(app.repository) }
+                    )
+                    BandejaScreen(
+                        vm = vm,
+                        alAbrirTicket = { id -> nav.navigate(Rutas.atender(id)) }
+                    )
+                }
+
+                composable(
+                    Rutas.ATENDER,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.IntType })
+                ) {
+                    PantallaPendiente("Atender ticket", 11)
+                }
+
+                composable(Rutas.CATEGORIAS) {
+                    PantallaPendiente("Categorías", 11)
+                }
+
+                composable(Rutas.AJUSTES) {
+                    PantallaPendiente("Ajustes", 12, cerrarSesion)
                 }
             }
         }
