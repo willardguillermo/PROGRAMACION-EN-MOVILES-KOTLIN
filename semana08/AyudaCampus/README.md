@@ -95,14 +95,22 @@ com.tecsup.ayudacampus
 ## Capturas
 
 ### Estudiante
-| Login | Mis tickets | Detalle y calificación |
-|---|---|---|
-| <img src="capturas/estudiante-login.png" width="220"/> | <img src="capturas/estudiante-mis-tickets.png" width="220"/> | <img src="capturas/estudiante-detalle.png" width="220"/> |
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/cfd2bf79-700f-4de3-b356-d48f4eab97a7" />
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/020b825c-3503-419f-9de2-034924e3de8f" /> 
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/673a13da-7477-4e29-bf8f-1f04d1a8ed9d" />
+
 
 ### Soporte TI
-| Panel | Bandeja | Atender ticket |
-|---|---|---|
-| <img src="capturas/soporte-panel.png" width="220"/> | <img src="capturas/soporte-bandeja.png" width="220"/> | <img src="capturas/soporte-atender.png" width="220"/> |
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/23c9b8a7-412d-4b0d-a9a8-efc799634c17" />
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/c1c37e7d-e4b0-43f0-b905-8ee443494737" />
+
+<img width="220"  alt="image" src="https://github.com/user-attachments/assets/09dcd58b-178a-4ea8-b5f3-a231b730375c" />
+
 
 ## Pruebas de aceptación
 | Prueba | Resultado esperado | OK |
