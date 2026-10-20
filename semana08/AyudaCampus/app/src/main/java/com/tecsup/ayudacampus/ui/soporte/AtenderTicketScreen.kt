@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +68,7 @@ fun AtenderTicketScreen(
     val estadoElegido by vm.estadoElegido.collectAsStateWithLifecycle()
     val prioridadElegida by vm.prioridadElegida.collectAsStateWithLifecycle()
     val mensaje by vm.mensaje.collectAsStateWithLifecycle()
+    val notaInterna by vm.notaInterna.collectAsStateWithLifecycle()
     var respuesta by rememberSaveable { mutableStateOf("") }
 
     val actual = detalle
@@ -158,6 +160,18 @@ fun AtenderTicketScreen(
             }
 
             if (!cerrado) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    Switch(checked = notaInterna, onCheckedChange = vm::cambiarNotaInterna)
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "Nota interna (el estudiante no la ve)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 CampoRespuesta(
                     texto = respuesta,
                     alCambiar = { respuesta = it },

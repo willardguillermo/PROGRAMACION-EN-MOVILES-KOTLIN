@@ -66,6 +66,7 @@ fun DetalleTicketScreen(
     alVolver: () -> Unit
 ) {
     val detalle by vm.ticket.collectAsStateWithLifecycle()
+    val comentarios by vm.comentariosVisibles.collectAsStateWithLifecycle()
     val calificacion by vm.calificacion.collectAsStateWithLifecycle()
     var texto by rememberSaveable { mutableStateOf("") }
     var comentarioFinal by rememberSaveable { mutableStateOf("") }
@@ -93,7 +94,6 @@ fun DetalleTicketScreen(
             }
         } else {
             val estado = EstadoTicket.valueOf(actual.ticket.estado)
-            val comentarios = actual.comentarios.sortedBy { it.fecha }
 
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),

@@ -106,14 +106,15 @@ class AyudaRepositoryRoom(
     override suspend fun reabrir(ticketId: Int) =
         ticketDao.reabrir(ticketId)
 
-    override suspend fun agregarComentario(ticketId: Int, autor: Usuario, texto: String) {
+    override suspend fun agregarComentario(ticketId: Int, autor: Usuario, texto: String, interno: Boolean) {
         val comentario = Comentario(
             ticketId = ticketId,
             autorId = autor.id,
             autorNombre = autor.nombre,
             autorRol = autor.rol,
             texto = texto.trim(),
-            fecha = System.currentTimeMillis()
+            fecha = System.currentTimeMillis(),
+            interno = interno
         )
         ticketDao.insertarComentario(comentario)
     }

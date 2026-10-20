@@ -6,10 +6,12 @@ import com.tecsup.ayudacampus.data.local.entity.Usuario
 import com.tecsup.ayudacampus.data.local.relation.TicketConDetalle
 import com.tecsup.ayudacampus.data.repository.AyudaRepository
 import com.tecsup.ayudacampus.model.EstadoTicket
+import com.tecsup.ayudacampus.data.local.entity.Comentario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,6 +23,11 @@ class TicketDetalleViewModel(
 
     val ticket: StateFlow<TicketConDetalle?> = repo.observarTicket(ticketId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val comentariosVisibles: StateFlow<List<Comentario>> =
+        ticket.map { detalle ->
+            detalle?.comentarios?.filter { !it.interno }?.sortedBy { it.fecha } ?: emptyList()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _calificacion = MutableStateFlow(0)
     val calificacion: StateFlow<Int> = _calificacion.asStateFlow()

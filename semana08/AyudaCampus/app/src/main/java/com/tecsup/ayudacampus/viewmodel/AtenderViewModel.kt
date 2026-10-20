@@ -31,6 +31,9 @@ class AtenderViewModel(
 
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
+    
+    private val _notaInterna = MutableStateFlow(false)
+    val notaInterna: StateFlow<Boolean> = _notaInterna.asStateFlow()
 
     private fun estaCerrado(): Boolean =
         ticket.value?.ticket?.estado == EstadoTicket.CERRADO.name
@@ -47,10 +50,15 @@ class AtenderViewModel(
         _mensaje.value = null
     }
 
+    fun cambiarNotaInterna(valor: Boolean) {
+        _notaInterna.value = valor
+    }
+
     fun responder(texto: String) {
         if (texto.isBlank() || ticket.value == null || estaCerrado()) return
         viewModelScope.launch {
-            repo.agregarComentario(ticketId, usuario, texto)
+            repo.agregarComentario(ticketId, usuario, texto, _notaInterna.value)
+            _notaInterna.value = false
         }
     }
 
