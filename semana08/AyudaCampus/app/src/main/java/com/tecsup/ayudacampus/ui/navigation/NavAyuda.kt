@@ -39,7 +39,9 @@ import com.tecsup.ayudacampus.model.Rol
 import com.tecsup.ayudacampus.ui.cliente.DetalleTicketScreen
 import com.tecsup.ayudacampus.ui.cliente.LoginScreen
 import com.tecsup.ayudacampus.ui.cliente.MisTicketsScreen
+import com.tecsup.ayudacampus.ui.cliente.NotificacionesScreen
 import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
+import com.tecsup.ayudacampus.viewmodel.NotificacionesViewModel
 import com.tecsup.ayudacampus.ui.cliente.PerfilScreen
 import com.tecsup.ayudacampus.ui.cliente.RegistroScreen
 import com.tecsup.ayudacampus.ui.cliente.SplashScreen
@@ -168,6 +170,24 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                 RegistroScreen(vm = vm, alVolver = { nav.popBackStack() })
             }
 
+            composable(Rutas.NOTIFICACIONES) {
+                val actual = usuario ?: return@composable
+                val vm: NotificacionesViewModel = viewModel(
+                    key = "notificaciones_root",
+                    factory = AyudaViewModelFactory {
+                        NotificacionesViewModel(app.repository, app.preferencias, actual)
+                    }
+                )
+                NotificacionesScreen(
+                    vm = vm,
+                    alAbrirTicket = { id ->
+                        val destino = if (actual.rol == Rol.ADMIN.name) Rutas.atender(id) else Rutas.detalle(id)
+                        nav.navigate(destino)
+                    },
+                    alVolver = { nav.popBackStack() }
+                )
+            }
+
             navigation(startDestination = Rutas.MIS_TICKETS, route = Rutas.GRAFO_CLIENTE) {
                 composable(Rutas.MIS_TICKETS) {
                     val actual = usuario ?: return@composable
@@ -176,11 +196,21 @@ fun NavAyuda(sesionVm: SesionViewModel) {
                             MisTicketsViewModel(app.repository, actual.id)
                         }
                     )
+                    val notifVm: NotificacionesViewModel = viewModel(
+                        key = "notificaciones",
+                        factory = AyudaViewModelFactory {
+                            NotificacionesViewModel(app.repository, app.preferencias, actual)
+                        }
+                    )
+                    val noLeidas by notifVm.noLeidas.collectAsStateWithLifecycle()
+
                     MisTicketsScreen(
                         vm = vm,
                         nombre = actual.nombre,
+                        noLeidas = noLeidas,
                         alAbrirTicket = { id -> nav.navigate(Rutas.detalle(id)) },
-                        alNuevo = { irATabCliente(Rutas.NUEVO_TICKET) }
+                        alNuevo = { irATabCliente(Rutas.NUEVO_TICKET) },
+                        alAbrirNotificaciones = { nav.navigate(Rutas.NOTIFICACIONES) }
                     )
                 }
 
@@ -238,10 +268,24 @@ fun NavAyuda(sesionVm: SesionViewModel) {
 
             navigation(startDestination = Rutas.PANEL, route = Rutas.GRAFO_SOPORTE) {
                 composable(Rutas.PANEL) {
+                    val actual = usuario ?: return@composable
                     val vm: PanelViewModel = viewModel(
                         factory = AyudaViewModelFactory { PanelViewModel(app.repository) }
                     )
-                    PanelScreen(vm = vm, alVerBandeja = { irATabSoporte(Rutas.BANDEJA) })
+                    val notifVm: NotificacionesViewModel = viewModel(
+                        key = "notificaciones",
+                        factory = AyudaViewModelFactory {
+                            NotificacionesViewModel(app.repository, app.preferencias, actual)
+                        }
+                    )
+                    val noLeidas by notifVm.noLeidas.collectAsStateWithLifecycle()
+
+                    PanelScreen(
+                        vm = vm,
+                        noLeidas = noLeidas,
+                        alVerBandeja = { irATabSoporte(Rutas.BANDEJA) },
+                        alAbrirNotificaciones = { nav.navigate(Rutas.NOTIFICACIONES) }
+                    )
                 }
 
                 composable(Rutas.BANDEJA) {

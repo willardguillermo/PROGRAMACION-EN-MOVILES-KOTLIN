@@ -19,6 +19,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -51,8 +54,10 @@ private val filtros = listOf(
 fun MisTicketsScreen(
     vm: MisTicketsViewModel,
     nombre: String,
+    noLeidas: Int,
     alAbrirTicket: (Int) -> Unit,
-    alNuevo: () -> Unit
+    alNuevo: () -> Unit,
+    alAbrirNotificaciones: () -> Unit
 ) {
     val tickets by vm.tickets.collectAsStateWithLifecycle()
     val filtro by vm.filtro.collectAsStateWithLifecycle()
@@ -94,7 +99,17 @@ fun MisTicketsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Icon(Icons.Outlined.Notifications, contentDescription = "Notificaciones")
+                    IconButton(onClick = alAbrirNotificaciones) {
+                        BadgedBox(
+                            badge = {
+                                if (noLeidas > 0) {
+                                    Badge { Text(noLeidas.toString()) }
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Outlined.Notifications, contentDescription = "Notificaciones")
+                        }
+                    }
                 }
             }
 

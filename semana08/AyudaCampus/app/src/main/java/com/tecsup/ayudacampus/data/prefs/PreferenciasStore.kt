@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.tecsup.ayudacampus.model.Rol
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,13 @@ class PreferenciasStore(private val context: Context) {
 
     suspend fun guardarRecibirTickets(activo: Boolean) {
         context.dataStore.edit { it[Claves.RECIBIR_TICKETS] = activo }
+    }
+
+    fun ultimaVisita(rol: Rol): Flow<Long> =
+        context.dataStore.data.map { it[longPreferencesKey("ultimaVisita_${rol.name}")] ?: 0L }
+
+    suspend fun guardarUltimaVisita(rol: Rol, momento: Long) {
+        context.dataStore.edit { it[longPreferencesKey("ultimaVisita_${rol.name}")] = momento }
     }
 
     suspend fun cerrarSesion() {

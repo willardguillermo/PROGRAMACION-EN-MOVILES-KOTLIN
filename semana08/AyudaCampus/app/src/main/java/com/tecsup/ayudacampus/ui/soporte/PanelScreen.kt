@@ -26,6 +26,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +50,12 @@ import com.tecsup.ayudacampus.ui.theme.PrioridadAlta
 import com.tecsup.ayudacampus.viewmodel.PanelViewModel
 
 @Composable
-fun PanelScreen(vm: PanelViewModel, alVerBandeja: () -> Unit) {
+fun PanelScreen(
+    vm: PanelViewModel,
+    noLeidas: Int,
+    alVerBandeja: () -> Unit,
+    alAbrirNotificaciones: () -> Unit
+) {
     val abiertos by vm.abiertos.collectAsStateWithLifecycle()
     val enProceso by vm.enProceso.collectAsStateWithLifecycle()
     val resueltos by vm.resueltos.collectAsStateWithLifecycle()
@@ -72,7 +80,17 @@ fun PanelScreen(vm: PanelViewModel, alVerBandeja: () -> Unit) {
                 )
                 Text("Mesa de ayuda TI · Hoy", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Icon(Icons.Outlined.Notifications, contentDescription = "Notificaciones")
+            IconButton(onClick = alAbrirNotificaciones) {
+                BadgedBox(
+                    badge = {
+                        if (noLeidas > 0) {
+                            Badge { Text(noLeidas.toString()) }
+                        }
+                    }
+                ) {
+                    Icon(Icons.Outlined.Notifications, contentDescription = "Notificaciones")
+                }
+            }
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
