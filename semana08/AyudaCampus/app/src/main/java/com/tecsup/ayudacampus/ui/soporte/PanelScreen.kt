@@ -49,6 +49,7 @@ fun PanelScreen(vm: PanelViewModel, alVerBandeja: () -> Unit) {
     val porEstado by vm.porEstado.collectAsStateWithLifecycle()
     val porCategoria by vm.porCategoria.collectAsStateWithLifecycle()
     val altas by vm.altasSinAtender.collectAsStateWithLifecycle()
+    val tiempoPromedio by vm.tiempoPromedioResolucion.collectAsStateWithLifecycle()
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -74,6 +75,8 @@ fun PanelScreen(vm: PanelViewModel, alVerBandeja: () -> Unit) {
             Contador("En proceso", enProceso, EstadoEnProceso, Modifier.weight(1f))
             Contador("Resueltos", resueltos, EstadoResuelto, Modifier.weight(1f))
         }
+
+        TarjetaPromedio(tiempoPromedio)
 
         Seccion("Tickets por estado") {
             GraficoDona(datos = porEstado)
@@ -121,6 +124,31 @@ private fun Seccion(titulo: String, contenido: @Composable () -> Unit) {
             Box(modifier = Modifier.padding(16.dp)) {
                 contenido()
             }
+        }
+    }
+}
+
+@Composable
+private fun TarjetaPromedio(texto: String) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                "Tiempo promedio de resolución",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(texto, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         }
     }
 }

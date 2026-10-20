@@ -71,4 +71,7 @@ interface TicketDao {
 
     @Query("SELECT COUNT(*) FROM tickets WHERE categoriaId = :categoriaId")
     suspend fun contarDeCategoria(categoriaId: Int): Int
+
+    @Query("SELECT AVG(fechaCierre - fecha) FROM tickets WHERE estado = 'CERRADO'")
+    fun obtenerTiempoPromedioResolucion(): Flow<Long?>
 }

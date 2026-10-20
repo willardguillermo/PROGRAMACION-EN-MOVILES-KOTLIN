@@ -57,8 +57,18 @@ class PanelViewModel(private val repo: AyudaRepository) : ViewModel() {
         .flatMapLatest { ahora -> repo.observarAltasSinAtender(ahora - UNA_HORA) }
         .enEstado(0)
 
+    val tiempoPromedioResolucion: StateFlow<String> = repo.observarTiempoPromedioResolucion()
+        .map { ms -> formatearDuracion(ms) }
+        .enEstado("Sin datos")
+
     private fun cantidad(estado: EstadoTicket): Flow<Int> =
         repo.observarCantidadPorEstado(estado)
+
+    private fun formatearDuracion(ms: Long?): String {
+        if (ms == null) return "Sin datos"
+        val minutosTotales = ms / 60_000
+        return "${minutosTotales / 60} h ${minutosTotales % 60} min"
+    }
 
     private fun <T> Flow<T>.enEstado(inicial: T): StateFlow<T> =
         stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), inicial)
