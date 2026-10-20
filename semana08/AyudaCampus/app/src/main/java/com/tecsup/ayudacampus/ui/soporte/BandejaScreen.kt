@@ -37,6 +37,7 @@ private val filtrosBandeja = listOf(
 fun BandejaScreen(vm: BandejaViewModel, alAbrirTicket: (Int) -> Unit) {
     val tickets by vm.tickets.collectAsStateWithLifecycle()
     val filtro by vm.filtro.collectAsStateWithLifecycle()
+    val slas by vm.slaTickets.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
         AppTopBar(titulo = "Tickets")
@@ -60,7 +61,8 @@ fun BandejaScreen(vm: BandejaViewModel, alAbrirTicket: (Int) -> Unit) {
                 TicketCard(
                     detalle = detalle,
                     alPulsar = { alAbrirTicket(detalle.ticket.id) },
-                    mostrarCliente = true
+                    mostrarCliente = true,
+                    sla = slas[detalle.ticket.id]
                 )
             }
         }

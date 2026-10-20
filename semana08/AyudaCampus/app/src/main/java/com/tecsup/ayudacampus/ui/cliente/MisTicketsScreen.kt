@@ -57,6 +57,7 @@ fun MisTicketsScreen(
     val filtro by vm.filtro.collectAsStateWithLifecycle()
     val busqueda by vm.busqueda.collectAsStateWithLifecycle()
     val abiertos by vm.abiertos.collectAsStateWithLifecycle()
+    val slas by vm.slaTickets.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -115,7 +116,8 @@ fun MisTicketsScreen(
                 items(tickets, key = { it.ticket.id }) { detalle ->
                     TicketCard(
                         detalle = detalle,
-                        alPulsar = { alAbrirTicket(detalle.ticket.id) }
+                        alPulsar = { alAbrirTicket(detalle.ticket.id) },
+                        sla = slas[detalle.ticket.id]
                     )
                 }
             }

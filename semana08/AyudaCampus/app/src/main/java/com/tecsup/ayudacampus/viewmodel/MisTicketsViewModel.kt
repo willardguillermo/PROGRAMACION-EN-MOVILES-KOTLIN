@@ -5,11 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.tecsup.ayudacampus.data.local.relation.TicketConDetalle
 import com.tecsup.ayudacampus.data.repository.AyudaRepository
 import com.tecsup.ayudacampus.model.EstadoTicket
+import com.tecsup.ayudacampus.model.InfoSla
+import com.tecsup.ayudacampus.model.calcularSla
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -36,6 +40,20 @@ class MisTicketsViewModel(
     val abiertos: StateFlow<Int> = misTickets
         .map { lista -> lista.count { it.ticket.estado == EstadoTicket.ABIERTO.name } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val reloj = flow {
+        while (true) {
+            emit(System.currentTimeMillis())
+            delay(60_000)
+        }
+    }
+
+    val slaTickets: StateFlow<Map<Int, InfoSla>> = combine(misTickets, reloj) { lista, ahora ->
+        lista.mapNotNull { detalle ->
+            val ticket = detalle.ticket
+            calcularSla(ticket.prioridad, ticket.estado, ticket.fecha, ahora)?.let { ticket.id to it }
+        }.toMap()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     fun elegirFiltro(estado: EstadoTicket?) {
         _filtro.value = estado

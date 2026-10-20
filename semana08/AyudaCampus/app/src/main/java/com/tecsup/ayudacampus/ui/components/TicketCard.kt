@@ -20,6 +20,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,15 +31,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tecsup.ayudacampus.data.local.relation.TicketConDetalle
 import com.tecsup.ayudacampus.model.EstadoTicket
+import com.tecsup.ayudacampus.model.InfoSla
 import com.tecsup.ayudacampus.model.Prioridad
 import com.tecsup.ayudacampus.ui.theme.colorPrioridad
+import com.tecsup.ayudacampus.ui.theme.PrioridadAlta
 
 @Composable
 fun TicketCard(
     detalle: TicketConDetalle,
     alPulsar: () -> Unit,
     modifier: Modifier = Modifier,
-    mostrarCliente: Boolean = false
+    mostrarCliente: Boolean = false,
+    sla: InfoSla? = null
 ) {
     val ticket = detalle.ticket
     val prioridad = Prioridad.valueOf(ticket.prioridad)
@@ -113,6 +118,25 @@ fun TicketCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+                if (sla != null) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val colorSla = if (sla.vencido) PrioridadAlta else MaterialTheme.colorScheme.onSurfaceVariant
+                        Icon(
+                            Icons.Outlined.Schedule,
+                            contentDescription = "SLA",
+                            tint = colorSla,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = sla.texto,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = colorSla,
+                            fontWeight = if (sla.vencido) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
