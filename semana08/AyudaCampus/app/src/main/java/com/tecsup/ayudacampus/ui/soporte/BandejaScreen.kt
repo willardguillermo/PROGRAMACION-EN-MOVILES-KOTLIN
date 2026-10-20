@@ -1,5 +1,10 @@
 package com.tecsup.ayudacampus.ui.soporte
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -31,6 +37,7 @@ import com.tecsup.ayudacampus.model.EstadoTicket
 import com.tecsup.ayudacampus.model.Prioridad
 import com.tecsup.ayudacampus.ui.components.AppTopBar
 import com.tecsup.ayudacampus.ui.components.AyudaTextField
+import com.tecsup.ayudacampus.ui.components.EstadoVacio
 import com.tecsup.ayudacampus.ui.components.TicketCard
 import com.tecsup.ayudacampus.viewmodel.BandejaViewModel
 
@@ -69,7 +76,11 @@ fun BandejaScreen(vm: BandejaViewModel, alAbrirTicket: (Int) -> Unit) {
         ChipsPrioridad(seleccionado = prioridad, alElegir = vm::elegirPrioridad)
         ChipsCategorias(seleccionado = categoriaId, categorias = categorias, alElegir = vm::elegirCategoria)
 
-        if (hayFiltros) {
+        AnimatedVisibility(
+            visible = hayFiltros,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,9 +100,10 @@ fun BandejaScreen(vm: BandejaViewModel, alAbrirTicket: (Int) -> Unit) {
         ) {
             if (tickets.isEmpty()) {
                 item {
-                    Text(
-                        "No hay tickets con estos filtros",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    EstadoVacio(
+                        icono = Icons.Outlined.Inbox,
+                        titulo = "No hay tickets",
+                        mensaje = "Ajusta los filtros para ver más resultados"
                     )
                 }
             }
@@ -100,7 +112,8 @@ fun BandejaScreen(vm: BandejaViewModel, alAbrirTicket: (Int) -> Unit) {
                     detalle = detalle,
                     alPulsar = { alAbrirTicket(detalle.ticket.id) },
                     mostrarCliente = true,
-                    sla = slas[detalle.ticket.id]
+                    sla = slas[detalle.ticket.id],
+                    modifier = Modifier.animateItem()
                 )
             }
         }

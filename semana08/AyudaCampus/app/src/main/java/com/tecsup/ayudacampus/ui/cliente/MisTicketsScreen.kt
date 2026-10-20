@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tecsup.ayudacampus.model.EstadoTicket
 import com.tecsup.ayudacampus.ui.components.AyudaTextField
+import com.tecsup.ayudacampus.ui.components.EstadoVacio
 import com.tecsup.ayudacampus.ui.components.TicketCard
 import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
 
@@ -111,13 +112,20 @@ fun MisTicketsScreen(
             }
 
             if (tickets.isEmpty()) {
-                item { EstadoVacio() }
+                item {
+                    EstadoVacio(
+                        icono = Icons.Outlined.Inbox,
+                        titulo = "No tienes tickets aquí",
+                        mensaje = "Prueba con otro filtro o crea uno nuevo"
+                    )
+                }
             } else {
                 items(tickets, key = { it.ticket.id }) { detalle ->
                     TicketCard(
                         detalle = detalle,
                         alPulsar = { alAbrirTicket(detalle.ticket.id) },
-                        sla = slas[detalle.ticket.id]
+                        sla = slas[detalle.ticket.id],
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -144,31 +152,5 @@ private fun ChipsEstado(seleccionado: EstadoTicket?, alElegir: (EstadoTicket?) -
                 )
             )
         }
-    }
-}
-
-@Composable
-private fun EstadoVacio() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 48.dp)
-    ) {
-        Icon(
-            Icons.Outlined.Inbox,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(56.dp)
-        )
-        Text(
-            "No tienes tickets aquí",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            "Prueba con otro filtro o crea uno nuevo",
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }

@@ -1,5 +1,10 @@
 package com.tecsup.ayudacampus.ui.cliente
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,6 +56,7 @@ import com.tecsup.ayudacampus.ui.components.AyudaButton
 import com.tecsup.ayudacampus.ui.components.AyudaTextField
 import com.tecsup.ayudacampus.ui.components.BurbujaComentario
 import com.tecsup.ayudacampus.ui.components.EstadoChip
+import com.tecsup.ayudacampus.ui.components.EstadoVacio
 import com.tecsup.ayudacampus.ui.components.Estrellas
 import com.tecsup.ayudacampus.ui.components.PrioridadChip
 import com.tecsup.ayudacampus.ui.components.StepperTicket
@@ -103,8 +110,14 @@ fun DetalleTicketScreen(
                 item { Cabecera(actual) }
                 item { StepperTicket(estado) }
 
-                if (estado == EstadoTicket.RESUELTO) {
-                    item { AvisoResuelto() }
+                item {
+                    AnimatedVisibility(
+                        visible = estado == EstadoTicket.RESUELTO,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        AvisoResuelto()
+                    }
                 }
 
                 item {
@@ -117,9 +130,10 @@ fun DetalleTicketScreen(
 
                 if (comentarios.isEmpty()) {
                     item {
-                        Text(
-                            "Aún no hay comentarios",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        EstadoVacio(
+                            icono = Icons.Outlined.ChatBubbleOutline,
+                            titulo = "Aún no hay comentarios",
+                            mensaje = "Sé el primero en escribir un mensaje"
                         )
                     }
                 }

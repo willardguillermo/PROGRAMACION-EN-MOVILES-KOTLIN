@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.size
 import com.tecsup.ayudacampus.data.local.entity.Comentario
 import com.tecsup.ayudacampus.model.Rol
 import com.tecsup.ayudacampus.ui.theme.CianContenedor
-import com.tecsup.ayudacampus.ui.theme.EstadoAbierto
 import com.tecsup.ayudacampus.ui.theme.TextoPrincipal
 import com.tecsup.ayudacampus.ui.theme.VioletaContenedor
 import java.text.SimpleDateFormat

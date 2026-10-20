@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,6 +53,7 @@ import com.tecsup.ayudacampus.model.Prioridad
 import com.tecsup.ayudacampus.ui.components.AppTopBar
 import com.tecsup.ayudacampus.ui.components.AyudaButton
 import com.tecsup.ayudacampus.ui.components.BurbujaComentario
+import com.tecsup.ayudacampus.ui.components.EstadoVacio
 import com.tecsup.ayudacampus.ui.components.numeroTicket
 import com.tecsup.ayudacampus.ui.theme.EstadoResuelto
 import com.tecsup.ayudacampus.ui.theme.colorEstado
@@ -147,7 +149,11 @@ fun AtenderTicketScreen(
 
                 if (comentarios.isEmpty()) {
                     item {
-                        Text("Aún no hay comentarios", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        EstadoVacio(
+                            icono = Icons.Outlined.ChatBubbleOutline,
+                            titulo = "Aún no hay comentarios",
+                            mensaje = "No hay mensajes en este ticket"
+                        )
                     }
                 }
 

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tecsup.ayudacampus.data.local.entity.Categoria
 import com.tecsup.ayudacampus.ui.components.AppTopBar
+import com.tecsup.ayudacampus.ui.components.EstadoVacio
 import com.tecsup.ayudacampus.ui.components.iconoCategoria
 import com.tecsup.ayudacampus.viewmodel.CategoriasViewModel
 
@@ -72,6 +74,15 @@ fun CategoriasScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            if (categorias.isEmpty()) {
+                item {
+                    EstadoVacio(
+                        icono = Icons.Outlined.LocalOffer,
+                        titulo = "Sin categorías",
+                        mensaje = "Crea una categoría para empezar"
+                    )
+                }
+            }
             items(categorias, key = { it.id }) { c ->
                 CategoriaItem(
                     categoria = c,

@@ -1,5 +1,10 @@
 package com.tecsup.ayudacampus.ui.soporte
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -86,7 +91,11 @@ fun PanelScreen(vm: PanelViewModel, alVerBandeja: () -> Unit) {
             GraficoBarras(datos = porCategoria)
         }
 
-        if (altas > 0) {
+        AnimatedVisibility(
+            visible = altas > 0,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             AlertaAltas(cantidad = altas, alVer = alVerBandeja)
         }
     }

@@ -1,5 +1,9 @@
 package com.tecsup.ayudacampus.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -129,6 +133,10 @@ fun NavAyuda(sesionVm: SesionViewModel) {
         NavHost(
             navController = nav,
             startDestination = Rutas.SPLASH,
+            enterTransition = { fadeIn(tween(250)) + slideInHorizontally(tween(250)) { it / 8 } },
+            exitTransition = { fadeOut(tween(250)) },
+            popEnterTransition = { fadeIn(tween(250)) + slideInHorizontally(tween(250)) { -it / 8 } },
+            popExitTransition = { fadeOut(tween(250)) },
             modifier = Modifier
                 .padding(padding)
                 .consumeWindowInsets(padding)
