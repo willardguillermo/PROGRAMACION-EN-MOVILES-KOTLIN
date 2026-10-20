@@ -37,6 +37,7 @@ import com.tecsup.ayudacampus.ui.cliente.LoginScreen
 import com.tecsup.ayudacampus.ui.cliente.MisTicketsScreen
 import com.tecsup.ayudacampus.ui.cliente.NuevoTicketScreen
 import com.tecsup.ayudacampus.ui.cliente.PerfilScreen
+import com.tecsup.ayudacampus.ui.cliente.RegistroScreen
 import com.tecsup.ayudacampus.ui.cliente.SplashScreen
 import com.tecsup.ayudacampus.ui.soporte.AjustesScreen
 import com.tecsup.ayudacampus.ui.soporte.AtenderTicketScreen
@@ -52,6 +53,7 @@ import com.tecsup.ayudacampus.viewmodel.MisTicketsViewModel
 import com.tecsup.ayudacampus.viewmodel.NuevoTicketViewModel
 import com.tecsup.ayudacampus.viewmodel.PanelViewModel
 import com.tecsup.ayudacampus.viewmodel.PerfilViewModel
+import com.tecsup.ayudacampus.viewmodel.RegistroViewModel
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 import com.tecsup.ayudacampus.viewmodel.TicketDetalleViewModel
 
@@ -144,7 +146,18 @@ fun NavAyuda(sesionVm: SesionViewModel) {
             }
 
             composable(Rutas.LOGIN) {
-                LoginScreen(vm = sesionVm, alIngresar = irAGrafo)
+                LoginScreen(
+                    vm = sesionVm,
+                    alIngresar = irAGrafo,
+                    alRegistrarse = { nav.navigate(Rutas.REGISTRO) }
+                )
+            }
+
+            composable(Rutas.REGISTRO) {
+                val vm: RegistroViewModel = viewModel(
+                    factory = AyudaViewModelFactory { RegistroViewModel(app.repository) }
+                )
+                RegistroScreen(vm = vm, alVolver = { nav.popBackStack() })
             }
 
             navigation(startDestination = Rutas.MIS_TICKETS, route = Rutas.GRAFO_CLIENTE) {

@@ -21,13 +21,26 @@ class AyudaRepositoryRoom(
 ) : AyudaRepository {
 
     override suspend fun login(correo: String, clave: String): Usuario? =
-        usuarioDao.login(correo.trim(), clave)
+        usuarioDao.login(correo.trim().lowercase(), clave)
 
     override suspend fun obtenerUsuario(id: Int): Usuario? =
         usuarioDao.buscarPorId(id)
 
     override suspend fun obtenerUsuarioPorRol(rol: Rol): Usuario? =
         usuarioDao.buscarPorRol(rol.name)
+
+    override suspend fun existeCorreo(correo: String): Boolean =
+        usuarioDao.contarPorCorreo(correo.trim().lowercase()) > 0
+
+    override suspend fun registrarEstudiante(nombre: String, correo: String, clave: String): Long {
+        val usuario = Usuario(
+            nombre = nombre.trim(),
+            correo = correo.trim().lowercase().replace(" ", ""),
+            clave = clave,
+            rol = Rol.CLIENTE.name
+        )
+        return usuarioDao.insertar(usuario)
+    }
 
     override fun observarCategorias(): Flow<List<Categoria>> =
         categoriaDao.observarTodas()

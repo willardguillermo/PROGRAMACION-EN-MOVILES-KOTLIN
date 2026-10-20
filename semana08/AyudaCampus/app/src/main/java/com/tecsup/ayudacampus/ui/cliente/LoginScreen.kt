@@ -40,7 +40,7 @@ import com.tecsup.ayudacampus.ui.theme.AyudaTheme
 import com.tecsup.ayudacampus.viewmodel.SesionViewModel
 
 @Composable
-fun LoginScreen(vm: SesionViewModel, alIngresar: (Rol) -> Unit) {
+fun LoginScreen(vm: SesionViewModel, alIngresar: (Rol) -> Unit, alRegistrarse: () -> Unit) {
     val usuario by vm.usuarioActual.collectAsStateWithLifecycle()
     val error by vm.error.collectAsStateWithLifecycle()
     val oscuro by vm.modoOscuro.collectAsStateWithLifecycle()
@@ -126,7 +126,10 @@ fun LoginScreen(vm: SesionViewModel, alIngresar: (Rol) -> Unit) {
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { alRegistrarse() }
+                            .padding(vertical = 8.dp)
                     )
                 } else {
                     Column(

@@ -22,4 +22,10 @@ interface UsuarioDao {
 
     @Query("SELECT COUNT(*) FROM usuarios")
     suspend fun contar(): Int
+
+    @Query("SELECT COUNT(*) FROM usuarios WHERE correo = :correo")
+    suspend fun contarPorCorreo(correo: String): Int
+
+    @Insert
+    suspend fun insertar(usuario: Usuario): Long
 }

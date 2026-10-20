@@ -3,6 +3,7 @@ package com.tecsup.ayudacampus.ui.navigation
 object Rutas {
     const val SPLASH = "splash"
     const val LOGIN = "login"
+    const val REGISTRO = "registro"
 
     const val GRAFO_CLIENTE = "grafo_cliente"
     const val MIS_TICKETS = "mis_tickets"
